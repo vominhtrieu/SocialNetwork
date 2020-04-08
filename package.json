@@ -1,0 +1,32 @@
+{
+  "name": "social-network",
+  "version": "1.0.0",
+  "description": "A basic social network",
+  "main": "index.js",
+  "scripts": {
+    "install-client": "cd ./src/client && npm install",
+    "install-server": "cd ./src/server && npm install",
+    "install": "npm-run-all install-client install-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipupro2/SocialNetwork.git"
+  },
+  "keywords": [
+    "Social",
+    "Network"
+  ],
+  "author": "Vo Minh Trieu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ipupro2/SocialNetwork/issues"
+  },
+  "homepage": "https://github.com/ipupro2/SocialNetwork#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.9.8",
+    "materialize": "^1.0.0"
+  }
+}

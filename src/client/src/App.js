@@ -1,10 +1,16 @@
 import React from "react";
 import "./App.css";
-import Navbar from "./component/Navbar";
 import Auth from "./container/Auth";
-import Home from "./component/Home";
+import Home from "./container/Home";
+import Friends from "./component/Friends/Friends";
+import Messages from "./component/Messages";
+import Notifications from "./component/Notifications";
+import TitleNavbar from "./component/Navbar/TitleNavbar";
+import MainNavbar from "./component/Navbar/MainNavbar";
 //import { connect } from "react-redux";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import PrivateRoute from "./component/PrivateRoute";
+import { Grid, Box } from "@material-ui/core";
 
 class App extends React.Component {
   constructor() {
@@ -16,12 +22,31 @@ class App extends React.Component {
     return (
       <div>
         <BrowserRouter>
-          <Route path="*" component={Navbar} />
           <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/signin" component={Auth} />
-            <Route exact path="/signup" component={Auth} />
+            <Route exact path="/signin" component={TitleNavbar} />
+            <Route exact path="/signup" component={TitleNavbar} />
+            <Route path="*" component={MainNavbar} />
           </Switch>
+          <Grid container>
+            <Grid item xs={false} md={3} />
+            <Grid item xs={12} md={6}>
+              <Box width="min(100%, 550px)" margin="auto">
+                <Switch>
+                  <PrivateRoute exact path="/" component={Home} />
+                  <PrivateRoute exact path="/friends" component={Friends} />
+                  <PrivateRoute exact path="/messages" component={Messages} />
+                  <PrivateRoute
+                    exact
+                    path="/notifications"
+                    component={Notifications}
+                  />
+                  <Route exact path="/signin" component={Auth} />
+                  <Route exact path="/signup" component={Auth} />
+                </Switch>
+              </Box>
+            </Grid>
+            <Grid item xs={false} md={3} />
+          </Grid>
         </BrowserRouter>
       </div>
     );

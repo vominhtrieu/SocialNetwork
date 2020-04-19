@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 mongoose.set("useCreateIndex", true);
@@ -29,10 +28,21 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  friendRelationships: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "FriendRelationship",
+    },
+  ],
+  friendRequests: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "FriendRequest",
+    },
+  ],
 });
 
 UserSchema.pre("save", function (next) {
-  console.log("here");
   if (this.isNew || this.isModified("password")) {
     const document = this;
     bcrypt.hash(document.password, saltRound, function (err, hash) {
@@ -43,15 +53,16 @@ UserSchema.pre("save", function (next) {
       }
     });
   }
+  else {
+    next();
+  }
 });
 
 UserSchema.methods.validatePassword = function (password, callback) {
-  bcrypt.compare(password, this.password, function(err, same) {
-    if(err)
-      callback(err)
-    else
-      callback(err, same);
-  })
+  bcrypt.compare(password, this.password, function (err, same) {
+    if (err) callback(err);
+    else callback(err, same);
+  });
 };
 
 module.exports = mongoose.model("User", UserSchema);

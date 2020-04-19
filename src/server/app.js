@@ -28,6 +28,7 @@ mongoose
 
 //Routes
 app.use("/", require("./routes/auth"));
+app.use("/", require("./routes/friend"));
 
 app.get("/",authMiddleware, (req, res) => {
   res.json("homepage");

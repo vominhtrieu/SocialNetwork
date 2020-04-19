@@ -8,13 +8,12 @@ module.exports = (req, res, next) => {
   if (!token) res.status(401).json("Unauthorized");
   else {
     jwt.verify(token, process.env.JWT_SECRET, function (err, data) {
-        if(err) {
-            res.status(401).json("Invalid token");
-        }
-        else {
-            req.email = data.email;
-            next(); 
-        }
+      if (err) {
+        res.status(401).json("Invalid token");
+      } else {
+        req.body.id = data.id;
+        next();
+      }
     });
   }
 };

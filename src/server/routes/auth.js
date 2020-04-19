@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
@@ -26,12 +25,12 @@ router.post("/signin", (req, res) => {
         } else if (!same) {
           res.status(400).json("Incorrect email or password");
         } else {
-          const payload = { email };
+          const payload = { id: user._id };
           const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1h",
           });
           
-          res.cookie("token", token, { httpOnly: true, maxAge: 100000 }).status(200).json("Successfully Login");
+          res.cookie("token", token, { httpOnly: true, maxAge: 10*3600000 }).status(200).json("Successfully Login");
         }
       });
     }

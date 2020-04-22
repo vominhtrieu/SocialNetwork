@@ -11,6 +11,7 @@ import MainNavbar from "./component/Navbar/MainNavbar";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./component/PrivateRoute";
 import { Grid, Box } from "@material-ui/core";
+import Profile from "./component/Profile/Profile";
 
 class App extends React.Component {
   constructor() {
@@ -30,7 +31,7 @@ class App extends React.Component {
           <Grid container>
             <Grid item xs={false} md={3} />
             <Grid item xs={12} md={6}>
-              <Box width="min(100%, 550px)" margin="auto">
+              <Box width="min(100%, 600px)" margin="auto">
                 <Switch>
                   <PrivateRoute exact path="/" component={Home} />
                   <PrivateRoute exact path="/friends" component={Friends} />
@@ -40,6 +41,7 @@ class App extends React.Component {
                     path="/notifications"
                     component={Notifications}
                   />
+                  <PrivateRoute exact path="/profile" component={Profile} />
                   <Route exact path="/signin" component={Auth} />
                   <Route exact path="/signup" component={Auth} />
                 </Switch>

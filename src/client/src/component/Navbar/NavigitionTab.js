@@ -23,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 40,
     [theme.breakpoints.only("sm")]: {
       paddingTop: 0,
-      paddingBottom: 0
-    }
+      paddingBottom: 0,
+    },
   },
   icon: {
     transition: "all 0.3s",
@@ -63,6 +63,7 @@ function routeToIndex(route) {
 
 function NavigationTab(props) {
   const classes = useStyles();
+  console.log("here");
   const [tabIndex, setTabIndex] = React.useState(
     routeToIndex(props.history.location.pathname)
   );
@@ -77,7 +78,7 @@ function NavigationTab(props) {
         classes={{
           indicator: classes.bigIndicator,
         }}
-        value={tabIndex}
+        value={routeToIndex(props.history.location.pathname)}
         className={classes.tabsRoot}
         onChange={changeRoute}
         variant="fullWidth"

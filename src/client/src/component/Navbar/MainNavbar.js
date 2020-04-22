@@ -19,29 +19,31 @@ import PersonIcon from "@material-ui/icons/Person";
 import SettingsIcon from "@material-ui/icons/Settings";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import HelpIcon from "@material-ui/icons/Help";
+import Logo from "../../resources/Logo.svg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: "#1e88e5",
+    zIndex: 9999
   },
   brand: {
     float: "left",
-    width: 80,
     cursor: "default",
-    marginTop: 10,
+    marginLeft: 10,
+    paddingTop: 1,
     paddingRight: 2,
     "&>*": {
       fontWeight: "bold",
     },
   },
   searchBar: {
-    marginLeft: 80,
+    marginLeft: 50,
     borderRadius: 25,
     width: "calc(100%-80px)",
     [theme.breakpoints.down("sm")]: {
-      marginRight: 60,
-      marginTop: 10
+      marginRight: 55,
+      marginTop: 10,
     },
     backgroundColor: "white",
     margin: theme.spacing(1),
@@ -57,8 +59,8 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   accountButton: {
-    float: "right",
-    marginTop: 9,
+    float: "right",  
+    marginTop: -1,  
     marginRight: 10,
     [theme.breakpoints.up("md")]: {
       display: "none",
@@ -86,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function MainNavbar(props) {
+  console.log("here");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -93,31 +96,38 @@ export function MainNavbar(props) {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const closeMenu = (newLocation) => {
+    if(newLocation)
+      props.history.push(newLocation);
     setAnchorEl(null);
   };
   return (
     <AppBar position="static" className={classes.root}>
       <Grid container alignItems="center">
         <Grid item xs={12} md={3}>
-          <Box className={classes.brand} width={70}>
-            <Typography align="center" variant="h5">
-              MTN
-            </Typography>
-          </Box>
+          <Box>
+            <Box className={classes.brand} width={40}>
+              <img src={Logo} alt="Logo" width={35} />
+            </Box>
 
-          <IconButton disableRipple onClick={handleMenu} size="small" className={classes.accountButton}>
-            <Avatar className={classes.accountAvatar} />
-          </IconButton>
-          <Box position="relative" className={classes.searchBar}>
-            <InputBase
-              fullWidth
-              placeholder="Search..."
-              inputProps={{ "aria-label": "search" }}
-            />
-            <IconButton size="small" className={classes.searchButton}>
-              <SearchIcon />
+            <IconButton
+              disableRipple
+              onClick={handleMenu}
+              size="small"
+              className={classes.accountButton}
+            >
+              <Avatar className={classes.accountAvatar} />
             </IconButton>
+            <Box position="relative" className={classes.searchBar}>
+              <InputBase
+                fullWidth
+                placeholder="Search..."
+                inputProps={{ "aria-label": "search" }}
+              />
+              <IconButton size="small" className={classes.searchButton}>
+                <SearchIcon />
+              </IconButton>
+            </Box>
           </Box>
         </Grid>
         <Grid item xs={12} md={6}>
@@ -155,21 +165,23 @@ export function MainNavbar(props) {
             horizontal: "right",
           }}
           open={open}
-          onClose={handleClose}
+          onClose={closeMenu}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem 
+          onClick={() => {closeMenu("/profile")}}>
             <PersonIcon className={classes.menuIcon} />
             <Typography>Profile</Typography>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem 
+          onClick={() => {closeMenu("/")}}>
             <SettingsIcon className={classes.menuIcon} />
             <Typography>Setting</Typography>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={() => {closeMenu("/")}}>
             <HelpIcon className={classes.menuIcon} />
             <Typography>Help</Typography>
           </MenuItem>
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={() => {closeMenu("/")}}>
             <LogoutIcon className={classes.menuIcon} />
             <Typography>Sign out</Typography>
           </MenuItem>

@@ -53,6 +53,7 @@ function Post(props) {
   const classes = useStyle();
   return (
     <Box
+      width="100%"
       display="flex"
       justifyContent="center"
       paddingTop={1}

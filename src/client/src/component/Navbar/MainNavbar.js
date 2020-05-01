@@ -8,24 +8,30 @@ import {
   Button,
   Avatar,
   IconButton,
+  InputBase,
+  Grid,
 } from "@material-ui/core";
+import {
+  Search as SearchIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  Person as PersonIcon,
+  Settings as SettingsIcon,
+  ExitToApp as LogoutIcon,
+  Help as HelpIcon,
+} from "@material-ui/icons";
+
 import { makeStyles } from "@material-ui/core/styles";
-import SearchIcon from "@material-ui/icons/Search";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import InputBase from "@material-ui/core/InputBase";
-import Grid from "@material-ui/core/Grid";
 import NavigationTab from "./NavigitionTab";
-import PersonIcon from "@material-ui/icons/Person";
-import SettingsIcon from "@material-ui/icons/Settings";
-import LogoutIcon from "@material-ui/icons/ExitToApp";
-import HelpIcon from "@material-ui/icons/Help";
 import Logo from "../../resources/Logo.svg";
+import { HOST } from "../../config/constant";
+
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     backgroundColor: "#1e88e5",
-    zIndex: 9999
+    zIndex: 9999,
   },
   brand: {
     float: "left",
@@ -59,8 +65,8 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   accountButton: {
-    float: "right",  
-    marginTop: -1,  
+    float: "right",
+    marginTop: -1,
     marginRight: 10,
     [theme.breakpoints.up("md")]: {
       display: "none",
@@ -88,19 +94,33 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function MainNavbar(props) {
-  console.log("here");
+  const { user } = props;
+
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const closeMenu = (newLocation) => {
-    if(newLocation)
-      props.history.push(newLocation);
+    if (newLocation) props.history.push(newLocation);
     setAnchorEl(null);
   };
+
+  function SignOut() {
+    fetch(HOST + "/signout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }).then((res) => {
+      if (res.ok) props.history.push("/signin");
+    });
+  }
+
   return (
     <AppBar position="static" className={classes.root}>
       <Grid container alignItems="center">
@@ -116,7 +136,10 @@ export function MainNavbar(props) {
               size="small"
               className={classes.accountButton}
             >
-              <Avatar className={classes.accountAvatar} />
+              <Avatar
+                className={classes.accountAvatar}
+                src={HOST + "/image?id=" + user.avatar}
+              />
             </IconButton>
             <Box position="relative" className={classes.searchBar}>
               <InputBase
@@ -144,9 +167,13 @@ export function MainNavbar(props) {
               disableRipple
             >
               <Box marginRight={1}>
-                <Avatar className={classes.accountAvatar} alt="Your avatar" />
+                <Avatar
+                  className={classes.accountAvatar}
+                  src={HOST + "/image?id=" + user.avatar}
+                  alt={user.firstName + "'s avatar"}
+                />
               </Box>
-              <Typography>Võ Minh Triều</Typography>
+              <Typography>{user.firstName + " " + user.lastName}</Typography>
               <ArrowDropDownIcon />
             </Button>
           </Box>
@@ -167,21 +194,31 @@ export function MainNavbar(props) {
           open={open}
           onClose={closeMenu}
         >
-          <MenuItem 
-          onClick={() => {closeMenu("/profile")}}>
+          <MenuItem
+            onClick={() => {
+              closeMenu("/" + user.id);
+            }}
+          >
             <PersonIcon className={classes.menuIcon} />
             <Typography>Profile</Typography>
           </MenuItem>
-          <MenuItem 
-          onClick={() => {closeMenu("/")}}>
+          <MenuItem
+            onClick={() => {
+              closeMenu("/");
+            }}
+          >
             <SettingsIcon className={classes.menuIcon} />
             <Typography>Setting</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {closeMenu("/")}}>
+          <MenuItem
+            onClick={() => {
+              closeMenu("/");
+            }}
+          >
             <HelpIcon className={classes.menuIcon} />
             <Typography>Help</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {closeMenu("/")}}>
+          <MenuItem onClick={SignOut}>
             <LogoutIcon className={classes.menuIcon} />
             <Typography>Sign out</Typography>
           </MenuItem>
@@ -191,4 +228,10 @@ export function MainNavbar(props) {
   );
 }
 
-export default MainNavbar;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps)(MainNavbar);

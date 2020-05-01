@@ -2,11 +2,13 @@ require("dotenv").config();
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const DataId = require("./IdRecord");
 
 mongoose.set("useCreateIndex", true);
 const saltRound = 10;
 
 const UserSchema = new mongoose.Schema({
+  _id: Number,
   email: {
     type: String,
     unique: true,
@@ -40,11 +42,44 @@ const UserSchema = new mongoose.Schema({
       ref: "FriendRequest",
     },
   ],
+  avatar: {
+    type: Number,
+    ref: "Image",
+  },
+  cover: {
+    type: Number,
+    ref: "Image",
+  },
+  images: [
+    {
+      type: Number,
+      ref: "Image",
+    },
+  ],
 });
 
 UserSchema.pre("save", function (next) {
-  if (this.isNew || this.isModified("password")) {
+  if (this.isNew) {
     const document = this;
+    DataId.findOneAndUpdate(
+      { model: "User" },
+      { $inc: { recentId: 1 } },
+      { new: true, useFindAndModify: false },
+      (err, data) => {
+        if (err) next(err);
+        else {
+          document._id = data.recentId;
+          bcrypt.hash(document.password, saltRound, function (err, hash) {
+            if (err) next(err);
+            else {
+              document.password = hash;
+              next();
+            }
+          });
+        }
+      }
+    );
+  } else if (this.isModified("password")) {
     bcrypt.hash(document.password, saltRound, function (err, hash) {
       if (err) next(err);
       else {
@@ -52,8 +87,7 @@ UserSchema.pre("save", function (next) {
         next();
       }
     });
-  }
-  else {
+  } else {
     next();
   }
 });

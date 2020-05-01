@@ -57,17 +57,16 @@ function routeToIndex(route) {
     case "/notifications":
       return 3;
     default:
-      return -1;
+      return false;
   }
 }
 
 function NavigationTab(props) {
   const classes = useStyles();
-  console.log("here");
-  const [tabIndex, setTabIndex] = React.useState(
-    routeToIndex(props.history.location.pathname)
-  );
-
+  const [tabIndex, setTabIndex] = React.useState(false);
+  React.useEffect(() => {
+    setTabIndex(routeToIndex(props.history.location.pathname));
+  }, [props.history.location.pathname]);
   const changeRoute = (event, newIndex) => {
     setTabIndex(newIndex);
     props.history.push(indexToRoute(newIndex));
@@ -78,7 +77,7 @@ function NavigationTab(props) {
         classes={{
           indicator: classes.bigIndicator,
         }}
-        value={routeToIndex(props.history.location.pathname)}
+        value={tabIndex}
         className={classes.tabsRoot}
         onChange={changeRoute}
         variant="fullWidth"

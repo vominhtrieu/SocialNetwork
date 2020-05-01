@@ -10,6 +10,8 @@ import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
+import { connect } from "react-redux";
+import { getProfile } from "../../actions/getProfile";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -38,18 +40,19 @@ function SignInForm(props) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
       body: JSON.stringify(data),
     })
-      .then((res) => 
-      {
+      .then((res) => {
         return res.json();
       })
       .then((message) => {
         setAlertOpen(true);
         setAlertTitle(message);
-        if(message==="Successfully Login")
+        if (message === "Successfully Login") {
+          props.getProfile();
           props.history.push("/");
+        }
       })
       .catch((err) => console.log);
   }
@@ -142,4 +145,12 @@ function SignInForm(props) {
   );
 }
 
-export default SignInForm;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getProfile: () => {
+      dispatch(getProfile);
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SignInForm);

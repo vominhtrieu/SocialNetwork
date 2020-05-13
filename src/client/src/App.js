@@ -10,7 +10,8 @@ import MainNavbar from "./component/Navbar/MainNavbar";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./component/PrivateRoute";
 import { Grid, Box } from "@material-ui/core";
-import Profile from "./component/Profile/Profile";
+import Profile from "./container/Profile";
+import DialogAlert from "./component/Dialog/AlertDialog";
 
 import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
@@ -22,43 +23,53 @@ class App extends React.Component {
 
   render() {
     const { isPending, error } = this.props;
-    if (!isPending) {
-      if (error) {
-        return(<Box>{"Unexpected error: " + error}</Box>)
-      }
+    if (isPending)
+    return (
+      <Box>
+        Loading
+      </Box>
+    );
+    if (error) {
       return (
-        <div>
-          <BrowserRouter>
-            <Switch>
-              <Route exact path="/signin" component={TitleNavbar} />
-              <Route exact path="/signup" component={TitleNavbar} />
-              <Route path="*" component={MainNavbar} />
-            </Switch>
-            <Grid container>
-              <Grid item xs={false} md={3} />
-              <Grid item xs={12} md={6}>
-                <Box width="min(100%, 600px)" margin="auto">
-                  <Switch>
-                    <PrivateRoute exact path="/" component={Home} />
-                    <PrivateRoute exact path="/friends" component={Friends} />
-                    <PrivateRoute exact path="/messages" component={Messages} />
-                    <PrivateRoute
-                      exact
-                      path="/notifications"
-                      component={Notifications}
-                    />
-                    <Route exact path="/signin" component={Auth} />
-                    <Route exact path="/signup" component={Auth} />
-                    <PrivateRoute path="/:id" component={Profile} />
-                  </Switch>
-                </Box>
-              </Grid>
-              <Grid item xs={false} md={3} />
-            </Grid>
-          </BrowserRouter>
-        </div>
+        <Box>
+          Cannot connect to server. Please check your internet connenction and
+          try again
+        </Box>
       );
-    } else return <div />;
+    }
+    return (
+      <div>
+        <DialogAlert />
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/signin" component={TitleNavbar} />
+            <Route exact path="/signup" component={TitleNavbar} />
+            <Route path="*" component={MainNavbar} />
+          </Switch>
+          <Grid container>
+            <Grid item xs={false} md={3} />
+            <Grid item xs={12} md={6}>
+              <Box width="min(100%, 600px)" margin="auto">
+                <Switch>
+                  <PrivateRoute exact path="/" component={Home} />
+                  <PrivateRoute exact path="/friends" component={Friends} />
+                  <PrivateRoute exact path="/messages" component={Messages} />
+                  <PrivateRoute
+                    exact
+                    path="/notifications"
+                    component={Notifications}
+                  />
+                  <Route exact path="/signin" component={Auth} />
+                  <Route exact path="/signup" component={Auth} />
+                  <PrivateRoute path="/:id" component={Profile} />
+                </Switch>
+              </Box>
+            </Grid>
+            <Grid item xs={false} md={3} />
+          </Grid>
+        </BrowserRouter>
+      </div>
+    );
   }
 }
 

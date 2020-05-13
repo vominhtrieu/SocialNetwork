@@ -24,19 +24,26 @@ import { makeStyles } from "@material-ui/core/styles";
 import NavigationTab from "./NavigitionTab";
 import Logo from "../../resources/Logo.svg";
 import { HOST } from "../../config/constant";
-
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    height: 65,
+    [theme.breakpoints.only("sm")]: {
+      height: 120,
+    },
+    [theme.breakpoints.only("xs")]: {
+      height: 110,
+    },
+  },
+  appbar: {
     backgroundColor: "#1e88e5",
-    zIndex: 9999,
+    zIndex: 999,
+    padding: "0 10px",
   },
   brand: {
     float: "left",
     cursor: "default",
-    marginLeft: 10,
     paddingTop: 1,
     paddingRight: 2,
     "&>*": {
@@ -44,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   searchBar: {
-    marginLeft: 50,
+    marginLeft: 40,
     borderRadius: 25,
     width: "calc(100%-80px)",
     [theme.breakpoints.down("sm")]: {
-      marginRight: 55,
+      marginRight: 45,
       marginTop: 10,
     },
     backgroundColor: "white",
@@ -66,8 +73,8 @@ const useStyles = makeStyles((theme) => ({
   },
   accountButton: {
     float: "right",
-    marginTop: -1,
-    marginRight: 10,
+    marginTop: -1.5,
+    marginRight: -2,
     [theme.breakpoints.up("md")]: {
       display: "none",
     },
@@ -81,8 +88,10 @@ const useStyles = makeStyles((theme) => ({
     width: 35,
     height: 35,
     backgroundColor: "#bdbdbd",
+    border: "1.7px solid white",
   },
   userInfo: {
+    padding: 0,
     textTransform: "none",
     "&:hover": {
       backgroundColor: "inherit",
@@ -122,109 +131,113 @@ export function MainNavbar(props) {
   }
 
   return (
-    <AppBar position="static" className={classes.root}>
-      <Grid container alignItems="center">
-        <Grid item xs={12} md={3}>
-          <Box>
-            <Box className={classes.brand} width={40}>
-              <img src={Logo} alt="Logo" width={35} />
-            </Box>
+    <Box className={classes.root}>
+      <AppBar position="fixed" className={classes.appbar}>
+        <Grid container alignItems="center">
+          <Grid item xs={12} md={3}>
+            <Box>
+              <Box className={classes.brand} width={40}>
+                <img src={Logo} alt="Logo" width={35} />
+              </Box>
 
-            <IconButton
-              disableRipple
-              onClick={handleMenu}
-              size="small"
-              className={classes.accountButton}
-            >
-              <Avatar
-                className={classes.accountAvatar}
-                src={HOST + "/image?id=" + user.avatar}
-              />
-            </IconButton>
-            <Box position="relative" className={classes.searchBar}>
-              <InputBase
-                fullWidth
-                placeholder="Search..."
-                inputProps={{ "aria-label": "search" }}
-              />
-              <IconButton size="small" className={classes.searchButton}>
-                <SearchIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <NavigationTab history={props.history} />
-        </Grid>
-        <Grid className={classes.accountGrid} item xs={2} md={3}>
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              className={classes.userInfo}
-              color="inherit"
-              size="large"
-              onClick={handleMenu}
-              disableElevation
-              disableRipple
-            >
-              <Box marginRight={1}>
+              <IconButton
+                disableRipple
+                onClick={handleMenu}
+                size="small"
+                className={classes.accountButton}
+              >
                 <Avatar
                   className={classes.accountAvatar}
                   src={HOST + "/image?id=" + user.avatar}
-                  alt={user.firstName + "'s avatar"}
                 />
+              </IconButton>
+              <Box position="relative" className={classes.searchBar}>
+                <InputBase
+                  fullWidth
+                  placeholder="Search..."
+                  inputProps={{ "aria-label": "search" }}
+                />
+                <IconButton size="small" className={classes.searchButton}>
+                  <SearchIcon />
+                </IconButton>
               </Box>
-              <Typography>{user.firstName + " " + user.lastName}</Typography>
-              <ArrowDropDownIcon />
-            </Button>
-          </Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <NavigationTab history={props.history} />
+          </Grid>
+          <Grid className={classes.accountGrid} item xs={2} md={3}>
+            <Box display="flex" justifyContent="flex-end">
+              <Button
+                className={classes.userInfo}
+                color="inherit"
+                size="large"
+                onClick={handleMenu}
+                disableElevation
+                disableRipple
+              >
+                <Box marginRight={1}>
+                  <Avatar
+                    className={classes.accountAvatar}
+                    src={HOST + "/image?id=" + user.avatar}
+                    alt={user.firstName + "'s avatar"}
+                  />
+                </Box>
+                <Typography>{user.firstName + " " + user.lastName}</Typography>
+                <ArrowDropDownIcon />
+              </Button>
+            </Box>
+          </Grid>
+
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            disableScrollLock={true}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={open}
+            onClose={closeMenu}
+          >
+            <MenuItem
+              onClick={() => {
+                closeMenu("/" + user.id);
+              }}
+            >
+              <PersonIcon className={classes.menuIcon} />
+              <Typography>Account</Typography>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                closeMenu("/");
+              }}
+            >
+              <SettingsIcon className={classes.menuIcon} />
+              <Typography>Setting</Typography>
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                closeMenu("/");
+              }}
+            >
+              <HelpIcon className={classes.menuIcon} />
+              <Typography>Help</Typography>
+            </MenuItem>
+            <MenuItem onClick={SignOut}>
+              <LogoutIcon className={classes.menuIcon} />
+              <Typography>Sign out</Typography>
+            </MenuItem>
+          </Menu>
         </Grid>
-        <Menu
-          id="menu-appbar"
-          anchorEl={anchorEl}
-          getContentAnchorEl={null}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={open}
-          onClose={closeMenu}
-        >
-          <MenuItem
-            onClick={() => {
-              closeMenu("/" + user.id);
-            }}
-          >
-            <PersonIcon className={classes.menuIcon} />
-            <Typography>Profile</Typography>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              closeMenu("/");
-            }}
-          >
-            <SettingsIcon className={classes.menuIcon} />
-            <Typography>Setting</Typography>
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              closeMenu("/");
-            }}
-          >
-            <HelpIcon className={classes.menuIcon} />
-            <Typography>Help</Typography>
-          </MenuItem>
-          <MenuItem onClick={SignOut}>
-            <LogoutIcon className={classes.menuIcon} />
-            <Typography>Sign out</Typography>
-          </MenuItem>
-        </Menu>
-      </Grid>
-    </AppBar>
+      </AppBar>
+    </Box>
   );
 }
 

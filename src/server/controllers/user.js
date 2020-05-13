@@ -5,7 +5,7 @@ exports.getProfile = (req, res) => {
     res.status(400).json("Cannot add yourself");
   }
   User.findById(req.body.id, (err, user) => {
-    if (err) res.status(400).json("Unable to find user");
+    if (err || !user) res.status(400).json("Unable to find user");
     else
       res.json({
         id: user._id,
@@ -18,7 +18,7 @@ exports.getProfile = (req, res) => {
 
 exports.getProfileById = (req, res) => {
   User.findById(Number(req.params.id), (err, user) => {
-    if (err) res.status(400).json("Unable to find user");
+    if (err || !user) res.status(400).json("Unable to find user");
     else
       res.json({
         firstName: user.firstName,

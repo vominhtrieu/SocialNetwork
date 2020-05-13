@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 var friendRequestSchema = new mongoose.Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number,
         required: true,
         ref: "User"
     },
     requestedDate: {
         type: Date,
         required: true,
-        default: Date.now()
+        default: Date.now
     }
 })
 

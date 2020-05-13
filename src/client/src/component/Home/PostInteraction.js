@@ -13,6 +13,8 @@ import CommentIcon from "@material-ui/icons/Comment";
 import ShareIcon from "@material-ui/icons/Share";
 import SendIcon from "@material-ui/icons/Send";
 import { fade, makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import { HOST } from "../../config/constant";
 
 const useStyle = makeStyles((theme) => ({
   buttonGroup: {
@@ -52,7 +54,7 @@ const useStyle = makeStyles((theme) => ({
   }
 }));
 
-function PostInteraction() {
+function PostInteraction(props) {
   const classes = useStyle();
   return (
     <Box>
@@ -81,7 +83,7 @@ function PostInteraction() {
           View Comments
         </Link>
       </Box>
-      <Avatar className={classes.avatar}>
+      <Avatar src={`${HOST}/image?id=${props.user.avatar}`} className={classes.avatar}>
         </Avatar>
       <Box marginLeft={6} display="relative" className={classes.commentField}>
         <InputBase
@@ -99,4 +101,8 @@ function PostInteraction() {
   );
 }
 
-export default PostInteraction;
+const mapStateToProps = (state) => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps)(PostInteraction);

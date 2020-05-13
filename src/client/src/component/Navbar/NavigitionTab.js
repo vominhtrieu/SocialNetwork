@@ -8,6 +8,8 @@ import MessageIcon from "@material-ui/icons/Message";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
+import io from "socket.io-client";
+import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   tabsRoot: {
@@ -46,27 +48,37 @@ function indexToRoute(index) {
   }
 }
 
-function routeToIndex(route) {
-  switch (route) {
-    case "/":
-      return 0;
-    case "/friends":
-      return 1;
-    case "/messages":
-      return 2;
-    case "/notifications":
-      return 3;
-    default:
-      return false;
-  }
-}
+// function routeToIndex(route) {
+//   switch (route) {
+//     case "/":
+//       return 0;
+//     case "/friends":
+//       return 1;
+//     case "/messages":
+//       return 2;
+//     case "/notifications":
+//       return 3;
+//     default:
+//       return false;
+//   }
+// }
 
 function NavigationTab(props) {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(false);
+
+  const [newFriendRequest, setNewFriendRequest] = React.useState(0);
+  const [socket] = React.useState(io(HOST));
   React.useEffect(() => {
-    setTabIndex(routeToIndex(props.history.location.pathname));
-  }, [props.history.location.pathname]);
+    fetch(HOST + "/update", { method: "GET", credentials: "include" })
+      .then((res) => res.json())
+      .then(({ newFriendRequests }) => setNewFriendRequest(newFriendRequests));
+      
+    socket.on("newFriendRequest", (data) => {
+      setNewFriendRequest(data.newFriendRequest);
+    });
+  }, [socket]);
+
   const changeRoute = (event, newIndex) => {
     setTabIndex(newIndex);
     props.history.push(indexToRoute(newIndex));
@@ -96,7 +108,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={2} max={99} color="secondary">
+            <Badge badgeContent={newFriendRequest} max={99} color="secondary">
               <FriendIcon
                 className={classes.icon}
                 fontSize={tabIndex === 1 ? "large" : "default"}

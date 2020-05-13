@@ -11,6 +11,8 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import PostInteraction from "./PostInteraction";
+import moment from "moment/moment";
+import { HOST } from "../../config/constant";
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -51,6 +53,8 @@ const useStyle = makeStyles((theme) => ({
 
 function Post(props) {
   const classes = useStyle();
+
+  const {user} = props;
   return (
     <Box
       width="100%"
@@ -61,13 +65,13 @@ function Post(props) {
     >
       <Card variant="outlined" className={classes.root}>
         <CardContent>
-          <Avatar className={classes.avatar}>T</Avatar>
+          <Avatar src={`${HOST}/image?id=${user.avatar}`} className={classes.avatar}>{user.firstName[0]}</Avatar>
           <Box>
             <Typography className={classes.poster} variant="h5">
-              Võ Minh Triều
+              {user.firstName + user.lastName}
             </Typography>
             <Typography className={classes.date} color="textSecondary">
-              Yesterday
+              {moment(props.date).fromNow()}
             </Typography>
           </Box>
           <Box className={classes.moreButton}>
@@ -76,15 +80,7 @@ function Post(props) {
             </IconButton>
           </Box>
           <Typography className={classes.cardBody} variant="body2">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
+            {props.textContent}
           </Typography>
           <PostInteraction />
         </CardContent>

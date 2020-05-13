@@ -7,6 +7,24 @@ const DataId = require("./IdRecord");
 mongoose.set("useCreateIndex", true);
 const saltRound = 10;
 
+const FriendRelationshipSchema = new mongoose.Schema(
+  {
+    user: {
+      type: Number,
+      ref: "User",
+    },
+    type: {
+      type: String,
+      default: "Normal",
+    },
+    since: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
+
 const UserSchema = new mongoose.Schema({
   _id: Number,
   email: {
@@ -30,12 +48,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  friendRelationships: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "FriendRelationship",
-    },
-  ],
+  friends: [FriendRelationshipSchema],
   friendRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -50,6 +63,10 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     ref: "Image",
   },
+  posts: [{
+    type: Number,
+    ref: "Post"
+  }],
   images: [
     {
       type: Number,

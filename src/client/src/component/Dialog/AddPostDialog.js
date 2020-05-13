@@ -1,0 +1,80 @@
+import React from "react";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import { InputBase, Button } from "@material-ui/core";
+import { HOST } from "../../config/constant";
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    width: "min(500px, 90vw)",
+    maxHeight: 500,
+    marginBottom: 10,
+  },
+  title: {
+    textAlign: "center",
+  },
+}));
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
+export default function AddPostDialog(props) {
+  const classes = useStyles();
+
+  const [postText, setPostText] = React.useState("");
+
+  const submitPost = () => {
+    fetch(HOST + "/newpost", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ post: { textContent: postText } }),
+    }).then((res) => {
+      if (res.ok) {
+        props.closeDialog();
+      }
+    });
+  };
+
+  return (
+    <Dialog
+      onClose={props.closeDialog}
+      aria-labelledby="addPostDialogTitle"
+      open={props.open}
+    >
+      <DialogTitle
+        className={classes.title}
+        id="addPostDialogTitle"
+        onClose={props.closeDialog}
+      >
+        New post
+      </DialogTitle>
+      <DialogContent dividers>
+        <InputBase
+          className={classes.input}
+          autoFocus
+          placeholder="What do you think...?"
+          multiline
+          onChange={(e) => setPostText(e.target.value)}
+          fullWidth
+          inputProps={{ "aria-label": "Add new post" }}
+        />
+        <Button
+          onClick={submitPost}
+          variant="outlined"
+          color="primary"
+          fullWidth
+        >
+          Post
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+}

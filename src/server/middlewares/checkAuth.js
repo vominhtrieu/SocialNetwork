@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
       } else {
         req.body.id = data.id;
         User.findById(req.body.id, (err, user) => {
-          if (err) {
+          if (err || !user) {
             res.json("Not found user");
           } else {
             req.body.user = user;

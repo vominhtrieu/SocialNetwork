@@ -2,9 +2,15 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const databaseController = require("./controllers/database");
+
+//Socket
+require("./socket/socket")(io);
 
 if (app.get("env") === "production") {
   app.set("trust proxy", 1);
@@ -21,8 +27,10 @@ app.use(cookieParser());
 app.use("/", require("./routes/auth"));
 app.use("/", require("./routes/friend"));
 app.use("/", require("./routes/image"));
+app.use("/", require("./routes/notification"));
+app.use("/", require("./routes/post"));
 app.use("/", require("./routes/user"));
 
-app.listen(process.env.SERVER_PORT, function () {
+server.listen(process.env.SERVER_PORT, function () {
   console.log("Server has started on PORT", process.env.SERVER_PORT);
 });

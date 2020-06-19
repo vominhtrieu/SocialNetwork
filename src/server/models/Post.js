@@ -10,13 +10,25 @@ var postSchema = new mongoose.Schema({
   },
   textContent: {
     type: String,
-    required: true
+    required: true,
   },
-  image: [ String ],
+  image: [String],
   date: {
-      type: Date,
-      default: Date.now
+    type: Date,
+    default: Date.now,
   },
+  likes: [
+    {
+      type: Number,
+      ref: "User",
+    },
+  ],
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   privacy: {
     type: Number,
     require: true,

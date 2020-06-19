@@ -3,7 +3,7 @@ import "./App.css";
 import Auth from "./container/Auth";
 import Home from "./container/Home";
 import Friends from "./component/Friends/Friends";
-import Messages from "./component/Messages";
+import Messages from "./container/Messages";
 import Notifications from "./component/Notifications";
 import TitleNavbar from "./component/Navbar/TitleNavbar";
 import MainNavbar from "./component/Navbar/MainNavbar";
@@ -11,7 +11,6 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import PrivateRoute from "./component/PrivateRoute";
 import { Grid, Box } from "@material-ui/core";
 import Profile from "./container/Profile";
-import DialogAlert from "./component/Dialog/AlertDialog";
 
 import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
@@ -23,12 +22,7 @@ class App extends React.Component {
 
   render() {
     const { isPending, error } = this.props;
-    if (isPending)
-    return (
-      <Box>
-        Loading
-      </Box>
-    );
+    if (isPending) return <Box>Loading</Box>;
     if (error) {
       return (
         <Box>
@@ -38,22 +32,21 @@ class App extends React.Component {
       );
     }
     return (
-      <div>
-        <DialogAlert />
+      <React.Fragment>
         <BrowserRouter>
           <Switch>
             <Route exact path="/signin" component={TitleNavbar} />
             <Route exact path="/signup" component={TitleNavbar} />
             <Route path="*" component={MainNavbar} />
           </Switch>
-          <Grid container>
+          <Grid container className={{alignItems: "stretch"}}>
             <Grid item xs={false} md={3} />
             <Grid item xs={12} md={6}>
               <Box width="min(100%, 600px)" margin="auto">
                 <Switch>
                   <PrivateRoute exact path="/" component={Home} />
                   <PrivateRoute exact path="/friends" component={Friends} />
-                  <PrivateRoute exact path="/messages" component={Messages} />
+                  <PrivateRoute path="/messages" component={Messages} />
                   <PrivateRoute
                     exact
                     path="/notifications"
@@ -68,7 +61,7 @@ class App extends React.Component {
             <Grid item xs={false} md={3} />
           </Grid>
         </BrowserRouter>
-      </div>
+      </React.Fragment>
     );
   }
 }

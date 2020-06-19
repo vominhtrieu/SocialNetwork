@@ -32,3 +32,7 @@ exports.getProfileById = (req, res) => {
 exports.auth = (req, res) => {
   res.json("Authenticated");
 };
+
+exports.getFeed = (req, res) => {
+  
+}

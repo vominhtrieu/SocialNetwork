@@ -12,16 +12,18 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import PostInteraction from "./PostInteraction";
 import moment from "moment/moment";
+import { Link } from "react-router-dom";
 import { HOST } from "../../config/constant";
 
 const useStyle = makeStyles((theme) => ({
   root: {
     width: "100%",
   },
-  poster: {
+  name: {
     fontWeight: "bold",
     fontSize: 16,
-    cursor: "default",
+    color: "black",
+    textDecoration: "none",
   },
   date: {
     fontSize: 14,
@@ -31,11 +33,13 @@ const useStyle = makeStyles((theme) => ({
   cardBody: {
     marginTop: 20,
     marginBottom: 20,
+    whiteSpace: "pre-line"
   },
   avatar: {
     width: 40,
     marginRight: 10,
     float: "left",
+    textDecoration: "none"
   },
   moreButton: {
     marginTop: -45,
@@ -53,8 +57,21 @@ const useStyle = makeStyles((theme) => ({
 
 function Post(props) {
   const classes = useStyle();
+  const [post, setPost] = React.useState({});
 
-  const {user} = props;
+  React.useEffect(() => {
+    fetch(`${HOST}/post/${props.id}`, {
+      method: "GET",
+      credentials: "include"
+    }).then(res => res.json())
+    .then(post => {
+      setPost(post);
+    })
+  }, [props.id]);
+  
+  if(!post.user)
+    return null;
+
   return (
     <Box
       width="100%"
@@ -65,13 +82,25 @@ function Post(props) {
     >
       <Card variant="outlined" className={classes.root}>
         <CardContent>
-          <Avatar src={`${HOST}/image?id=${user.avatar}`} className={classes.avatar}>{user.firstName[0]}</Avatar>
+          <Avatar
+            component={Link}
+            to={`/${post.user.Id}`}
+            src={`${HOST}/image/${post.user.avatar}`}
+            className={classes.avatar}
+          >
+            {post.user.firstName[0]}
+          </Avatar>
           <Box>
-            <Typography className={classes.poster} variant="h5">
-              {user.firstName + user.lastName}
+            <Typography
+              component={Link}
+              to={`/${post.user.Id}`}
+              className={classes.name}
+              variant="h5"
+            >
+              {post.user.firstName + " " + post.user.lastName}
             </Typography>
             <Typography className={classes.date} color="textSecondary">
-              {moment(props.date).fromNow()}
+              {moment(post.date).fromNow()}
             </Typography>
           </Box>
           <Box className={classes.moreButton}>
@@ -80,9 +109,9 @@ function Post(props) {
             </IconButton>
           </Box>
           <Typography className={classes.cardBody} variant="body2">
-            {props.textContent}
+            {post.textContent}
           </Typography>
-          <PostInteraction />
+          <PostInteraction postId={post.postId} liked={post.liked} likeCount={post.likeCount} comments={post.comments} />
         </CardContent>
       </Card>
     </Box>

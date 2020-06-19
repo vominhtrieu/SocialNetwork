@@ -63,10 +63,18 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     ref: "Image",
   },
-  posts: [{
-    type: Number,
-    ref: "Post"
-  }],
+  posts: [
+    {
+      type: Number,
+      ref: "Post",
+    },
+  ],
+  chatRooms: [
+    {
+      type: Number,
+      ref: "ChatRoom",
+    },
+  ],
   images: [
     {
       type: Number,

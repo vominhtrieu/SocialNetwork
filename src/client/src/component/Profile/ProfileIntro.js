@@ -107,7 +107,7 @@ function ProfileIntro(props) {
         className={classes.root}
         style={{
           backgroundImage:
-            "url(" + HOST + "/image?id=" + profileUser.cover + ")",
+            "url(" + HOST + "/image/" + profileUser.cover + ")",
         }}
       >
         {user.id === Number(profileUser.id) ? (
@@ -131,10 +131,12 @@ function ProfileIntro(props) {
             className={classes.avatar}
             src={
               profileUser.avatar
-                ? HOST + "/image?id=" + profileUser.avatar
+                ? HOST + "/image/" + profileUser.avatar
                 : null
             }
-          />
+          >
+            {profileUser.firstName[0]}
+          </Avatar>
           <Box className={classes.addAvatarButton}>
             {user.id === Number(profileUser.id) ? (
               <Box>

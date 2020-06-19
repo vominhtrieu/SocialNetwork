@@ -57,7 +57,7 @@ function FriendInfo(props) {
           <Box display="block">
             <Link className={classes.link} to={"/" + user.id}>
               <Avatar
-                src={HOST + "/image?id=" + user.avatar}
+                src={HOST + "/image/" + user.avatar}
                 className={classes.avatar}
               ></Avatar>
             </Link>

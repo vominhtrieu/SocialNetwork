@@ -3,8 +3,6 @@ import {
   AppBar,
   Typography,
   Box,
-  Menu,
-  MenuItem,
   Button,
   Avatar,
   IconButton,
@@ -14,10 +12,6 @@ import {
 import {
   Search as SearchIcon,
   ArrowDropDown as ArrowDropDownIcon,
-  Person as PersonIcon,
-  Settings as SettingsIcon,
-  ExitToApp as LogoutIcon,
-  Help as HelpIcon,
 } from "@material-ui/icons";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,6 +19,7 @@ import NavigationTab from "./NavigitionTab";
 import Logo from "../../resources/Logo.svg";
 import { HOST } from "../../config/constant";
 import { connect } from "react-redux";
+import NavbarMenu from "./NavbarMenu";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,10 +91,7 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "inherit",
     },
-  },
-  menuIcon: {
-    marginRight: 5,
-  },
+  }
 }));
 
 export function MainNavbar(props) {
@@ -107,7 +99,6 @@ export function MainNavbar(props) {
 
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -117,18 +108,6 @@ export function MainNavbar(props) {
     if (newLocation) props.history.push(newLocation);
     setAnchorEl(null);
   };
-
-  function SignOut() {
-    fetch(HOST + "/signout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }).then((res) => {
-      if (res.ok) props.history.push("/signin");
-    });
-  }
 
   return (
     <Box className={classes.root}>
@@ -148,7 +127,7 @@ export function MainNavbar(props) {
               >
                 <Avatar
                   className={classes.accountAvatar}
-                  src={HOST + "/image?id=" + user.avatar}
+                  src={HOST + "/image/" + user.avatar}
                 />
               </IconButton>
               <Box position="relative" className={classes.searchBar}>
@@ -179,7 +158,7 @@ export function MainNavbar(props) {
                 <Box marginRight={1}>
                   <Avatar
                     className={classes.accountAvatar}
-                    src={HOST + "/image?id=" + user.avatar}
+                    src={HOST + "/image/" + user.avatar}
                     alt={user.firstName + "'s avatar"}
                   />
                 </Box>
@@ -188,53 +167,7 @@ export function MainNavbar(props) {
               </Button>
             </Box>
           </Grid>
-
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            getContentAnchorEl={null}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            disableScrollLock={true}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={open}
-            onClose={closeMenu}
-          >
-            <MenuItem
-              onClick={() => {
-                closeMenu("/" + user.id);
-              }}
-            >
-              <PersonIcon className={classes.menuIcon} />
-              <Typography>Account</Typography>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                closeMenu("/");
-              }}
-            >
-              <SettingsIcon className={classes.menuIcon} />
-              <Typography>Setting</Typography>
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                closeMenu("/");
-              }}
-            >
-              <HelpIcon className={classes.menuIcon} />
-              <Typography>Help</Typography>
-            </MenuItem>
-            <MenuItem onClick={SignOut}>
-              <LogoutIcon className={classes.menuIcon} />
-              <Typography>Sign out</Typography>
-            </MenuItem>
-          </Menu>
+          <NavbarMenu anchorEl={anchorEl} closeMenu={closeMenu} user={user} />
         </Grid>
       </AppBar>
     </Box>

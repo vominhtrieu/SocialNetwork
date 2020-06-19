@@ -48,7 +48,7 @@ function PostAdd(props) {
       <Card variant="outlined" className={classes.root}>
         <CardContent>
           <Box display="relative">
-            <Avatar src={HOST + "/image?id=" + props.user.avatar} className={classes.avatar}></Avatar>
+            <Avatar src={HOST + "/image/" + props.user.avatar} className={classes.avatar}></Avatar>
             <Box className={classes.addPostField} onClick={openDialog}>
               What do you think?
             </Box>

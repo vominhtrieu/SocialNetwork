@@ -5,6 +5,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 module.exports = (socket, next) => {
+  if(!socket.request.headers.cookie)
+    return;
   const { token } = cookie.parse(socket.request.headers.cookie);
   
   if (!token) next(new Error("Token is not existed"));
@@ -18,6 +20,7 @@ module.exports = (socket, next) => {
           if (err || !user) {
             next(new Error("Not found user"));
           } else {
+            socket.user = user;
             next();
           }
         });

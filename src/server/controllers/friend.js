@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const FriendRequest = require("../models/FriendRequest");
+const ChatRoom = require("../models/ChatRoom");
 
 exports.addFriend = async (req, res) => {
   try {
@@ -80,6 +81,35 @@ exports.respondFriendRequest = async (req, res) => {
     if (req.body.accept) {
       req.body.user.friends.push({ user: request.user._id });
       request.user.friends.push({ user: req.body.id });
+      await req.body.user
+        .populate({
+          path: "chatRooms",
+          match: {
+            participants: { $elemMatch: { $eq: request.user._id } },
+          },
+        })
+        .execPopulate();
+
+      await request.user
+        .populate({
+          path: "chatRooms",
+          match: {
+            participants: { $elemMatch: { $eq: req.body.id } },
+          },
+        })
+        .execPopulate();
+
+      if (
+        req.body.user.chatRooms.length === 0 &&
+        request.user.chatRooms.length === 0
+      ) {
+        const room = new ChatRoom({
+          participants: [req.body.id, request.user._id],
+        });
+        await room.save();
+        req.body.user.chatRooms.push(room._id);
+        request.user.chatRooms.push(room._id);
+      }
 
       await Promise.all([req.body.user.save(), request.user.save()]);
     }
@@ -87,7 +117,7 @@ exports.respondFriendRequest = async (req, res) => {
     await FriendRequest.findByIdAndDelete(request._id);
     res.json("Action Completed");
   } catch (err) {
-    res.status(500).json("Internal error");
+    res.status(500).json("Internal error" + err);
   }
 };
 

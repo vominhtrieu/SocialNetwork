@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
+import DialogAlert from "./component/Dialog/AlertDialog";
 import * as serviceWorker from "./serviceWorker";
 
 import { createStore, applyMiddleware } from "redux";
@@ -14,6 +15,7 @@ const store = createStore(profileReducer, applyMiddleware(reduxThunk));
 ReactDOM.render(
   // <React.StrictMode>
   <Provider store={store}>
+    <DialogAlert />
     <App />
   </Provider>,
   /* </React.StrictMode> */ document.getElementById("root")

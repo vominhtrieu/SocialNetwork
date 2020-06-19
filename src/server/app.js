@@ -28,7 +28,9 @@ app.use("/", require("./routes/auth"));
 app.use("/", require("./routes/friend"));
 app.use("/", require("./routes/image"));
 app.use("/", require("./routes/notification"));
+app.use("/", require("./routes/chatRoom"));
 app.use("/", require("./routes/post"));
+app.use("/", require("./routes/comment"));
 app.use("/", require("./routes/user"));
 
 server.listen(process.env.SERVER_PORT, function () {

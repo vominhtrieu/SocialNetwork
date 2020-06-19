@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import PostAdd from "../Home/PostAdd";
-import Post from "../Home/Post";
+import PostAdd from "../Post/PostAdd";
+import Post from "../Post/Post";
 import { HOST } from "../../config/constant";
 
 export default function ProfileHome(props) {
@@ -13,13 +13,13 @@ export default function ProfileHome(props) {
     })
       .then((res) => res.json())
       .then((posts) => {
-        setPosts(posts)
+        setPosts(posts);
       });
   }, [props.profileUser.id]);
-
-  const renderPosts = posts.map((post, index) => {
-    return <Post key={index} user={post.user} textContent={post.textContent} images={post.images} date={post.date} />
-  })
+  
+  const renderPosts = posts.map((postId, index) => {
+    return <Post key={index} id={postId} />;
+  });
 
   return (
     <div>

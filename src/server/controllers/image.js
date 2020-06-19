@@ -5,7 +5,7 @@ const multer = require("multer");
 const path = require("path");
 
 exports.getImage = function (req, res) {
-  Image.findById(Number(req.query.id), (err, img) => {
+  Image.findById(Number(req.params.id), (err, img) => {
     if (err) res.status(400).json("Image not found");
     else {
       if (img.privacy != 0) res.status(400).json("Unauthorization");
@@ -14,7 +14,7 @@ exports.getImage = function (req, res) {
           path.join(
             __dirname,
             "../public/images",
-            req.query.id + "." + img.extension
+            req.params.id + "." + img.extension
           )
         );
     }

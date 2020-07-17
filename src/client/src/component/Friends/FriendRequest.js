@@ -70,7 +70,7 @@ function FriendRequest(props) {
           <Box display="block">
             <Link className={classes.link} to={"/" + request.userId}>
               <Avatar
-                src={HOST + "/image?id=" + request.avatar}
+                src={HOST + "/image/" + request.avatar}
                 className={classes.avatar}
               ></Avatar>
             </Link>

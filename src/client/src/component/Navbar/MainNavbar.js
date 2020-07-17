@@ -6,11 +6,9 @@ import {
   Button,
   Avatar,
   IconButton,
-  InputBase,
   Grid,
 } from "@material-ui/core";
 import {
-  Search as SearchIcon,
   ArrowDropDown as ArrowDropDownIcon,
 } from "@material-ui/icons";
 
@@ -20,6 +18,7 @@ import Logo from "../../resources/Logo.svg";
 import { HOST } from "../../config/constant";
 import { connect } from "react-redux";
 import NavbarMenu from "./NavbarMenu";
+import SearchBar from "./SearchBar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,12 +55,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     margin: theme.spacing(1),
     padding: theme.spacing(0.3, 5, 0.3, 2),
-  },
-  searchButton: {
-    color: "black",
-    position: "absolute",
-    right: 5,
-    top: 3,
   },
   fullHeight: {
     ...theme.mixins.toolbar,
@@ -108,7 +101,6 @@ export function MainNavbar(props) {
     if (newLocation) props.history.push(newLocation);
     setAnchorEl(null);
   };
-
   return (
     <Box className={classes.root}>
       <AppBar position="fixed" className={classes.appbar}>
@@ -131,14 +123,7 @@ export function MainNavbar(props) {
                 />
               </IconButton>
               <Box position="relative" className={classes.searchBar}>
-                <InputBase
-                  fullWidth
-                  placeholder="Search..."
-                  inputProps={{ "aria-label": "search" }}
-                />
-                <IconButton size="small" className={classes.searchButton}>
-                  <SearchIcon />
-                </IconButton>
+                <SearchBar />
               </Box>
             </Box>
           </Grid>

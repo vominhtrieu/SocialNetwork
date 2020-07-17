@@ -26,7 +26,7 @@ class App extends React.Component {
     if (error) {
       return (
         <Box>
-          Cannot connect to server. Please check your internet connenction and
+          Cannot connect to server. Please check your internet connection and
           try again
         </Box>
       );
@@ -39,7 +39,7 @@ class App extends React.Component {
             <Route exact path="/signup" component={TitleNavbar} />
             <Route path="*" component={MainNavbar} />
           </Switch>
-          <Grid container className={{alignItems: "stretch"}}>
+          <Grid container>
             <Grid item xs={false} md={3} />
             <Grid item xs={12} md={6}>
               <Box width="min(100%, 600px)" margin="auto">

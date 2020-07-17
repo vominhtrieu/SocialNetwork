@@ -133,7 +133,7 @@ export default function NewMessage(props) {
           {matchedFriends && matchedFriends.length > 0 ? (
             <MatchedFriends
               friends={matchedFriends}
-              selectRecipient={selectRecipient}
+              action={selectRecipient}
             />
           ) : null}
           <Box display="flex">{renderRecipients}</Box>

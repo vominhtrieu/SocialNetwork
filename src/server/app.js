@@ -31,6 +31,7 @@ app.use("/", require("./routes/notification"));
 app.use("/", require("./routes/chatRoom"));
 app.use("/", require("./routes/post"));
 app.use("/", require("./routes/comment"));
+app.use("/", require("./routes/search"));
 app.use("/", require("./routes/user"));
 
 server.listen(process.env.SERVER_PORT, function () {

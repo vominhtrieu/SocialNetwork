@@ -43,14 +43,14 @@ export default function MatchedFriends(props) {
       display="flex"
       alignItems="center"
       className={classes.item}
-      onClick={() => props.selectRecipient(friend)}
+      onClick={() => props.action(friend)}
     >
       <Avatar
         src={HOST + "/image/" + friend.avatar}
         className={classes.avatar}
       />
       <Typography className={classes.name} variant="body2">
-        {friend.firstName + " " + friend.lastName}
+        {friend.fullName}
       </Typography>
     </Box>
   ));

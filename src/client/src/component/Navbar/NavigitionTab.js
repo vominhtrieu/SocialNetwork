@@ -119,7 +119,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={5} max={99} color="secondary">
+            <Badge badgeContent={0} max={99} color="secondary">
               <MessageIcon
                 className={classes.icon}
                 fontSize={tabIndex === 2 ? "large" : "default"}
@@ -130,7 +130,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={101} max={99} color="secondary">
+            <Badge badgeContent={0} max={99} color="secondary">
               <NotificationsIcon
                 className={classes.icon}
                 fontSize={tabIndex === 3 ? "large" : "default"}

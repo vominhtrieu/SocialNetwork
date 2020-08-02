@@ -15,13 +15,14 @@ import { connect } from "react-redux";
 import ImageIcon from "@material-ui/icons/Image";
 import SendIcon from "@material-ui/icons/Send";
 import EmojiIcon from "@material-ui/icons/EmojiEmotions";
+import EmojiPicker from "../General/EmojiPicker";
 import io from "socket.io-client";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 16,
-    height: "auto"
+    height: "calc(100vh - 100px)",
   },
   backButton: {
     width: 48,
@@ -47,9 +48,13 @@ const useStyles = makeStyles((theme) => ({
   input: {
     border: "1px solid rgba(0,0,0,0.12)",
     marginLeft: 10,
+    maxHeight: 100,
+    overflow: "auto",
     padding: "2px 20px 2px 20px",
     borderRadius: 25,
     backgroundColor: "#f0f2f5",
+    minHeight: 30,
+    margin: "5px 0",
   },
 }));
 
@@ -78,7 +83,6 @@ function ReceiveMessage(props) {
 
   return (
     <Box
-      className={classes.root}
       display="flex"
       alignItems="center"
       justifyContent="flex-start"
@@ -103,6 +107,8 @@ function Room(props) {
   const [room, setRoom] = React.useState(null);
   const [textContent, setTextContent] = React.useState("");
   const [messages, setMessages] = React.useState([]);
+  const [isEmojiPickerOpened, setIsEmojiPickerOpened] = React.useState(false);
+  const messageHistory = React.useRef(null);
 
   React.useEffect(() => {
     socket.emit("joinRoom", {
@@ -111,6 +117,8 @@ function Room(props) {
 
     socket.on("message", (data) => {
       setMessages((messages) => [...messages, data]);
+      if (messageHistory.current !== null)
+        messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
     });
 
     return () => {
@@ -151,6 +159,9 @@ function Room(props) {
       .then((res) => res.json())
       .then((messages) => {
         setMessages(messages);
+        if (messageHistory.current !== null)
+          messageHistory.current.scrollTop =
+            messageHistory.current.scrollHeight;
       });
   }, [props.match.params.id]);
 
@@ -161,6 +172,17 @@ function Room(props) {
       textContent: textContent,
     });
   };
+
+  const addEmoji = (emoji) => {
+    setTextContent((textContent) => {
+      return textContent + emoji
+    });
+  };
+
+  const closeEmojiPicker = () => {
+    setIsEmojiPickerOpened(false);
+  }
+
   if (!room) return null;
   return (
     <Card variant="outlined" className={classes.root}>
@@ -185,7 +207,13 @@ function Room(props) {
         <Typography>{room.conversationName}</Typography>
       </Box>
       <Divider />
-      <Box padding={2} display="block" overflow="auto">
+      <Box
+        ref={messageHistory}
+        padding={2}
+        height="calc(100% - 128px)"
+        display="block"
+        overflow="auto"
+      >
         {messages.map((message, index) =>
           message.senderId === props.user.id ? (
             <SentMessage key={index} message={message} />
@@ -199,14 +227,18 @@ function Room(props) {
         <IconButton size="small">
           <ImageIcon />
         </IconButton>
-        <IconButton size="small">
-          <EmojiIcon />
-        </IconButton>
+        <Box position="relative">
+          <IconButton onClick={() => setIsEmojiPickerOpened(true)} size="small">
+            <EmojiIcon />
+          </IconButton>
+          <EmojiPicker isOpened={isEmojiPickerOpened} onClose={closeEmojiPicker} addEmoji={addEmoji} />
+        </Box>
         <InputBase
           onChange={(e) => setTextContent(e.target.value)}
           value={textContent}
           className={classes.input}
           placeholder="..."
+          multiline
           fullWidth
         />
         <IconButton onClick={() => sendMessage()}>

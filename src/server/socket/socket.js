@@ -1,7 +1,9 @@
 const User = require("../models/User");
 const ChatRoom = require("../models/ChatRoom");
 const Message = require("../models/Message");
+const Post = require("../models/Post");
 const socketAuth = require("../middlewares/socketAuth");
+const { post } = require("../routes/auth");
 let connectedUser = {};
 
 module.exports = (io) => {
@@ -58,7 +60,7 @@ module.exports = (io) => {
             sender: socket.userId,
             textContent: data.textContent,
           });
-          message.save().then(()=>{
+          message.save().then(() => {
             room.chatHistory.push(message);
             room.save().then(() => {
               io.sockets.in(data.roomId).emit("message", {
@@ -74,6 +76,55 @@ module.exports = (io) => {
       });
     });
 
-    socket.on("disconnect", () => {});
+    socket.on("joinPost", ({postId}) => {
+      socket.join("post/" + String(postId));
+    })
+
+    socket.on("like", ({ postId }) => {
+      Post.findById(postId, (err, post) => {
+        if (!post)
+          return;
+        if (post.likes.indexOf(socket.userId) !== -1) {
+          Post.findOneAndUpdate(
+            { _id: postId },
+            {
+              $pull: {
+                useFindAndModify: false,
+                likes: socket.userId,
+              },
+            },
+            {
+              useFindAndModify: false,
+              new: true
+            }, (err, post) => {
+              if (!err && post) {
+                socket.to("post/" + String(post._id)).emit("newLike", {
+                  likeCount: post.likes.length
+                })
+              }
+            });
+        } else {
+          Post.findOneAndUpdate(
+            { _id: postId },
+            {
+              $push: {
+                likes: socket.userId,
+              },
+            }, {
+            useFindAndModify: false,
+            new: true
+          }, (err, post) => {
+            if (!err && post) {
+              socket.to("post/" + String(post._id)).emit("newLike", {
+                likeCount: post.likes.length
+              });
+            }
+          });
+        }
+      }
+      );
+    });
+
+    socket.on("disconnect", () => { });
   });
 };

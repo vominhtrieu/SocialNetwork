@@ -15,6 +15,7 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import CommentSection from "./CommentSection";
 import { HOST } from "../../config/constant";
+import io from "socket.io-client";
 
 const useStyle = makeStyles((theme) => ({
   button: {
@@ -78,25 +79,20 @@ function numToFixedLengthString(num) {
 function PostInteraction(props) {
   const classes = useStyle();
   const [openComment, setOpenComment] = React.useState(false);
-  const [liked, setLiked] = React.useState(props.liked);
   const [textInput, setTextInput] = React.useState("");
+  const [socket] = React.useState(io(HOST));
+
+  React.useEffect(()=>{
+
+  }, [])
   const onInput = (e) => {
     setTextInput(e.target.value);
   };
 
   const likeThisPost = () => {
-    fetch(`${HOST}/like`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ postId: props.postId }),
-    })
-      .then((res) => res.json())
-      .then((isLiked) => {
-        setLiked(isLiked);
-      });
+    socket.emit("like", {
+      postId: props.postId
+    });
   };
 
   const makeAComment = (e) => {
@@ -128,7 +124,7 @@ function PostInteraction(props) {
           onClick={likeThisPost}
           className={classes.button}
           size="large"
-          startIcon={<LikeIcon color={liked ? "primary" : "inherit"} />}
+          startIcon={<LikeIcon color={props.liked ? "primary" : "inherit"} />}
         >
           {numToFixedLengthString(props.likeCount)}
         </Button>

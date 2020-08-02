@@ -52,41 +52,6 @@ exports.getPost = (req, res) => {
     });
 };
 
-exports.like = (req, res) => {
-  Post.findById(req.body.postId, (err, post) => {
-    if (err || !post) res.status(400).json("Post not found");
-    else {
-      if (post.likes.indexOf(req.body.id) !== -1) {
-        Post.updateOne(
-          { _id: req.body.postId },
-          {
-            $pull: {
-              likes: req.body.id,
-            },
-          },
-          (err) => {
-            if (err) res.status(500).json("Internal Error");
-            else res.json(false);
-          }
-        );
-      } else {
-        Post.updateOne(
-          { _id: req.body.postId },
-          {
-            $push: {
-              likes: req.body.id,
-            },
-          },
-          (err) => {
-            if (err) res.status(500).json("Internal Error");
-            else res.json(true);
-          }
-        );
-      }
-    }
-  });
-};
-
 exports.getFeed = (req, res) => {
   const friendIds = req.body.user.friends.map((friend) => {
     return friend.user;

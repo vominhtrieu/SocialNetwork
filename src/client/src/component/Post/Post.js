@@ -12,6 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import PostInteraction from "./PostInteraction";
 import moment from "moment/moment";
+import io from "socket.io-client";
 import { Link } from "react-router-dom";
 import { HOST } from "../../config/constant";
 
@@ -58,6 +59,17 @@ const useStyle = makeStyles((theme) => ({
 function Post(props) {
   const classes = useStyle();
   const [post, setPost] = React.useState({});
+  const [socket] = React.useState(io(HOST));
+
+  React.useEffect(() => {
+    socket.emit("joinPost", {
+      postId: props.id
+    }); 
+    socket.on("newLike", data => setPost(post => Object.assign(post, {
+      likeCount: data.likeCount
+    }))
+    )
+  }, [socket, props.id]);
 
   React.useEffect(() => {
     fetch(`${HOST}/post/${props.id}`, {

@@ -13,6 +13,7 @@ import { Switch, Route } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 16,
+    height: "calc(100vh - 100px)"
   },
   avatar: {
     marginRight: 1,

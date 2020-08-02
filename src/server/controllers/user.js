@@ -12,6 +12,7 @@ exports.getProfile = (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         avatar: user.avatar,
+        email: user.email
       });
   });
 };

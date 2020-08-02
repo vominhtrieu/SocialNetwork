@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const { use } = require("../routes/auth");
+  
 
 exports.searchForUser = (req, res) => {
     const text = req.query.q;
@@ -12,7 +13,7 @@ exports.searchForUser = (req, res) => {
             else
                 res.json([{
                     id: user._id,
-                    fullName: user.firstName + user.lastName,
+                    fullName: user.firstName + " " + user.lastName,
                     avatar: user.avatar
                 }]);
         });

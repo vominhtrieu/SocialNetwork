@@ -14,30 +14,32 @@ exports.getRoom = (req, res) => {
   ChatRoom.findOne({
     _id: req.params.id,
     participants: {
-      $elemMatch: { $eq: req.body.id },
+      $elemMatch: { user: req.body.id },
     },
   })
-    .populate("participants")
-    .populate("chatHistory")
+    .populate("participants.user")
+    .populate("messages")
     .exec((err, room) => {
       if (err)
-        res.status(500).json("Unable to handle this request. Error: " + err);
+        res.status(500).json("Error: " + err);
       else if (!room)
         res.status(400).json("You are not authorized to view this room");
       else {
         let data = {
           roomId: room._id,
         };
-        if (room.chatHistory.length > 0)
-          data.recentMessage = room.chatHistory[room.chatHistory.length - 1].textContent;
+        if (room.messages.length > 0)
+          data.recentMessage = room.messages[room.messages.length - 1].textContent;
         else data.recentMessage = "";
 
-        data.participants = room.participants.map((participant) => ({
-          id: participant._id,
-          firstName: participant.firstName,
-          lastName: participant.lastName,
-          avatar: participant.avatar,
+        data.participants = room.participants.map(({user, messageSeen}) => ({
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          avatar: user.avatar,
+          messageSeen: messageSeen,
         }));
+        data.messageCount = room.messages.length;
 
         res.json(data);
       }
@@ -48,21 +50,21 @@ exports.getMessages = (req, res) => {
   ChatRoom.findOne({
     _id: req.params.id,
     participants: {
-      $elemMatch: { $eq: req.body.id },
+      $elemMatch: { user: req.body.id },
     },
   })
     .populate({
-      path: "chatHistory",
+      path: "messages",
       model: "Message",
       populate: {
         path: "sender",
-        mode: "User"
+        model: "User"
       }
     })
     .exec((err, room) => {
       if (err || !room)
         return res.status(400).json("Unable to make this request");
-      const data = room.chatHistory.map((message) => {
+      const data = room.messages.map((message) => {
         return {
           senderId: message.sender._id,
           senderAvatar: message.sender.avatar,

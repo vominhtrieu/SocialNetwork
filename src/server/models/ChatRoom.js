@@ -7,11 +7,19 @@ var chatRoomSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  participants: [{
-    type: Number,
-    ref: "User",
-  }],
-  chatHistory: [
+  participants: [
+    {
+      user: {
+        type: Number,
+        ref: "User",
+      },
+      messageSeen: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
+  messages: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",

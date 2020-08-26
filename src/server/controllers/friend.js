@@ -85,7 +85,7 @@ exports.respondFriendRequest = async (req, res) => {
         .populate({
           path: "chatRooms",
           match: {
-            participants: { $elemMatch: { $eq: request.user._id } },
+            participants: { $elemMatch: { user: request.user._id } },
           },
         })
         .execPopulate();
@@ -94,7 +94,7 @@ exports.respondFriendRequest = async (req, res) => {
         .populate({
           path: "chatRooms",
           match: {
-            participants: { $elemMatch: { $eq: req.body.id } },
+            participants: { $elemMatch: { user: req.body.id } },
           },
         })
         .execPopulate();
@@ -103,8 +103,9 @@ exports.respondFriendRequest = async (req, res) => {
         req.body.user.chatRooms.length === 0 &&
         request.user.chatRooms.length === 0
       ) {
+        const participants = [{ user: req.body.id }, { user: request.user._id }];
         const room = new ChatRoom({
-          participants: [req.body.id, request.user._id],
+          participants: participants,
         });
         await room.save();
         req.body.user.chatRooms.push(room._id);

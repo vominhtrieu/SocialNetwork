@@ -8,7 +8,6 @@ import MessageIcon from "@material-ui/icons/Message";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
-import io from "socket.io-client";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,63 +32,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function indexToRoute(index) {
-  switch (index) {
-    case 0:
-      return "/";
-    case 1:
-      return "/friends";
-    case 2:
-      return "/messages";
-    case 3:
-      return "/notifications";
-    default:
-      return "/";
-  }
-}
-
-// function routeToIndex(route) {
-//   switch (route) {
-//     case "/":
-//       return 0;
-//     case "/friends":
-//       return 1;
-//     case "/messages":
-//       return 2;
-//     case "/notifications":
-//       return 3;
-//     default:
-//       return false;
-//   }
-// }
+const routes = ["/", "/friends", "/messages", "/notifications"];
 
 function NavigationTab(props) {
   const classes = useStyles();
-  const [tabIndex, setTabIndex] = React.useState(false);
+  const [tabIndex, setTabIndex] = React.useState(
+    routes.indexOf(props.history.location.pathname)
+  );
+  const [newFriendRequests, setNewFriendRequests] = React.useState(0);
+  const [newMessages, setNewMessages] = React.useState(0);
 
-  const [newFriendRequest, setNewFriendRequest] = React.useState(0);
-  const [socket] = React.useState(io(HOST));
   React.useEffect(() => {
     fetch(HOST + "/update", { method: "GET", credentials: "include" })
       .then((res) => res.json())
-      .then(({ newFriendRequests }) => setNewFriendRequest(newFriendRequests));
-      
-    socket.on("newFriendRequest", (data) => {
-      setNewFriendRequest(data.newFriendRequest);
+      .then((notifications) => {
+        setNewFriendRequests(notifications.newFriendRequests);
+        setNewMessages(notifications.newMessages);
+      });
+
+    props.socket.on("newFriendRequest", (data) => {
+      setNewFriendRequests(data.newFriendRequests);
     });
-  }, [socket]);
+
+    props.socket.on("newMessage", (data) => {
+      console.log("alo");
+    });
+  }, [props.socket]);
+
+  React.useEffect(() => {
+    setTabIndex(routes.indexOf(props.history.location.pathname));
+  }, [props.history.location.pathname]);
 
   const changeRoute = (event, newIndex) => {
-    setTabIndex(newIndex);
-    props.history.push(indexToRoute(newIndex));
+    props.history.push(routes[newIndex]);
   };
+
   return (
     <Box display="flex" justifyContent="center">
       <Tabs
         classes={{
           indicator: classes.bigIndicator,
         }}
-        value={tabIndex}
+        value={tabIndex === -1 ? false : tabIndex}
         className={classes.tabsRoot}
         onChange={changeRoute}
         variant="fullWidth"
@@ -108,7 +92,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={newFriendRequest} max={99} color="secondary">
+            <Badge badgeContent={newFriendRequests} max={99} color="secondary">
               <FriendIcon
                 className={classes.icon}
                 fontSize={tabIndex === 1 ? "large" : "default"}
@@ -119,7 +103,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={0} max={99} color="secondary">
+            <Badge badgeContent={newMessages} max={99} color="secondary">
               <MessageIcon
                 className={classes.icon}
                 fontSize={tabIndex === 2 ? "large" : "default"}

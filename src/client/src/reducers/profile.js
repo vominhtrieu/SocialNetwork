@@ -2,10 +2,13 @@ import {
   GET_PROFILE_PENDING,
   GET_PROFILE_SUCCESS,
   GET_PROFILE_FAILED,
+  HOST,
 } from "../config/constant";
+import io from "socket.io-client";
 
 const initialState = {
   user: {},
+  socket: null,
   isPending: true,
   error: "",
 };
@@ -17,6 +20,7 @@ export function profile(state = initialState, action = {}) {
     case GET_PROFILE_SUCCESS:
       return Object.assign({}, state, {
         user: action.payload,
+        socket: io(HOST),
         isPending: false,
       });
     case GET_PROFILE_FAILED:

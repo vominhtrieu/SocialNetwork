@@ -5,7 +5,7 @@ import {
   Box,
   Avatar,
   IconButton,
-  InputBase,
+  TextField,
 } from "@material-ui/core";
 import LikeIcon from "@material-ui/icons/ThumbUp";
 import CommentIcon from "@material-ui/icons/Comment";
@@ -26,19 +26,15 @@ const useStyle = makeStyles((theme) => ({
       boxShadow: "none",
     },
   },
-  commentField: {
-    padding: theme.spacing(0.4, 1, 0.4, 2.5),
-    backgroundColor: fade(theme.palette.common.black, 0.07),
-    borderRadius: 25,
-  },
   avatar: {
     float: "left",
     width: 40,
     marginRight: 10,
   },
   commentInput: {
-    width: "calc(100% - 40px)",
-    height: 35,
+    width: "calc(100% - 50px)",
+    outline: "none",
+    borderRadius: "15px"
   },
   sendButton: {
     float: "right",
@@ -82,16 +78,14 @@ function PostInteraction(props) {
   const [textInput, setTextInput] = React.useState("");
   const [socket] = React.useState(io(HOST));
 
-  React.useEffect(()=>{
-
-  }, [])
+  React.useEffect(() => {}, []);
   const onInput = (e) => {
     setTextInput(e.target.value);
   };
 
   const likeThisPost = () => {
     socket.emit("like", {
-      postId: props.postId
+      postId: props.postId,
     });
   };
 
@@ -151,20 +145,18 @@ function PostInteraction(props) {
             src={`${HOST}/image/${props.user.avatar}`}
             className={classes.avatar}
           ></Avatar>
-          <Box
-            marginLeft={6}
-            display="relative"
-            className={classes.commentField}
-          >
-            <InputBase
+          <Box marginLeft={6} marginBottom={2} display="relative">
+            <TextField
               className={classes.commentInput}
               onChange={onInput}
               value={textInput}
               placeholder="Add a comment"
               autoFocus
-              fullWidth
               multiline
-              inputProps={{ "aria-label": "comment" }}
+              rowsMax={3}
+              variant="outlined"
+              size="small"
+              spellCheck={false}
             />
             <IconButton
               className={classes.sendButton}

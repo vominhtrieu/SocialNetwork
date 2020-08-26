@@ -163,7 +163,14 @@ function Room(props) {
           messageHistory.current.scrollTop =
             messageHistory.current.scrollHeight;
       });
-  }, [props.match.params.id]);
+  }, [props.match.params.id, socket]);
+
+  React.useEffect(() => {
+    socket.emit("seen", {
+      roomId: props.match.params.id,
+      messageSeen: messages.length,
+    });
+  }, [props.match.params.id, socket, messages.length]);
 
   let sendMessage = () => {
     setTextContent("");
@@ -175,13 +182,13 @@ function Room(props) {
 
   const addEmoji = (emoji) => {
     setTextContent((textContent) => {
-      return textContent + emoji
+      return textContent + emoji;
     });
   };
 
   const closeEmojiPicker = () => {
     setIsEmojiPickerOpened(false);
-  }
+  };
 
   if (!room) return null;
   return (
@@ -231,7 +238,11 @@ function Room(props) {
           <IconButton onClick={() => setIsEmojiPickerOpened(true)} size="small">
             <EmojiIcon />
           </IconButton>
-          <EmojiPicker isOpened={isEmojiPickerOpened} onClose={closeEmojiPicker} addEmoji={addEmoji} />
+          <EmojiPicker
+            isOpened={isEmojiPickerOpened}
+            onClose={closeEmojiPicker}
+            addEmoji={addEmoji}
+          />
         </Box>
         <InputBase
           onChange={(e) => setTextContent(e.target.value)}

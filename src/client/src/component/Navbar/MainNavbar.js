@@ -103,7 +103,7 @@ export function MainNavbar(props) {
   };
   return (
     <Box className={classes.root}>
-      <AppBar position="fixed" className={classes.appbar}>
+      <AppBar className={classes.appbar}>
         <Grid container alignItems="center">
           <Grid item xs={12} md={3}>
             <Box>
@@ -128,7 +128,7 @@ export function MainNavbar(props) {
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
-            <NavigationTab history={props.history} />
+            <NavigationTab history={props.history} socket={props.socket} />
           </Grid>
           <Grid className={classes.accountGrid} item xs={2} md={3}>
             <Box display="flex" justifyContent="flex-end">
@@ -152,7 +152,7 @@ export function MainNavbar(props) {
               </Button>
             </Box>
           </Grid>
-          <NavbarMenu anchorEl={anchorEl} closeMenu={closeMenu} user={user} />
+          <NavbarMenu history={props.history} anchorEl={anchorEl} closeMenu={closeMenu} user={user} />
         </Grid>
       </AppBar>
     </Box>
@@ -162,6 +162,7 @@ export function MainNavbar(props) {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    socket: state.socket
   };
 };
 

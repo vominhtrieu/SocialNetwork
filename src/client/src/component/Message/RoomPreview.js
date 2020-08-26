@@ -13,11 +13,17 @@ import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   message: {
+    color: "inherit",
     "&:hover": {
       cursor: "pointer",
     },
   },
-  conversationName: {
+  notSeen: {
+    color: "blue",
+    marginTop: 5,
+  },
+  seen: {
+    color: "inherit",
     marginTop: 5,
   },
 }));
@@ -31,9 +37,13 @@ export default function RoomPreview(props) {
     })
       .then((res) => res.json())
       .then((roomData) => {
-        roomData.participants = roomData.participants.filter(
-          (participant) => participant.id !== props.userId
-        );
+        roomData.participants = roomData.participants.filter((participant) => {
+          if (participant.id === props.userId) {
+            roomData.messageSeen = participant.messageSeen;
+            return false;
+          }
+          return true;
+        });
         roomData.conversationName = roomData.participants.reduce(
           (name, participant) => {
             return (
@@ -43,6 +53,7 @@ export default function RoomPreview(props) {
           ""
         );
         roomData.conversationName = roomData.conversationName.slice(0, -2);
+        console.log(roomData);
         setRoom(roomData);
       });
   }, [props.id, props.userId]);
@@ -70,10 +81,16 @@ export default function RoomPreview(props) {
           </AvatarGroup>
         </Box>
       </ListItemAvatar>
-      <Box className={classes.conversationName}>
+      <Box
+        className={
+          room.messageSeen === room.messageCount
+            ? classes.seen
+            : classes.notSeen
+        }
+      >
         <ListItemText
           primary={<b>{room.conversationName}</b>}
-          secondary={room.recentMessage}
+          secondary={room.messageCount===0?"Let start this conversation":room.recentMessage}
         />
       </Box>
     </ListItem>

@@ -30,7 +30,13 @@ export default function MessageInput({ socket, roomInfo }) {
     });
   };
   return (
-    <Box style={{flexBasis: 45}} display="flex" alignItems="center" paddingLeft={1}>
+    <Box
+      style={{ flexBasis: 45 }}
+      borderTop="1px solid rgba(0,0,0,0.12)"
+      display="flex"
+      alignItems="center"
+      paddingLeft={1}
+    >
       <IconButton size="small">
         <ImageIcon />
       </IconButton>

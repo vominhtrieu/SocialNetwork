@@ -3,21 +3,16 @@ import {
   Button,
   ButtonGroup,
   Box,
-  Avatar,
-  IconButton,
-  TextField,
-  Divider,
 } from "@material-ui/core";
 import LikeIcon from "@material-ui/icons/ThumbUp";
 import CommentIcon from "@material-ui/icons/Comment";
 import ShareIcon from "@material-ui/icons/Share";
-import SendIcon from "@material-ui/icons/Send";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import CommentSection from "./CommentSection";
 import { HOST } from "../../config/constant";
 import io from "socket.io-client";
-import CustimizedTextField from "../Common/CustimizedTextField";
+import CommentInput from "./CommentInput";
 
 const useStyle = makeStyles((theme) => ({
   button: {
@@ -72,34 +67,11 @@ function numToFixedLengthString(num) {
 function PostInteraction(props) {
   const classes = useStyle();
   const [openComment, setOpenComment] = React.useState(false);
-  const [textInput, setTextInput] = React.useState("");
   const [socket] = React.useState(io(HOST));
-
-  React.useEffect(() => {}, []);
-  const onInput = (text) => {
-    setTextInput(text);
-  };
 
   const likeThisPost = () => {
     socket.emit("like", {
       postId: props.postId,
-    });
-  };
-
-  const makeAComment = (e) => {
-    fetch(`${HOST}/comment`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        postId: props.postId,
-        textContent: textInput,
-        images: [],
-      }),
-    }).then((res) => {
-      setTextInput("");
     });
   };
 
@@ -125,7 +97,7 @@ function PostInteraction(props) {
           size="large"
           startIcon={<CommentIcon />}
         >
-          0
+          {numToFixedLengthString(props.comments.length)}
         </Button>
         <Button
           className={classes.button}
@@ -135,33 +107,15 @@ function PostInteraction(props) {
           0
         </Button>
       </ButtonGroup>
-      <CommentSection comments={props.comments} />
+
       {openComment ? (
-        <Box marginTop={2}>
-          <Avatar
-            src={`${HOST}/image/${props.user.avatar}`}
-            className={classes.avatar}
-          ></Avatar>
-          <Box marginLeft={6} marginBottom={2} display="flex">
-            <CustimizedTextField
-              className={classes.commentInput}
-              onChange={onInput}
-              onSubmit={makeAComment}
-              value={textInput}
-              variant="textField"
-              autoFocus
-            />
-            <IconButton
-              className={classes.sendButton}
-              onClick={makeAComment}
-              size="small"
-              variant="contained"
-              color="secondary"
-            >
-              <SendIcon />
-            </IconButton>
-          </Box>
-        </Box>
+        <React.Fragment>
+          {/* Area shows comments from this post */}
+          <CommentSection comments={props.comments} />
+
+          {/* Field for user type their comments */}
+          <CommentInput postId={props.postId} user={props.user} />
+        </React.Fragment>
       ) : null}
     </Box>
   );

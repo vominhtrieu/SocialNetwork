@@ -10,6 +10,7 @@ import {
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import { HOST } from "../../config/constant";
 import { Link } from "react-router-dom";
+import Skeleton from "react-loading-skeleton";
 
 const useStyle = makeStyles((theme) => ({
   avatar: {
@@ -40,36 +41,43 @@ export default function Comment(props) {
       .then((data) => setCommentData(data));
   }, [props.id]);
 
-  if (!commentData) return null;
   return (
     <Box marginTop={2}>
-      <Link to={`/${commentData.user._id}`} className={classes.user}>
-        <Avatar
-          src={`${HOST}/image/${commentData.user.avatar}`}
-          className={classes.avatar}
-        >
-          {commentData.user.firstName[0]}
-        </Avatar>
-      </Link>
-      <Box display="flex" marginLeft={6} marginRight={5}>
-        <Card variant="outlined" className={classes.textContent}>
+      {!commentData ? (
+        <Skeleton count={3} />
+      ) : (
+        <React.Fragment>
           <Link to={`/${commentData.user._id}`} className={classes.user}>
-            <Typography color="textPrimary" variant="body2">
-              <b>
-                {commentData.user.firstName + " " + commentData.user.lastName}
-              </b>
-            </Typography>
+            <Avatar
+              src={`${HOST}/image/${commentData.user.avatar}`}
+              className={classes.avatar}
+            >
+              {commentData.user.firstName[0]}
+            </Avatar>
           </Link>
-          <Typography style={{ lineHeight: 1 }}>
-            {commentData.textContent}
-          </Typography>
-        </Card>
-        <Box display="flex" alignItems="center">
-          <IconButton size="small">
-            <MoreIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      </Box>
+          <Box display="flex" marginLeft={6} marginRight={5}>
+            <Card variant="outlined" className={classes.textContent}>
+              <Link to={`/${commentData.user._id}`} className={classes.user}>
+                <Typography color="textPrimary" variant="body2">
+                  <b>
+                    {commentData.user.firstName +
+                      " " +
+                      commentData.user.lastName}
+                  </b>
+                </Typography>
+              </Link>
+              <Typography variant="body2" style={{whiteSpace: "pre-line"}}>
+                {commentData.textContent}
+              </Typography>
+            </Card>
+            <Box display="flex" alignItems="center">
+              <IconButton size="small">
+                <MoreIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        </React.Fragment>
+      )}
     </Box>
   );
 }

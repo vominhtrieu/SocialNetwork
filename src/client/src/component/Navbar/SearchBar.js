@@ -1,6 +1,5 @@
 import React from "react";
-import { InputBase, IconButton, Box, TextField } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box, TextField } from "@material-ui/core";
 import { HOST } from "../../config/constant";
 
 import { Search as SearchIcon } from "@material-ui/icons";

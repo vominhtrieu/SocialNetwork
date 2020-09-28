@@ -64,7 +64,7 @@ function Room(props) {
   return (
     <Card variant="outlined" className={classes.root}>
       <Box height="100%" display="flex" flexDirection="column">
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" borderBottom="1px solid rgba(0,0,0,0.12)">
           <IconButton
             className={classes.backButton}
             onClick={() => props.history.push("/messages")}
@@ -87,13 +87,11 @@ function Room(props) {
           </Box>
           <Typography>{conversationName}</Typography>
         </Box>
-        <Divider />
         <MessageSection
           roomInfo={roomInfo}
           socket={props.socket}
           user={props.user}
         />
-        <Divider variant="fullWidth" />
         <MessageInput roomInfo={roomInfo} socket={props.socket} />
       </Box>
     </Card>

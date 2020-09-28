@@ -7,6 +7,7 @@ import {
   CardContent,
   IconButton,
 } from "@material-ui/core";
+import Skeleton from "react-loading-skeleton";
 
 import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
@@ -34,13 +35,13 @@ const useStyle = makeStyles((theme) => ({
   cardBody: {
     marginTop: 20,
     marginBottom: 20,
-    whiteSpace: "pre-line"
+    whiteSpace: "pre-line",
   },
   avatar: {
     width: 40,
     marginRight: 10,
     float: "left",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   moreButton: {
     marginTop: -45,
@@ -63,30 +64,31 @@ function Post(props) {
 
   React.useEffect(() => {
     socket.emit("joinPost", {
-      postId: props.id
-    }); 
-    socket.on("newLike", data => setPost(post => Object.assign(post, {
-      likeCount: data.likeCount
-    }))
-    )
+      postId: props.id,
+    });
+    socket.on("newLike", (data) =>
+      setPost((post) =>
+        Object.assign(post, {
+          likeCount: data.likeCount,
+        })
+      )
+    );
   }, [socket, props.id]);
 
   React.useEffect(() => {
     fetch(`${HOST}/post/${props.id}`, {
       method: "GET",
-      credentials: "include"
-    }).then(res => res.json())
-    .then(post => {
-      setPost(post);
+      credentials: "include",
     })
+      .then((res) => res.json())
+      .then((post) => {
+        setPost(post);
+      });
   }, [props.id]);
-  
-  if(!post.user)
-    return null;
 
   return (
     <Box
-      width="100%"
+      flexGrow={1}
       display="flex"
       justifyContent="center"
       paddingTop={1}
@@ -94,36 +96,47 @@ function Post(props) {
     >
       <Card variant="outlined" className={classes.root}>
         <CardContent>
-          <Avatar
-            component={Link}
-            to={`/${post.user.Id}`}
-            src={`${HOST}/image/${post.user.avatar}`}
-            className={classes.avatar}
-          >
-            {post.user.firstName[0]}
-          </Avatar>
-          <Box>
-            <Typography
-              component={Link}
-              to={`/${post.user.Id}`}
-              className={classes.name}
-              variant="h5"
-            >
-              {post.user.firstName + " " + post.user.lastName}
-            </Typography>
-            <Typography className={classes.date} color="textSecondary">
-              {moment(post.date).fromNow()}
-            </Typography>
-          </Box>
-          <Box className={classes.moreButton}>
-            <IconButton size="small" disableFocusRipple disableRipple>
-              <MoreIcon />
-            </IconButton>
-          </Box>
-          <Typography className={classes.cardBody} variant="body2">
-            {post.textContent}
-          </Typography>
-          <PostInteraction postId={post.postId} liked={post.liked} likeCount={post.likeCount} comments={post.comments} />
+          {!post.user ? (
+            <Skeleton count={5} />
+          ) : (
+            <React.Fragment>
+              <Avatar
+                component={Link}
+                to={`/${post.user.Id}`}
+                src={`${HOST}/image/${post.user.avatar}`}
+                className={classes.avatar}
+              >
+                {post.user.firstName[0]}
+              </Avatar>
+              <Box>
+                <Typography
+                  component={Link}
+                  to={`/${post.user.Id}`}
+                  className={classes.name}
+                  variant="h5"
+                >
+                  {post.user.firstName + " " + post.user.lastName}
+                </Typography>
+                <Typography className={classes.date} color="textSecondary">
+                  {moment(post.date).fromNow()}
+                </Typography>
+              </Box>
+              <Box className={classes.moreButton}>
+                <IconButton size="small" disableFocusRipple disableRipple>
+                  <MoreIcon />
+                </IconButton>
+              </Box>
+              <Typography className={classes.cardBody} variant="body2">
+                {post.textContent}
+              </Typography>
+              <PostInteraction
+                postId={post.postId}
+                liked={post.liked}
+                likeCount={post.likeCount}
+                comments={post.comments}
+              />
+            </React.Fragment>
+          )}
         </CardContent>
       </Card>
     </Box>

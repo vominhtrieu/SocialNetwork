@@ -75,7 +75,7 @@ function Messages(props) {
         closeDialog={() => setMessageOpen(false)}
         userId={props.user.id}
       />
-      <Box>
+      <Box borderBottom="1px solid rgba(0,0,0,0.12)">
         <IconButton onClick={() => setMessageOpen(true)}>
           <AddIcon />
         </IconButton>
@@ -83,7 +83,6 @@ function Messages(props) {
           <SearchIcon />
         </IconButton>
       </Box>
-      <Divider />
       <List dense>{renderedRooms}</List>
     </Card>
   );

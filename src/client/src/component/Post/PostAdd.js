@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "@material-ui/core/Card";
 import { CardContent, Avatar, Box, Typography } from "@material-ui/core";
-import { makeStyles, fade } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import AddPostDialog from "../Dialog/AddPostDialog";
 import { HOST } from "../../config/constant";
 import { connect } from "react-redux";

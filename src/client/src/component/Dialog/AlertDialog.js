@@ -24,6 +24,7 @@ export default function AlertDialog() {
       onClose={handleClose}
       aria-labelledby="alertDialogTitle"
       open={open}
+      style={{ overflowY: "scroll"}}
     >
       <DialogTitle id="alertDialogTitle" onClose={handleClose}>
         Please note that

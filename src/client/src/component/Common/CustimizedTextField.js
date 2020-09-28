@@ -21,7 +21,7 @@ export default function CustimizedTextField({
     return (
       <InputBase
         value={value}
-        placeholder="..."
+        placeholder="Write something here..."
         onChange={changeText}
         onKeyDown={detectKey}
         autoFocus={Boolean(autofocus)}

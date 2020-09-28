@@ -49,7 +49,7 @@ export default function MatchedFriends(props) {
         src={HOST + "/image/" + friend.avatar}
         className={classes.avatar}
       />
-      <Typography className={classes.name} variant="body2">
+      <Typography className={classes.name} noWrap variant="body2">
         {friend.fullName}
       </Typography>
     </Box>

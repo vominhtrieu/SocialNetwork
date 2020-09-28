@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     textAlign: "center",
   },
+  paper: { margin: 0, width: "100%" },
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -46,6 +47,10 @@ export default function AddPostDialog(props) {
 
   return (
     <Dialog
+      style={{ overflowY: "scroll"}}
+      classes={{
+        paper: classes.paper
+      }}
       onClose={props.closeDialog}
       aria-labelledby="addPostDialogTitle"
       open={props.open}

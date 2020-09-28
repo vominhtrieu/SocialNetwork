@@ -22,10 +22,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     height: "100vh",
     display: "flex",
-    [theme.breakpoints.down("sm")]: {
+  },
+  content: {
+    paddingTop: theme.spacing(8),
+    [theme.breakpoints.only("sm")]: {
       paddingTop: theme.spacing(15),
     },
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.only("xs")]: {
       paddingTop: theme.spacing(14),
     },
   },
@@ -57,10 +60,20 @@ function App(props) {
           <Route path="*">
             <MainNavbar />
             <Box className={classes.container}>
-              <Grid container style={{flexGrow: 1}}>
+              <Grid container style={{ flexGrow: 1 }}>
                 <Grid item xs={false} md={3} />
-                <Grid item xs={12} md={6} style={{flexGrow: 1, display: "flex"}}>
-                  <Box paddingTop={8} display="flex" marginX="auto" width="min(100%, 580px)">
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  style={{ flexGrow: 1, display: "flex" }}
+                >
+                  <Box
+                    className={classes.content}
+                    display="flex"
+                    marginX="auto"
+                    width="min(100%, 580px)"
+                  >
                     <Switch>
                       <PrivateRoute exact path="/" component={Home} />
                       <PrivateRoute exact path="/friends" component={Friends} />
@@ -76,7 +89,11 @@ function App(props) {
                   </Box>
                 </Grid>
                 <Grid item xs={false} md={3}>
-                  {isWidthUp("md", props.width) ? <ActiveList /> : null}
+                  {isWidthUp("md", props.width) ? (
+                    <Box position="fixed" top={0} width="100%" height="100vh" paddingLeft={2} className={classes.content}>
+                      <ActiveList />
+                    </Box>
+                  ) : null}
                 </Grid>
               </Grid>
             </Box>

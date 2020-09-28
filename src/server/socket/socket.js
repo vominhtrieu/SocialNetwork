@@ -1,9 +1,4 @@
-const User = require("../models/User");
-const ChatRoom = require("../models/ChatRoom");
-const Message = require("../models/Message");
-const Post = require("../models/Post");
 const socketAuth = require("../middlewares/socketAuth");
-const { post } = require("../routes/auth");
 
 module.exports = (io) => {
   io.use(socketAuth);

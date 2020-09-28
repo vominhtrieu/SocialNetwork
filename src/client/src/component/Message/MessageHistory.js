@@ -1,7 +1,7 @@
 import React from "react";
 import ReceiveMessage from "./ReceiveMessage";
 import SentMessage from "./SentMessage";
-import { Box, Divider } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { HOST } from "../../config/constant";
 
 export default function MessageHistory(props) {

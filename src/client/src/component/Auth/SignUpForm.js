@@ -2,6 +2,8 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+
+import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
 import Alert from "@material-ui/lab/Alert";
@@ -35,6 +37,7 @@ function validatePassword(event) {
 
 function SignUpForm(props) {
   const classes = useStyles();
+  const history = useHistory();
   const { register, handleSubmit } = useForm();
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState("");
@@ -55,8 +58,7 @@ function SignUpForm(props) {
         setAlertType(
           message === "Successfully registered" ? "success" : "error"
         );
-        if(message === "Successfully registered")
-          props.history.push("/signin");
+        if (message === "Successfully registered") history.push("/signin");
       })
       .catch(console.log);
   };

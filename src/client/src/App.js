@@ -5,65 +5,86 @@ import Home from "./container/Home";
 import Friends from "./component/Friends/Friends";
 import Messages from "./container/Messages";
 import Notifications from "./component/Notifications";
-import TitleNavbar from "./component/Navbar/TitleNavbar";
+import About from "./component/About/About";
 import MainNavbar from "./component/Navbar/MainNavbar";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+
 import PrivateRoute from "./component/PrivateRoute";
-import { Grid, Box } from "@material-ui/core";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+
+import { Grid, Box, makeStyles, withWidth, isWidthUp } from "@material-ui/core";
 import Profile from "./container/Profile";
+import ActiveList from "./container/ActiveList";
 
 import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
 
-class App extends React.Component {
-  componentDidMount() {
-    this.props.getProfile();
-  }
+const useStyles = makeStyles((theme) => ({
+  container: {
+    height: "100vh",
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(15),
+    },
+    [theme.breakpoints.down("xs")]: {
+      paddingTop: theme.spacing(14),
+    },
+  },
+}));
 
-  render() {
-    const { isPending, error } = this.props;
-    if (isPending) return <Box>Loading</Box>;
-    if (error) {
-      return (
-        <Box>
-          Cannot connect to server. Please check your internet connection and
-          try again
-        </Box>
-      );
-    }
+function App(props) {
+  const { isPending, error, getProfile } = props;
+  const classes = useStyles();
+
+  React.useEffect(() => {
+    getProfile();
+  }, [getProfile]);
+
+  if (isPending) return <Box>Loading</Box>;
+  if (error) {
     return (
-      <React.Fragment>
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/signin" component={TitleNavbar} />
-            <Route exact path="/signup" component={TitleNavbar} />
-            <Route path="*" component={MainNavbar} />
-          </Switch>
-          <Grid container>
-            <Grid item xs={false} md={3} />
-            <Grid item xs={12} md={6}>
-              <Box width="min(100%, 600px)" margin="auto">
-                <Switch>
-                  <PrivateRoute exact path="/" component={Home} />
-                  <PrivateRoute exact path="/friends" component={Friends} />
-                  <PrivateRoute path="/messages" component={Messages} />
-                  <PrivateRoute
-                    exact
-                    path="/notifications"
-                    component={Notifications}
-                  />
-                  <Route exact path="/signin" component={Auth} />
-                  <Route exact path="/signup" component={Auth} />
-                  <PrivateRoute path="/:id" component={Profile} />
-                </Switch>
-              </Box>
-            </Grid>
-            <Grid item xs={false} md={3} />
-          </Grid>
-        </BrowserRouter>
-      </React.Fragment>
+      <Box>
+        Cannot connect to server. Please check your internet connection and try
+        again
+      </Box>
     );
   }
+  return (
+    <React.Fragment>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/signin" component={Auth} />
+          <Route exact path="/signup" component={Auth} />
+          <Route path="*">
+            <MainNavbar />
+            <Box className={classes.container}>
+              <Grid container style={{flexGrow: 1}}>
+                <Grid item xs={false} md={3} />
+                <Grid item xs={12} md={6} style={{flexGrow: 1, display: "flex"}}>
+                  <Box paddingTop={8} display="flex" marginX="auto" width="min(100%, 580px)">
+                    <Switch>
+                      <PrivateRoute exact path="/" component={Home} />
+                      <PrivateRoute exact path="/friends" component={Friends} />
+                      <PrivateRoute path="/messages" component={Messages} />
+                      <PrivateRoute
+                        exact
+                        path="/notifications"
+                        component={Notifications}
+                      />
+                      <Route path="/about" component={About} />
+                      <PrivateRoute path="/:id" component={Profile} />
+                    </Switch>
+                  </Box>
+                </Grid>
+                <Grid item xs={false} md={3}>
+                  {isWidthUp("md", props.width) ? <ActiveList /> : null}
+                </Grid>
+              </Grid>
+            </Box>
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </React.Fragment>
+  );
 }
 
 const mapStateToProps = (state) => {
@@ -80,4 +101,4 @@ const mapDispatchToProps = (dispatch) => {
     },
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(withWidth()(App));

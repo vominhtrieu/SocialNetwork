@@ -69,11 +69,24 @@ const useStyles = makeStyles((theme) => ({
 export default function EmojiPicker(props) {
   const classes = useStyles();
   const {isOpened, onClose} = props;
+  const wrapperRef = React.createRef();
+
+  React.useEffect(() => {
+    const checkCloseEmojiPicker = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        onClose();
+      }
+    }
+    
+    document.addEventListener("mousedown", checkCloseEmojiPicker);
+    return () =>
+      document.removeEventListener("mousedown", checkCloseEmojiPicker);
+  }, [wrapperRef, onClose]);
+
   if (!isOpened)
     return null;
   return (
-    <Box position="absolute" bottom={30}>
-      <Box position="relative">
+    <Box ref={wrapperRef} position="absolute" bottom={30} right={0}>
         <Card variant="outlined" className={classes.card}>
           <CardContent>
             <Grid container>
@@ -89,9 +102,6 @@ export default function EmojiPicker(props) {
             </Grid>
           </CardContent>
         </Card>
-      </Box>
-      <Box onClick={onClose} position="fixed" top={0} left={0} width="100vw" height="100vw">
-      </Box>
     </Box>
   );
 }

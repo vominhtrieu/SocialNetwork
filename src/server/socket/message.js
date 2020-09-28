@@ -1,20 +1,8 @@
 const ChatRoom = require("../models/ChatRoom");
 const Message = require("../models/Message");
+const User = require("../models/User");
 
 module.exports = (io, socket) => {
-  socket.on("joinChatRoom", (data) => {
-    ChatRoom.findOne({
-      id: data.roomId,
-      $elemMatch: {
-        user: socket.userId,
-      },
-    }, (err, room) => {
-      if(!err && room) {
-        socket.join("r/" + roomId);
-      }
-    });
-  });
-  
   socket.on("message", (data) => {
     ChatRoom.findById(data.roomId, (err, room) => {
       if (!err && room) {
@@ -26,6 +14,9 @@ module.exports = (io, socket) => {
           .save()
           .then(() => {
             room.messages.push(message);
+
+            //Because user sent this message, user must read this message
+            //==> Number of messages this user seen = number of messages in rooms
             room.participants.forEach((participant) => {
               if (participant.user === socket.userId) {
                 participant.messageSeen = room.messages.length;
@@ -33,18 +24,20 @@ module.exports = (io, socket) => {
             });
             room.save().then(() => {
               const respondData = {
-                senderId: socket.userId,
-                senderAvatar: socket.user.avatar,
-                senderFirstName: socket.user.firstName,
-                senderLastName: socket.user.lastName,
-                textContent: data.textContent,
+                ...message.toObject(),
+                roomId: room._id,
               };
-              io.sockets.in(data.roomId).emit("message", respondData);
+
+              const updateData = {
+                roomId: room._id,
+              };
 
               room.participants.forEach((participant) => {
-                io.to("m/" + participant.user).emit("newMessage", respondData);
-
+                if (participant.user !== socket.userId)
+                  io.to("u/" + participant.user).emit("newMessage", updateData);
+                io.to("u/" + participant.user).emit("message", respondData);
               });
+              io.to("u/", socket.userId).emit("seen", updateData);
             });
           })
           .catch((err) => console.log(err));
@@ -62,9 +55,7 @@ module.exports = (io, socket) => {
       },
       (err) => {
         if (!err) {
-          socket
-            .to(roomId)
-            .emit("seen", { user: socket.userId, messageSeen: messageSeen });
+          io.to("u/" + socket.userId).emit("seen", { roomId: roomId });
         }
       }
     );

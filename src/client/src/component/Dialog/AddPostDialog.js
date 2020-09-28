@@ -3,7 +3,8 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { InputBase, Button } from "@material-ui/core";
+import { InputBase, Button, Box, IconButton } from "@material-ui/core";
+import { Image as ImageIcon } from "@material-ui/icons";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,20 +61,28 @@ export default function AddPostDialog(props) {
         <InputBase
           className={classes.input}
           autoFocus
-          placeholder="What do you think...?"
+          placeholder="What are you thinking...?"
           multiline
           onChange={(e) => setPostText(e.target.value)}
           fullWidth
+          rows={10}
           inputProps={{ "aria-label": "Add new post" }}
         />
-        <Button
-          onClick={submitPost}
-          variant="outlined"
-          color="primary"
-          fullWidth
-        >
-          Post
-        </Button>
+        <Box display="flex" alignItems="center">
+          <Box mr={1}>
+            <IconButton size="small">
+              <ImageIcon fontSize="large" />
+            </IconButton>
+          </Box>
+          <Button
+            onClick={submitPost}
+            variant="outlined"
+            color="primary"
+            fullWidth
+          >
+            Post
+          </Button>
+        </Box>
       </DialogContent>
     </Dialog>
   );

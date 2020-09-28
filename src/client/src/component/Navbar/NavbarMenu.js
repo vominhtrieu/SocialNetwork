@@ -14,6 +14,7 @@ import {
   Help as HelpIcon,
 } from "@material-ui/icons";
 import { HOST } from "../../config/constant";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   avatarMenuItem: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   name: {
     fontSize: 18,
     fontWeight: "bold",
+    lineHeight: 1,
   },
   menuIcon: {
     fontSize: 30,
@@ -32,6 +34,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NavbarMenu(props) {
   const classes = useStyles();
+  const history = useHistory();
+  
   const { anchorEl, closeMenu, user } = props;
   function SignOut() {
     fetch(HOST + "/signout", {
@@ -41,7 +45,7 @@ export default function NavbarMenu(props) {
       },
       credentials: "include",
     }).then((res) => {
-      if (res.ok) props.history.push("/signin");
+      if (res.ok) history.push("/signin");
     });
   }
 
@@ -81,6 +85,9 @@ export default function NavbarMenu(props) {
           <Typography className={classes.name}>
             {user.firstName + " " + user.lastName}
           </Typography>
+          <Typography color="textSecondary" variant="body2">
+            View your profile
+          </Typography>
         </Box>
       </MenuItem>
       <MenuItem>
@@ -93,15 +100,15 @@ export default function NavbarMenu(props) {
         }}
       >
         <SettingsIcon className={classes.menuIcon} />
-        <Typography>Preference setting</Typography>
+        <Typography>Setting</Typography>
       </MenuItem>
       <MenuItem
         onClick={() => {
-          closeMenu("/");
+          closeMenu("/about");
         }}
       >
         <HelpIcon className={classes.menuIcon} />
-        <Typography>FAQ</Typography>
+        <Typography>About</Typography>
       </MenuItem>
       <MenuItem onClick={SignOut}>
         <LogoutIcon className={classes.menuIcon} />

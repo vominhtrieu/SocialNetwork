@@ -12,6 +12,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { getProfile } from "../../actions/getProfile";
+import {HOST} from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -35,7 +36,7 @@ function SignInForm(props) {
   const [alertTitle, setAlertTitle] = React.useState("");
 
   function LogUserIn(data) {
-    fetch("http://localhost:4000/signin", {
+    fetch(`${HOST}/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

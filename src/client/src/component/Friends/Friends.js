@@ -2,6 +2,7 @@ import React from "react";
 import Box from "@material-ui/core/Box";
 import FriendRequest from "./FriendRequest";
 import { HOST } from "../../config/constant";
+import EmptyFriendPage from "./EmptyFriendPage";
 
 function Friends() {
   const [requests, setRequests] = React.useState([]);
@@ -22,7 +23,9 @@ function Friends() {
       })
     );
   };
-
+  if (requests.length === 0) {
+    return <EmptyFriendPage />
+  }
   const FriendRequests = requests.map((request, index) => {
     return <FriendRequest deleteRequest={deleteRequest} request={request} key={index} />;
   });

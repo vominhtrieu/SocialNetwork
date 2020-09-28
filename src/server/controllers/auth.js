@@ -53,11 +53,11 @@ exports.signIn = (req, res) => {
         } else {
           const payload = { id: user._id };
           const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: "1h",
+            expiresIn: "48h",
           });
 
           res
-            .cookie("token", token, { httpOnly: true, maxAge: 10 * 3600000 })
+            .cookie("token", token, { httpOnly: true, maxAge: 48 * 3600000 })
             .status(200)
             .json("Successfully Login");
         }

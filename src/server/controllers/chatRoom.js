@@ -1,48 +1,84 @@
 const ChatRoom = require("../models/ChatRoom");
+const User = require("../models/User");
 
 exports.getRoomList = async (req, res) => {
-  try {
-    await req.body.user.populate("chatRooms").execPopulate();
-    const data = req.body.user.chatRooms.map((room) => room._id);
-    res.json(data);
-  } catch (err) {
-    res.status(400).json("Unable to handle this request");
-  }
+  ChatRoom.aggregate()
+    .match({
+      participants: {
+        $elemMatch: {
+          user: req.body.id,
+        },
+      },
+    })
+    .sort({
+      "recentMessage.0.date": -1,
+    })
+    .project({
+      _id: 1,
+      participants: 1,
+      recentMessage: {
+        $arrayElemAt: [{ $slice: ["$messages", -1] }, 0],
+      },
+      messageCount: {
+        $size: "$messages",
+      },
+    })
+    .exec((err, rooms) => {
+      if (err) console.log(err);
+      if (!rooms) return res.json([]);
+      ChatRoom.populate(rooms, [
+        { path: "recentMessage", model: "Message" },
+        {
+          path: "participants.user",
+        }], (err, rooms) => {
+          if (err || !rooms)
+            return res.status(500);
+          return res.json(rooms);
+        }
+      );
+    });
 };
 
 exports.getRoom = (req, res) => {
-  ChatRoom.findOne({
-    _id: req.params.id,
-    participants: {
-      $elemMatch: { user: req.body.id },
-    },
-  })
-    .populate("participants.user")
-    .populate("messages")
+  ChatRoom.aggregate()
+    .match({
+      _id: Number(req.params.id),
+      participants: {
+        $elemMatch: { user: req.body.id },
+      },
+    })
+    .project({
+      participants: 1,
+      messages: 1,
+      messageCount: {
+        $size: "$messages",
+      },
+      recentMessage: {
+        $slice: ["$messages", -1],
+      },
+    })
     .exec((err, room) => {
-      if (err)
-        res.status(500).json("Error: " + err);
-      else if (!room)
-        res.status(400).json("You are not authorized to view this room");
-      else {
-        let data = {
-          roomId: room._id,
-        };
-        if (room.messages.length > 0)
-          data.recentMessage = room.messages[room.messages.length - 1].textContent;
-        else data.recentMessage = "";
-
-        data.participants = room.participants.map(({user, messageSeen}) => ({
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          avatar: user.avatar,
-          messageSeen: messageSeen,
-        }));
-        data.messageCount = room.messages.length;
-
-        res.json(data);
-      }
+      if (err) res.status(500);
+      if (!room) return res.json(400);
+      ChatRoom.populate(
+        room,
+        [
+          {
+            path: "recentMessage",
+            model: "Message",
+          },
+          {
+            path: "participants.user",
+            select: "firstName lastName avatar",
+            model: "User",
+          },
+        ],
+        (err, room) => {
+          if (err) res.status(500);
+          if (!room || room.length !== 1) return res.status(400);
+          return res.json(room[0]);
+        }
+      );
     });
 };
 
@@ -53,28 +89,10 @@ exports.getMessages = (req, res) => {
       $elemMatch: { user: req.body.id },
     },
   })
-    .populate({
-      path: "messages",
-      model: "Message",
-      populate: {
-        path: "sender",
-        model: "User"
-      }
-    })
+    .populate("messages")  
     .exec((err, room) => {
-      if (err || !room)
-        return res.status(400).json("Unable to make this request");
-      const data = room.messages.map((message) => {
-        return {
-          senderId: message.sender._id,
-          senderAvatar: message.sender.avatar,
-          senderFirstName: message.sender.firstName,
-          senderLastName: message.sender.lastName,
-          textContent: message.textContent,
-          images: message.images,
-        };
-      });
-
-      res.json(data);
+      if (err) return res.status(500);
+      if (!room) return res.status(400);
+      res.json(room.messages);
     });
 };

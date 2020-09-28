@@ -7,69 +7,79 @@ import FriendIcon from "@material-ui/icons/People";
 import MessageIcon from "@material-ui/icons/Message";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import Box from "@material-ui/core/Box";
+import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
-  tabsRoot: {
-    width: "min(100%, 550px)",
-  },
   bigIndicator: {
-    height: 4,
-    backgroundColor: "white",
+    height: 3,
+    backgroundColor: theme.palette.common.black,
     borderRadius: 2,
   },
   tab: {
     ...theme.mixins.toolbar,
     minWidth: 40,
-    [theme.breakpoints.only("sm")]: {
-      paddingTop: 0,
-      paddingBottom: 0,
-    },
   },
   icon: {
-    transition: "all 0.3s",
+    transition: "all 0.2s",
   },
 }));
 
 const routes = ["/", "/friends", "/messages", "/notifications"];
 
-function NavigationTab(props) {
+export default function NavigationTab(props) {
   const classes = useStyles();
+  const history = useHistory();
+  const location = useLocation();
+
   const [tabIndex, setTabIndex] = React.useState(
-    routes.indexOf(props.history.location.pathname)
+    routes.indexOf(location.pathname)
   );
   const [newFriendRequests, setNewFriendRequests] = React.useState(0);
-  const [newMessages, setNewMessages] = React.useState(0);
+
+  // List of rooms which  message(s) user have not read
+  const [notSeenRooms, setNotSeenRooms] = React.useState(new Set());
 
   React.useEffect(() => {
     fetch(HOST + "/update", { method: "GET", credentials: "include" })
       .then((res) => res.json())
       .then((notifications) => {
         setNewFriendRequests(notifications.newFriendRequests);
-        setNewMessages(notifications.newMessages);
+        setNotSeenRooms(new Set(notifications.notSeenRooms));
       });
 
     props.socket.on("newFriendRequest", (data) => {
       setNewFriendRequests(data.newFriendRequests);
     });
 
-    props.socket.on("newMessage", (data) => {
-      console.log("alo");
+    props.socket.on("newMessage", ({ roomId }) => {
+      setNotSeenRooms((notSeenRooms) => new Set(notSeenRooms).add(roomId));
+    });
+
+    props.socket.on("seen", ({ roomId }) => {
+      setNotSeenRooms((notSeenRooms) => {
+        let temp = new Set(notSeenRooms);
+        temp.delete(Number(roomId));
+        return temp;
+      });
     });
   }, [props.socket]);
 
   React.useEffect(() => {
-    setTabIndex(routes.indexOf(props.history.location.pathname));
-  }, [props.history.location.pathname]);
+    setTabIndex(routes.indexOf(location.pathname));
+  }, [location.pathname]);
 
   const changeRoute = (event, newIndex) => {
-    props.history.push(routes[newIndex]);
+    history.push(routes[newIndex]);
   };
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box margin="auto" width="min(580px, 100%)">
       <Tabs
+        style={{
+          flexGrow: 1
+        }}
         classes={{
           indicator: classes.bigIndicator,
         }}
@@ -77,6 +87,7 @@ function NavigationTab(props) {
         className={classes.tabsRoot}
         onChange={changeRoute}
         variant="fullWidth"
+        centered={true}
       >
         <Tab
           className={classes.tab}
@@ -103,7 +114,7 @@ function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={newMessages} max={99} color="secondary">
+            <Badge badgeContent={notSeenRooms.size} max={99} color="secondary">
               <MessageIcon
                 className={classes.icon}
                 fontSize={tabIndex === 2 ? "large" : "default"}
@@ -126,5 +137,3 @@ function NavigationTab(props) {
     </Box>
   );
 }
-
-export default NavigationTab;

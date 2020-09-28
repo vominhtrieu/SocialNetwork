@@ -10,7 +10,7 @@ function checkAuthenticated(props) {
     .then((res) => {
       if (res.status !== 200) props.history.push("/signin");
     })
-    .catch(console.log);
+    .catch(() => props.history.push("/signin"));
 }
 
 function PrivateRoute({ component: Component, ...rest }) {

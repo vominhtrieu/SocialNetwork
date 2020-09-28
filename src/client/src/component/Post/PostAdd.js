@@ -1,28 +1,22 @@
 import React from "react";
 import Card from "@material-ui/core/Card";
-import { CardContent, Avatar, Box } from "@material-ui/core";
+import { CardContent, Avatar, Box, Typography } from "@material-ui/core";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import AddPostDialog from "../Dialog/AddPostDialog";
-import {HOST} from "../../config/constant";
+import { HOST } from "../../config/constant";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    "&:hover": {
+      cursor: "pointer"
+    }
   },
   avatar: {
     float: "left",
     width: 40,
-  },
-  addPostField: {
-    color: "#969696",
-    paddingTop: 7,
-    cursor: "text",
-    marginLeft: 50,
-    padding: theme.spacing(0.5, 2.5, 0.5, 2.5),
-    backgroundColor: fade(theme.palette.common.black, 0.07),
-    borderRadius: 25,
-    height: 30,
+    marginRight: 10
   },
 }));
 
@@ -45,13 +39,14 @@ function PostAdd(props) {
       paddingBottom={1}
     >
       <AddPostDialog open={open} closeDialog={closeDialog} />
-      <Card variant="outlined" className={classes.root}>
+      <Card variant="elevation" className={classes.root} onClick={openDialog}>
         <CardContent>
-          <Box display="relative">
-            <Avatar src={HOST + "/image/" + props.user.avatar} className={classes.avatar}></Avatar>
-            <Box className={classes.addPostField} onClick={openDialog}>
-              What do you think?
-            </Box>
+          <Box display="flex" alignItems="center">
+            <Avatar
+              src={HOST + "/image/" + props.user.avatar}
+              className={classes.avatar}
+            ></Avatar>
+            <Typography variant="body2">What are you thinking...?</Typography>
           </Box>
         </CardContent>
       </Card>

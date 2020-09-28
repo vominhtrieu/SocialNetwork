@@ -12,18 +12,19 @@ exports.getUpdate = (req, res) => {
     (err, rooms) => {
       if (err) res.status(500);
       if (!rooms) rooms = [];
-      let newMessages = 0;
+      let notSeenRooms = [];
       rooms.forEach((room) => {
         room.participants.forEach((participant) => {
           if (participant.user === req.body.id) {
-            if (participant.messageSeen !== room.messages.length) newMessages++;
+            if (participant.messageSeen !== room.messages.length)
+              notSeenRooms.push(room._id);
             return;
           }
         });
       });
       res.json({
         newFriendRequests: req.body.user.friendRequests.length,
-        newMessages: newMessages,
+        notSeenRooms: notSeenRooms,
       });
     }
   );

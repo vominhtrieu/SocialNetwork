@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { Card, Box, Typography, Avatar, makeStyles, IconButton } from "@material-ui/core";
+import {
+  Card,
+  Box,
+  Typography,
+  Avatar,
+  makeStyles,
+  IconButton,
+} from "@material-ui/core";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import { HOST } from "../../config/constant";
 import { Link } from "react-router-dom";
@@ -12,16 +19,12 @@ const useStyle = makeStyles((theme) => ({
   user: {
     textDecoration: "none",
     fontWeight: "bold",
-    marginRight: 5,
   },
   textContent: {
     border: "1px solid rgba(0,0,0,0.23)",
-    borderRadius: "25px",
-    padding: "8px 15px",
+    borderRadius: "15px",
+    padding: "8px 12px",
   },
-  more: {
-    float: "right",
-  }
 }));
 
 export default function Comment(props) {
@@ -40,24 +43,32 @@ export default function Comment(props) {
   if (!commentData) return null;
   return (
     <Box marginTop={2}>
-      <Avatar
-        src={`${HOST}/image/${commentData.user.avatar}`}
-        className={classes.avatar}
-      >
-        {commentData.user.firstName[0]}
-      </Avatar>
+      <Link to={`/${commentData.user._id}`} className={classes.user}>
+        <Avatar
+          src={`${HOST}/image/${commentData.user.avatar}`}
+          className={classes.avatar}
+        >
+          {commentData.user.firstName[0]}
+        </Avatar>
+      </Link>
       <Box display="flex" marginLeft={6} marginRight={5}>
         <Card variant="outlined" className={classes.textContent}>
-          <Typography variant="body2">
-            <Link to={`/${commentData.user._id}`} className={classes.user}>
-              {commentData.user.firstName + " " + commentData.user.lastName}
-            </Link>
+          <Link to={`/${commentData.user._id}`} className={classes.user}>
+            <Typography color="textPrimary" variant="body2">
+              <b>
+                {commentData.user.firstName + " " + commentData.user.lastName}
+              </b>
+            </Typography>
+          </Link>
+          <Typography style={{ lineHeight: 1 }}>
             {commentData.textContent}
           </Typography>
         </Card>
-      <IconButton size="small" className={classes.more}>
-        <MoreIcon />
-      </IconButton>
+        <Box display="flex" alignItems="center">
+          <IconButton size="small">
+            <MoreIcon fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );

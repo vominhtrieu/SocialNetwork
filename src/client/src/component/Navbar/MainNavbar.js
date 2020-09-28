@@ -8,9 +8,7 @@ import {
   IconButton,
   Grid,
 } from "@material-ui/core";
-import {
-  ArrowDropDown as ArrowDropDownIcon,
-} from "@material-ui/icons";
+import { ArrowDropDown as ArrowDropDownIcon } from "@material-ui/icons";
 
 import { makeStyles } from "@material-ui/core/styles";
 import NavigationTab from "./NavigitionTab";
@@ -19,27 +17,17 @@ import { HOST } from "../../config/constant";
 import { connect } from "react-redux";
 import NavbarMenu from "./NavbarMenu";
 import SearchBar from "./SearchBar";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    height: 65,
-    [theme.breakpoints.only("sm")]: {
-      height: 120,
-    },
-    [theme.breakpoints.only("xs")]: {
-      height: 110,
-    },
-  },
   appbar: {
-    backgroundColor: "#1e88e5",
+    backgroundColor: theme.palette.common.white,
     zIndex: 999,
-    padding: "0 10px",
   },
   brand: {
     float: "left",
     cursor: "default",
-    paddingTop: 1,
-    paddingRight: 2,
+    paddingLeft: 5,
     "&>*": {
       fontWeight: "bold",
     },
@@ -47,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
   searchBar: {
     marginLeft: 40,
     borderRadius: 25,
-    width: "calc(100%-80px)",
     [theme.breakpoints.down("sm")]: {
       marginRight: 45,
       marginTop: 10,
@@ -84,12 +71,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: "inherit",
     },
-  }
+  },
 }));
 
 export function MainNavbar(props) {
   const { user } = props;
-
+  const history = useHistory();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -98,19 +85,18 @@ export function MainNavbar(props) {
   };
 
   const closeMenu = (newLocation) => {
-    if (newLocation) props.history.push(newLocation);
+    if (newLocation) history.replace({ pathname: newLocation });
     setAnchorEl(null);
   };
   return (
     <Box className={classes.root}>
-      <AppBar className={classes.appbar}>
+      <AppBar color="default" className={classes.appbar}>
         <Grid container alignItems="center">
           <Grid item xs={12} md={3}>
-            <Box>
+            <Box width="min(580px, 100%)" margin="auto">
               <Box className={classes.brand} width={40}>
                 <img src={Logo} alt="Logo" width={35} />
               </Box>
-
               <IconButton
                 disableRipple
                 onClick={handleMenu}
@@ -152,7 +138,12 @@ export function MainNavbar(props) {
               </Button>
             </Box>
           </Grid>
-          <NavbarMenu history={props.history} anchorEl={anchorEl} closeMenu={closeMenu} user={user} />
+          <NavbarMenu
+            history={props.history}
+            anchorEl={anchorEl}
+            closeMenu={closeMenu}
+            user={user}
+          />
         </Grid>
       </AppBar>
     </Box>
@@ -162,7 +153,7 @@ export function MainNavbar(props) {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    socket: state.socket
+    socket: state.socket,
   };
 };
 

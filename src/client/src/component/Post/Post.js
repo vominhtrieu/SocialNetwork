@@ -13,9 +13,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
 import PostInteraction from "./PostInteraction";
 import moment from "moment/moment";
-import io from "socket.io-client";
 import { Link } from "react-router-dom";
 import { HOST } from "../../config/constant";
+import TrackVisibility from "react-on-screen";
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -60,20 +60,6 @@ const useStyle = makeStyles((theme) => ({
 function Post(props) {
   const classes = useStyle();
   const [post, setPost] = React.useState({});
-  const [socket] = React.useState(io(HOST));
-
-  React.useEffect(() => {
-    socket.emit("joinPost", {
-      postId: props.id,
-    });
-    socket.on("newLike", (data) =>
-      setPost((post) =>
-        Object.assign(post, {
-          likeCount: data.likeCount,
-        })
-      )
-    );
-  }, [socket, props.id]);
 
   React.useEffect(() => {
     fetch(`${HOST}/post/${props.id}`, {
@@ -129,12 +115,15 @@ function Post(props) {
               <Typography className={classes.cardBody} variant="body2">
                 {post.textContent}
               </Typography>
-              <PostInteraction
-                postId={post.postId}
-                liked={post.liked}
-                likeCount={post.likeCount}
-                comments={post.comments}
-              />
+
+              <TrackVisibility partialVisibility>
+                <PostInteraction
+                  postId={post.postId}
+                  liked={post.liked}
+                  likeCount={post.likeCount}
+                  comments={post.comments}
+                />
+              </TrackVisibility>
             </React.Fragment>
           )}
         </CardContent>

@@ -52,7 +52,7 @@ export default function SearchBar(props) {
     ) : null;
 
   return (
-    <Box ref={wrapperRef} display="flex" alignItems="center">
+    <Box ref={wrapperRef} flexGrow={1} display="flex" alignItems="center">
       <SearchIcon />
       <Box position="relative" marginLeft={1} style={{flexGrow: 1}}>
         <TextField

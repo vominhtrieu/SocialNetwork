@@ -1,5 +1,4 @@
 const ChatRoom = require("../models/ChatRoom");
-const User = require("../models/User");
 
 exports.getRoomList = async (req, res) => {
   ChatRoom.aggregate()
@@ -26,13 +25,18 @@ exports.getRoomList = async (req, res) => {
     .exec((err, rooms) => {
       if (err) console.log(err);
       if (!rooms) return res.json([]);
-      ChatRoom.populate(rooms, [
-        { path: "recentMessage", model: "Message" },
-        {
-          path: "participants.user",
-        }], (err, rooms) => {
-          if (err || !rooms)
-            return res.status(500);
+      ChatRoom.populate(
+        rooms,
+        [
+          { path: "recentMessage", model: "Message" },
+          {
+            path: "participants.user",
+          },
+        ],
+        (err, rooms) => {
+          if (err)
+          console.log(err);
+          if (err || !rooms) return res.status(500);
           return res.json(rooms);
         }
       );
@@ -89,10 +93,27 @@ exports.getMessages = (req, res) => {
       $elemMatch: { user: req.body.id },
     },
   })
-    .populate("messages")  
+    .populate("messages")
     .exec((err, room) => {
       if (err) return res.status(500);
       if (!room) return res.status(400);
       res.json(room.messages);
     });
+};
+
+exports.createNewRoom = (req, res) => {
+  for (const participant of req.body.participants) {
+    if (user.friends.find((friend) => friend.user === participant.user) === -1)
+      return res.status(400).json("You're not allowed to chat with strangers");
+  }
+
+  const newRoom = ChatRoom({
+    participants: req.body.participants,
+  });
+  newRoom
+    .save()
+    .then(() => {
+      return res.status(200);
+    })
+    .catch((e) => res.status(500));
 };

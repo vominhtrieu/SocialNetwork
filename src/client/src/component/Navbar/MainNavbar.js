@@ -24,32 +24,27 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.common.white,
     zIndex: 999,
   },
-  brand: {
-    float: "left",
-    cursor: "default",
-    paddingLeft: 5,
-    "&>*": {
-      fontWeight: "bold",
+  container: {
+    height: 50,
+    [theme.breakpoints.down("sm")]: {
+      height: 100,
     },
+  },
+  brand: {
+    cursor: "default",
+    display: "flex",
+    alignItems: "center",
+    paddingLeft: theme.spacing(1),
   },
   searchBar: {
-    marginLeft: 40,
-    borderRadius: 25,
-    [theme.breakpoints.down("sm")]: {
-      marginRight: 45,
-      marginTop: 10,
-    },
-    backgroundColor: "white",
-    margin: theme.spacing(1),
-    padding: theme.spacing(0.3, 5, 0.3, 2),
-  },
-  fullHeight: {
-    ...theme.mixins.toolbar,
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
   },
   accountButton: {
-    float: "right",
-    marginTop: -1.5,
-    marginRight: -2,
+    marginRight: theme.spacing(1),
     [theme.breakpoints.up("md")]: {
       display: "none",
     },
@@ -85,31 +80,34 @@ export function MainNavbar(props) {
   };
 
   const closeMenu = (newLocation) => {
-    if (newLocation) history.replace({ pathname: newLocation });
+    if (newLocation.length) history.push({ pathname: newLocation });
     setAnchorEl(null);
   };
+
   return (
     <Box className={classes.root}>
       <AppBar color="default" className={classes.appbar}>
-        <Grid container alignItems="center">
+        <Grid container alignItems="center" className={classes.container}>
           <Grid item xs={12} md={3}>
-            <Box width="min(580px, 100%)" margin="auto">
+            <Box
+              height="50px"
+              display="flex"
+              width="min(580px, 100%)"
+              margin="auto"
+            >
               <Box className={classes.brand} width={40}>
                 <img src={Logo} alt="Logo" width={35} />
               </Box>
-              <IconButton
-                disableRipple
-                onClick={handleMenu}
-                size="small"
-                className={classes.accountButton}
-              >
-                <Avatar
-                  className={classes.accountAvatar}
-                  src={HOST + "/image/" + user.avatar}
-                />
-              </IconButton>
               <Box position="relative" className={classes.searchBar}>
                 <SearchBar />
+              </Box>
+              <Box className={classes.accountButton}>
+                <IconButton disableRipple onClick={handleMenu} size="small">
+                  <Avatar
+                    className={classes.accountAvatar}
+                    src={HOST + "/image/" + user.avatar}
+                  />
+                </IconButton>
               </Box>
             </Box>
           </Grid>

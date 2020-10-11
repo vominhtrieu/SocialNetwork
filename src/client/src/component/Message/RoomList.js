@@ -1,12 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, IconButton, Divider, List, Card } from "@material-ui/core";
+import { Box, IconButton, List, Card } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SearchIcon from "@material-ui/icons/Search";
 import NewMessageDialog from "../Dialog/NewMessage";
 import { connect } from "react-redux";
 import RoomItem from "./RoomItem";
 import { HOST } from "../../config/constant";
+import { Helmet } from "react-helmet";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,6 +71,9 @@ function Messages(props) {
 
   return (
     <Card variant="outlined" className={classes.root}>
+      <Helmet>
+        <title>MTNET - Messages</title>
+      </Helmet>
       <NewMessageDialog
         open={messageOpen}
         closeDialog={() => setMessageOpen(false)}

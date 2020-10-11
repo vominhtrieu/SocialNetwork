@@ -1,17 +1,18 @@
 require("dotenv").config();
 
-var cookie = require('cookie');
+var cookie = require("cookie");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
+const count = {};
+
 module.exports = (socket, next) => {
-  if(!socket.request.headers.cookie)
-    return;
+  if (!socket.request.headers.cookie) return;
   const { token } = cookie.parse(socket.request.headers.cookie);
-  
+
   if (!token) next(new Error("Token is not existed"));
   else {
-    jwt.verify(token, process.env.JWT_SECRET, function (err, data) {
+    jwt.verify(token, process.env.JWT_TOKEN_SECRET, function (err, data) {
       if (err) {
         next(err);
       } else {

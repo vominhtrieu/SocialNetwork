@@ -12,10 +12,13 @@ export default function MessageInput({ socket, roomInfo }) {
   //Determine is the Emoji Picker is opened or not
   const [isEmojiPickerOpened, setIsEmojiPickerOpened] = React.useState(false);
 
+  const onTyping = (text) => {
+    setTextContent(text);
+    socket.emit("typing", {roomId: roomInfo._id})
+  }
+
   const addEmoji = (emoji) => {
-    setTextContent((textContent) => {
-      return textContent + emoji;
-    });
+    onTyping(textContent + emoji);
   };
 
   const closeEmojiPicker = () => {
@@ -42,7 +45,7 @@ export default function MessageInput({ socket, roomInfo }) {
       </IconButton>
       <CustimizedTextField
         value={textContent}
-        onChange={(text) => setTextContent(text)}
+        onChange={onTyping}
         onSubmit={sendMessage}
       />
       <Box position="relative">

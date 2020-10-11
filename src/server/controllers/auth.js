@@ -52,12 +52,10 @@ exports.signIn = (req, res) => {
           res.status(400).json("Incorrect email or password");
         } else {
           const payload = { id: user._id };
-          const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: "48h",
-          });
+          const token = jwt.sign(payload, process.env.JWT_TOKEN_SECRET  );
 
           res
-            .cookie("token", token, { httpOnly: true, maxAge: 48 * 3600000 })
+            .cookie("token", token, { httpOnly: true})
             .status(200)
             .json("Successfully Login");
         }
@@ -67,5 +65,6 @@ exports.signIn = (req, res) => {
 };
 
 exports.signOut = (req, res) => {
+  //Currently not secure
   res.cookie("token", { maxAge: 0 }).json("Successfully signed out");
 };

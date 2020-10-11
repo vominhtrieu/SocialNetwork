@@ -36,9 +36,12 @@ export default function SentMessage({ message }) {
       marginBottom={0.5}
       justifyContent="flex-end"
     >
-      <LightTooltip title={moment(message.date).format('DD-MM-YYYY hh:mm')} placement="left">
+      <LightTooltip
+        title={moment(message.date).format("DD-MM-YYYY hh:mm")}
+        placement="left"
+      >
         <Box className={classes.messageContentSent}>
-          <Typography>{message.textContent}</Typography>
+          <Typography align="right">{message.textContent}</Typography>
         </Box>
       </LightTooltip>
     </Box>

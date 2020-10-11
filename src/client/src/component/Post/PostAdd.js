@@ -37,6 +37,7 @@ function PostAdd(props) {
       justifyContent="center"
       paddingTop={2}
       paddingBottom={1}
+      width="100%"
     >
       <AddPostDialog open={open} closeDialog={closeDialog} />
       <Card variant="elevation" className={classes.root} onClick={openDialog}>

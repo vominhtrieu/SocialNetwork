@@ -3,6 +3,7 @@ import Box from "@material-ui/core/Box";
 import FriendRequest from "./FriendRequest";
 import { HOST } from "../../config/constant";
 import EmptyFriendPage from "./EmptyFriendPage";
+import { Helmet } from "react-helmet";
 
 function Friends() {
   const [requests, setRequests] = React.useState([]);
@@ -24,12 +25,25 @@ function Friends() {
     );
   };
   if (requests.length === 0) {
-    return <EmptyFriendPage />
+    return <EmptyFriendPage />;
   }
   const FriendRequests = requests.map((request, index) => {
-    return <FriendRequest deleteRequest={deleteRequest} request={request} key={index} />;
+    return (
+      <FriendRequest
+        deleteRequest={deleteRequest}
+        request={request}
+        key={index}
+      />
+    );
   });
-  return <Box marginTop={2}>{FriendRequests}</Box>;
+  return (
+    <Box marginTop={2}>
+      <Helmet>
+        <title>MTNET - Friend</title>
+      </Helmet>
+      {FriendRequests}
+    </Box>
+  );
 }
 
 export default Friends;

@@ -10,20 +10,21 @@ import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { HOST } from "../../config/constant";
+import { Tooltip } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   bigIndicator: {
-    height: 3,
     backgroundColor: theme.palette.common.black,
+    height: 2,
     borderRadius: 2,
-  },
-  tab: {
-    ...theme.mixins.toolbar,
-    minWidth: 40,
   },
   icon: {
     transition: "all 0.2s",
   },
+  tab: {
+    height: 50,
+    minWidth: 0,
+  }
 }));
 
 const routes = ["/", "/friends", "/messages", "/notifications"];
@@ -75,19 +76,12 @@ export default function NavigationTab(props) {
   };
 
   return (
-    <Box margin="auto" width="min(580px, 100%)">
+    <Box height="50px" margin="auto" width="min(580px, 100%)">
       <Tabs
-        style={{
-          flexGrow: 1
-        }}
-        classes={{
-          indicator: classes.bigIndicator,
-        }}
         value={tabIndex === -1 ? false : tabIndex}
-        className={classes.tabsRoot}
         onChange={changeRoute}
         variant="fullWidth"
-        centered={true}
+        centered
       >
         <Tab
           className={classes.tab}

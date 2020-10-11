@@ -10,8 +10,6 @@ import ShareIcon from "@material-ui/icons/Share";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import CommentSection from "./CommentSection";
-import { HOST } from "../../config/constant";
-import io from "socket.io-client";
 import CommentInput from "./CommentInput";
 
 const useStyle = makeStyles((theme) => ({
@@ -67,10 +65,9 @@ function numToFixedLengthString(num) {
 function PostInteraction(props) {
   const classes = useStyle();
   const [openComment, setOpenComment] = React.useState(false);
-  const [socket] = React.useState(io(HOST));
 
   const likeThisPost = () => {
-    socket.emit("like", {
+    props.socket.emit("like", {
       postId: props.postId,
     });
   };
@@ -111,7 +108,7 @@ function PostInteraction(props) {
       {openComment ? (
         <React.Fragment>
           {/* Area shows comments from this post */}
-          <CommentSection comments={props.comments} />
+          <CommentSection isVisible={props.isVisible} comments={props.comments} socket={props.socket} id={props.id} />
 
           {/* Field for user type their comments */}
           <CommentInput postId={props.postId} user={props.user} />
@@ -123,6 +120,7 @@ function PostInteraction(props) {
 
 const mapStateToProps = (state) => ({
   user: state.user,
+  socket: state.socket,
 });
 
 export default connect(mapStateToProps)(PostInteraction);

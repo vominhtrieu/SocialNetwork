@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { HOST } from "../config/constant";
+import { HOST } from "../../config/constant";
 
 function checkAuthenticated(props) {
   fetch(HOST + "/auth", {

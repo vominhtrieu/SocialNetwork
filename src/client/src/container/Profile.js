@@ -5,7 +5,7 @@ import ProfileHome from "../component/Profile/ProfileHome";
 import ProfileImages from "../component/Profile/ProfileImages";
 import ProfileFriends from "../component/Profile/ProfileFriends";
 import ProfileDetail from "../component/Profile/ProfileDetail";
-
+import { Helmet } from "react-helmet";
 import { Switch, Route } from "react-router-dom";
 import { getProfile } from "../actions/getProfile";
 import { connect } from "react-redux";
@@ -94,6 +94,11 @@ class Profile extends React.Component {
     else {
       return (
         <Box marginTop={2} width="100%">
+          <Helmet>
+            <title>
+              {"MTNET - " + profileUser.firstName + " " + profileUser.lastName}
+            </title>
+          </Helmet>
           <ProfileIntro
             user={user}
             profileUser={profileUser}

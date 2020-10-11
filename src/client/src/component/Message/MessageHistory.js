@@ -3,11 +3,35 @@ import ReceiveMessage from "./ReceiveMessage";
 import SentMessage from "./SentMessage";
 import { Box } from "@material-ui/core";
 import { HOST } from "../../config/constant";
-
+import TypingMessage from "./TypingMessage";
 export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
   const messageHistory = React.useRef(null);
   const [messages, setMessages] = React.useState([]);
+  const [typingUsers, setTypingUsers] = React.useState(new Map());
+
+  //Scroll to bottom of component
+  const scrollToBottom = () => {
+    if (messageHistory.current !== null)
+      messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
+  };
+  
+  const addNewTypingUser = (userId) => {
+    
+  }
+
+  //Join and leave room
+  React.useEffect(() => {
+    socket.emit("joinRoom", {
+      roomId: roomInfo._id,
+    });
+
+    return () => {
+      socket.emit("leaveRoom", {
+        roomId: roomInfo._id,
+      });
+    };
+  }, [socket, roomInfo._id]);
 
   //Fetch room's messages
   React.useEffect(() => {
@@ -18,9 +42,7 @@ export default function MessageHistory(props) {
       .then((res) => res.json())
       .then((messages) => {
         setMessages(messages);
-        if (messageHistory.current !== null)
-          messageHistory.current.scrollTop =
-            messageHistory.current.scrollHeight;
+        scrollToBottom();
       });
   }, [roomInfo._id]);
 
@@ -28,12 +50,15 @@ export default function MessageHistory(props) {
   React.useEffect(() => {
     socket.on("message", (data) => {
       setMessages((messages) => [...messages, data]);
-      if (messageHistory.current !== null)
-        messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
+      scrollToBottom();
     });
-
+    socket.on("typing", ({ sender }) => {
+      addNewTypingUser(sender);
+      scrollToBottom();
+    });
     return () => {
       socket.removeAllListeners("message");
+      socket.removeAllListeners("typing");
     };
   }, [socket]);
 
@@ -69,9 +94,15 @@ export default function MessageHistory(props) {
       flexBasis={0}
       padding={2}
       display="block"
-      overflow="auto"      
+      overflow="auto"
     >
       {renderMessages}
+      {typingUsers.length > 0 ? (
+        <TypingMessage
+          typingUsers={typingUsers}
+          participants={roomInfo.participants}
+        />
+      ) : null}
     </Box>
   );
 }

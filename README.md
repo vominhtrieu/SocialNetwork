@@ -12,7 +12,7 @@ Cách sử dụng:
 <ul>
   <li>Cài đặt NodeJs tại https://nodejs.org/en/</li>
   <li>Cài đặt MongoDB tại https://www.mongodb.com/</li>
-  <li>Clone reposity này về</li>
+  <li>Clone repository này về</li>
   <li>Mở CMD/Terminal, cd đến thư mục reposity</li>
   <li>cd đến src/client và src/server, trong mỗi thư mục gõ npm install để cài đặt tất cả các package</li>
   <li>Ở client gõ npm start để chạy Server của React(Chế độ Debug)</li>

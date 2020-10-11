@@ -1,9 +1,6 @@
 const User = require("../models/User");
 
 exports.getProfile = (req, res) => {
-  if (req.body.id === req.body.addId) {
-    res.status(400).json("Cannot add yourself");
-  }
   User.findById(req.body.id, (err, user) => {
     if (err || !user) res.status(400).json("Unable to find user");
     else

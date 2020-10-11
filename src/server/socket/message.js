@@ -1,8 +1,15 @@
 const ChatRoom = require("../models/ChatRoom");
 const Message = require("../models/Message");
-const User = require("../models/User");
 
 module.exports = (io, socket) => {
+  socket.on("joinRoom", ({roomId}) => {
+    socket.join("r/" + roomId);
+  });
+
+  socket.on("leaveRoom", ({roomId}) => {
+    socket.leave("r/" + roomId);
+  });
+
   socket.on("message", (data) => {
     ChatRoom.findById(data.roomId, (err, room) => {
       if (!err && room) {
@@ -42,6 +49,12 @@ module.exports = (io, socket) => {
           })
           .catch((err) => console.log(err));
       }
+    });
+  });
+
+  socket.on("typing", ({ roomId }) => {
+    socket.to("r/" + roomId).emit("typing", {
+      sender: socket.userId,
     });
   });
 

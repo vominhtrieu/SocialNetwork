@@ -1,20 +1,19 @@
 import React from "react";
-import "./App.css";
 import Auth from "./container/Auth";
 import Home from "./container/Home";
 import Friends from "./component/Friends/Friends";
 import Messages from "./container/Messages";
-import Notifications from "./component/Notifications";
+import Notification from "./container/Notification";
 import About from "./component/About/About";
 import MainNavbar from "./component/Navbar/MainNavbar";
 
-import PrivateRoute from "./component/PrivateRoute";
+import PrivateRoute from "./component/Common/PrivateRoute";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import { Grid, Box, makeStyles, withWidth, isWidthUp } from "@material-ui/core";
 import Profile from "./container/Profile";
 import ActiveList from "./container/ActiveList";
-
+import ReactLoading from "react-loading";
 import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
 
@@ -24,12 +23,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   content: {
-    paddingTop: theme.spacing(8),
-    [theme.breakpoints.only("sm")]: {
-      paddingTop: theme.spacing(15),
-    },
-    [theme.breakpoints.only("xs")]: {
-      paddingTop: theme.spacing(14),
+    paddingTop: theme.spacing(6),
+    [theme.breakpoints.down("sm")]: {
+      paddingTop: theme.spacing(12),
     },
   },
 }));
@@ -42,7 +38,18 @@ function App(props) {
     getProfile();
   }, [getProfile]);
 
-  if (isPending) return <Box>Loading</Box>;
+  if (isPending)
+    return (
+      <Box
+        display="flex"
+        height="100vh"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <ReactLoading type="bubbles" color="black" />
+      </Box>
+    );
+
   if (error) {
     return (
       <Box>
@@ -81,20 +88,27 @@ function App(props) {
                       <PrivateRoute
                         exact
                         path="/notifications"
-                        component={Notifications}
+                        component={Notification}
                       />
                       <Route path="/about" component={About} />
                       <PrivateRoute path="/:id" component={Profile} />
                     </Switch>
                   </Box>
                 </Grid>
-                <Grid item xs={false} md={3}>
-                  {isWidthUp("md", props.width) ? (
-                    <Box position="fixed" top={0} width="100%" height="100vh" paddingLeft={2} className={classes.content}>
+
+                {isWidthUp("md", props.width) ? (
+                  <Grid item xs={false} md={3}>
+                    <Box
+                      position="fixed"
+                      top={0}
+                      width="100%"
+                      height="100vh"
+                      paddingLeft={2}
+                    >
                       <ActiveList />
                     </Box>
-                  ) : null}
-                </Grid>
+                  </Grid>
+                ) : null}
               </Grid>
             </Box>
           </Route>

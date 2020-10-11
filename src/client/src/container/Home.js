@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import { Box } from "@material-ui/core";
 import Post from "../component/Post/Post";
 import PostAdd from "../component/Post/PostAdd";
 import { HOST } from "../config/constant";
+import { Helmet } from "react-helmet";
 
-function Home() {
+function Home({ socket }) {
   const [posts, setPosts] = React.useState([]);
   useEffect(() => {
     fetch(`${HOST}/feed`, {
@@ -17,19 +19,17 @@ function Home() {
   }, []);
 
   const renderPost = posts.map((postId, index) => {
-    return (
-      <Post
-        key={index}
-        id={postId}
-      />
-    );
+    return <Post key={index} id={postId} />;
   });
 
   return (
-    <div>
+    <Box width="100%">
+      <Helmet>
+        <title>MTNET - Home</title>
+      </Helmet>
       <PostAdd />
       {renderPost}
-    </div>
+    </Box>
   );
 }
 

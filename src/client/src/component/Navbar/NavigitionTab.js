@@ -10,7 +10,6 @@ import Box from "@material-ui/core/Box";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { HOST } from "../../config/constant";
-import { Tooltip } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   bigIndicator: {

@@ -8,17 +8,13 @@ export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
   const messageHistory = React.useRef(null);
   const [messages, setMessages] = React.useState([]);
-  const [typingUsers, setTypingUsers] = React.useState(new Map());
+  const [typingUsers, setTypingUsers] = React.useState({});
 
   //Scroll to bottom of component
   const scrollToBottom = () => {
     if (messageHistory.current !== null)
       messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
   };
-  
-  const addNewTypingUser = (userId) => {
-    
-  }
 
   //Join and leave room
   React.useEffect(() => {
@@ -48,6 +44,25 @@ export default function MessageHistory(props) {
 
   //Listen to new message
   React.useEffect(() => {
+    const removeATypingUser = (userId) => {
+      setTypingUsers((typingUsers) => {
+        const temp = {...typingUsers};
+        temp[userId] = null;
+        return temp;
+      });
+    }
+    
+    const addNewTypingUser = (userId) => {
+      setTypingUsers((typingUsers) => {
+        const temp = {...typingUsers};
+        clearTimeout(temp[userId]);
+        temp[userId] = setTimeout(()=>{
+          removeATypingUser(userId);
+        }, 500);
+        return temp;
+      });
+    }
+
     socket.on("message", (data) => {
       setMessages((messages) => [...messages, data]);
       scrollToBottom();
@@ -87,6 +102,11 @@ export default function MessageHistory(props) {
     );
   });
 
+  console.log(Object.keys(typingUsers));
+  const typingUserList = Object.keys(typingUsers).filter((key)=>{
+    return typingUsers[key] !== null;
+  });
+
   return (
     <Box
       ref={messageHistory}
@@ -97,9 +117,9 @@ export default function MessageHistory(props) {
       overflow="auto"
     >
       {renderMessages}
-      {typingUsers.length > 0 ? (
+      {typingUserList.length > 0 ? (
         <TypingMessage
-          typingUsers={typingUsers}
+          typingUsers={typingUserList}
           participants={roomInfo.participants}
         />
       ) : null}

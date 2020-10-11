@@ -38,18 +38,21 @@ const LightTooltip = withStyles((theme) => ({
 export default function ReceiveMessage(props) {
   const { typingUsers, participants } = props;
   const classes = useStyles();
+  console.log(typingUsers);
 
   const users = typingUsers.map((user) => {
     let temp = null;
     for (const participant of participants) {
-      if (participant.user._id === user) {
+      if (participant.user._id === Number(user)) {
         temp = participant.user;
         break;
       }
     }
     return temp;
   });
+
   if (!users.length) return null;
+
   return (
     <Box
       display="flex"
@@ -59,8 +62,8 @@ export default function ReceiveMessage(props) {
     >
       <Box>
         <AvatarGroup max={3} spacing="small">
-          {users.map((user) => (
-            <Avatar src={user.avatar?`${HOST}/image/${user.avatar}`:null} />
+          {users.map((user, index) => (
+            <Avatar key={index} src={user.avatar?`${HOST}/image/${user.avatar}`:null} />
           ))}
         </AvatarGroup>
       </Box>

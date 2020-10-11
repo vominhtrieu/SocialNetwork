@@ -1,5 +1,5 @@
 # SocialNetwork
-SocialNetwork là một project cá nhân của mình với frontend dùng React và backend dùng NodeJs.
+SocialNetwork là một project cá nhân được phát triển với NodeJs, React,...
 
 Dự kiến project sẽ có các chức năng cơ bản của một mạng xã hội:
 <ul>
@@ -13,8 +13,8 @@ Cách sử dụng:
   <li>Cài đặt NodeJs tại https://nodejs.org/en/</li>
   <li>Cài đặt MongoDB tại https://www.mongodb.com/</li>
   <li>Clone repository này về</li>
-  <li>Mở CMD/Terminal, cd đến thư mục reposity</li>
-  <li>cd đến src/client và src/server, trong mỗi thư mục gõ npm install để cài đặt tất cả các package</li>
+  <li>Mở CMD/Terminal, cd đến thư mục repository</li>
+  <li>cd đến src/client và src/server, trong mỗi thư mục gõ <code>npm install</code> để cài đặt tất cả các package</li>
   <li>Ở client gõ npm start để chạy Server của React(Chế độ Debug)</li>
   <li>Ở server gõ node seed.js để khởi tạo các giá trị cần thiết trong cơ sở dữ liệu, sau đó nhấn Ctrl+C để thoát</li>
   <li>Tiếp tục gõ node app.js để chạy Server Backend</li>

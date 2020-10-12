@@ -63,7 +63,6 @@ class Profile extends React.Component {
       },
     }).then((res) => {
       if (res.ok) {
-        console.log(type);
         if (type !== "cover") this.props.getProfile();
         else {
           getUserProfile(this.props.user.id, (err, user) => {

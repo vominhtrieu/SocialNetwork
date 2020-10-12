@@ -8,6 +8,7 @@ import {
   IconButton,
   makeStyles,
   Card,
+  Button,
 } from "@material-ui/core";
 import { Link, withRouter } from "react-router-dom";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
@@ -16,6 +17,7 @@ import TimelineIcon from "@material-ui/icons/Timeline";
 import ImageIcon from "@material-ui/icons/Image";
 import FriendIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
+import MoreIcon from "@material-ui/icons/MoreHoriz";
 import io from "socket.io-client";
 import { HOST } from "../../config/constant";
 
@@ -106,8 +108,7 @@ function ProfileIntro(props) {
       <Box
         className={classes.root}
         style={{
-          backgroundImage:
-            "url(" + HOST + "/image/" + profileUser.cover + ")",
+          backgroundImage: "url(" + HOST + "/image/" + profileUser.cover + ")",
         }}
       >
         {user.id === Number(profileUser.id) ? (
@@ -126,17 +127,14 @@ function ProfileIntro(props) {
             </label>
           </Box>
         ) : null}
+
         <Box className={classes.avatarContainer}>
           <Avatar
             className={classes.avatar}
             src={
-              profileUser.avatar
-                ? HOST + "/image/" + profileUser.avatar
-                : null
+              profileUser.avatar ? `${HOST}/image/${profileUser.avatar}` : null
             }
-          >
-            {profileUser.firstName[0]}
-          </Avatar>
+          />
           <Box className={classes.addAvatarButton}>
             {user.id === Number(profileUser.id) ? (
               <Box>
@@ -156,22 +154,45 @@ function ProfileIntro(props) {
                   </IconButton>
                 </label>
               </Box>
-            ) : (
-              <IconButton
-                onClick={addFriend}
-                className={classes.addImageButton}
-                component="span"
-              >
-                <PersonAddIcon />
-              </IconButton>
-            )}
+            ) : null}
           </Box>
         </Box>
       </Box>
-      <Box style={{ backgroundColor: "white" }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        style={{ backgroundColor: "white" }}
+      >
         <Typography className={classes.name} align="center">
           {profileUser.firstName + " " + profileUser.lastName}
         </Typography>
+
+        {/* Add Friend/Message row */}
+        {user.id !== Number(profileUser.id) ? (
+          <Box
+            marginTop={1}
+            marginLeft={2}
+            marginRight={2}
+            display="flex"
+            flexGrow={1}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ flexGrow: 1 }}
+              startIcon={<PersonAddIcon />}
+            >
+              Add Friend
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              style={{ marginLeft: 16 }}
+            >
+              <MoreIcon />
+            </Button>
+          </Box>
+        ) : null}
         <Tabs value={path} variant="fullWidth">
           <Tab
             component={Link}

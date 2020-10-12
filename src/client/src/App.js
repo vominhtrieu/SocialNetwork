@@ -53,6 +53,7 @@ function App(props) {
         alignItems="center"
       >
         <ReactLoading type="bubbles" color="black" />
+        <Typography variant="body2">Loading</Typography>
       </Box>
     );
 

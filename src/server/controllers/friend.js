@@ -42,29 +42,23 @@ exports.addFriend = async (req, res) => {
   }
 };
 
-exports.getFriendRequests = (req, res) => {
-  User.findById(req.body.id)
-    .populate({
-      path: "friendRequests",
-      model: "FriendRequest",
-      populate: { path: "user", model: "User" },
-    })
-    .exec((err, user) => {
-      if (err) res.status(500).json("Unable to get friend requests");
-      else {
-        const requestDetails = user.friendRequests.map((request) => {
-          return {
-            requestId: request._id,
-            userId: request.user._id,
-            firstName: request.user.firstName,
-            lastName: request.user.lastName,
-            avatar: request.user.avatar,
-            date: request.requestedDate,
-          };
-        });
-        res.json({ requests: requestDetails });
-      }
+exports.getFriendRequest = (req, res) => {
+  FriendRequest.findById(req.query.id)
+    .populate("user", "firstName lastName avatar")
+    .exec((err, request) => {
+      if (err) return res.status(500);
+      if (!request) return res.status(400);
+      res.json(request);
     });
+};
+
+exports.getFriendRequests = (req, res) => {
+  User.findById(req.body.id, (err, user) => {
+    if (err) res.status(500).json("Unable to get friend requests");
+    else {
+      res.json({ requests: user.friendRequests });
+    }
+  });
 };
 
 exports.respondFriendRequest = async (req, res) => {

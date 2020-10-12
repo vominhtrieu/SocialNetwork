@@ -22,6 +22,7 @@ export function profile(state = initialState, action = {}) {
         user: action.payload,
         socket: io(HOST),
         isPending: false,
+        error: null,
       });
     case GET_PROFILE_FAILED:
       return Object.assign({}, state, {

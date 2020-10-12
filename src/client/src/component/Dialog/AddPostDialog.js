@@ -76,12 +76,12 @@ export default function AddPostDialog(props) {
         <Box display="flex" alignItems="center">
           <Box mr={1}>
             <IconButton size="small">
-              <ImageIcon fontSize="large" />
-            </IconButton>
+              <ImageIcon color="primary" fontSize="large" />
+            </IconButton> 
           </Box>
           <Button
             onClick={submitPost}
-            variant="outlined"
+            variant="contained"
             color="primary"
             fullWidth
           >

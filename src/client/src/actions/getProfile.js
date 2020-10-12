@@ -11,7 +11,11 @@ export function getProfile(dispatch) {
       method: "GET",
       credentials: "include"
     })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.ok)
+        return res.json();
+      throw new Error("Unauthenticated");
+    })
     .then((user) => {
       dispatch({ type: GET_PROFILE_SUCCESS, payload: user })
     })

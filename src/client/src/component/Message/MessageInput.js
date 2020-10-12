@@ -41,7 +41,7 @@ export default function MessageInput({ socket, roomInfo }) {
       paddingLeft={1}
     >
       <IconButton size="small">
-        <ImageIcon />
+        <ImageIcon color="primary" />
       </IconButton>
       <CustimizedTextField
         value={textContent}
@@ -50,16 +50,17 @@ export default function MessageInput({ socket, roomInfo }) {
       />
       <Box position="relative">
         <IconButton onClick={() => setIsEmojiPickerOpened(true)} size="small">
-          <EmojiIcon />
+          <EmojiIcon color="primary" />
         </IconButton>
         <EmojiPicker
+          color="primary"
           isOpened={isEmojiPickerOpened}
           onClose={closeEmojiPicker}
           addEmoji={addEmoji}
         />
       </Box>
       <IconButton size="small" onClick={() => sendMessage()}>
-        <SendIcon />
+        <SendIcon color="primary" />
       </IconButton>
     </Box>
   );

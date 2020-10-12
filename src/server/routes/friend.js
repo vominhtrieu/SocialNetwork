@@ -4,6 +4,7 @@ const friendController = require("../controllers/friend");
 const checkAuth = require("../middlewares/checkAuth");
 
 router.post("/addfriend", checkAuth, friendController.addFriend);
+router.get("/friendrequest", checkAuth, friendController.getFriendRequest);
 router.get("/friendrequests", checkAuth, friendController.getFriendRequests);
 router.post("/respondFriendRequest", checkAuth, friendController.respondFriendRequest);
 router.post("/unfriend", checkAuth, friendController.unfriend);

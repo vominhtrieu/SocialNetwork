@@ -15,8 +15,8 @@ Cách sử dụng:
   <li>Clone repository này về</li>
   <li>Mở CMD/Terminal, cd đến thư mục repository</li>
   <li>cd đến src/client và src/server, trong mỗi thư mục gõ <code>npm install</code> để cài đặt tất cả các package</li>
-  <li>Ở client gõ npm start để chạy Server của React(Chế độ Debug)</li>
-  <li>Ở server gõ node seed.js để khởi tạo các giá trị cần thiết trong cơ sở dữ liệu, sau đó nhấn Ctrl+C để thoát</li>
-  <li>Tiếp tục gõ node app.js để chạy Server Backend</li>
+  <li>Ở client gõ <code>npm start</code> để chạy Server của React(Chế độ Debug)</li>
+  <li>Ở server gõ <code>node seed.js</code> để khởi tạo các giá trị cần thiết trong cơ sở dữ liệu, sau đó nhấn Ctrl+C để thoát</li>
+  <li>Tiếp tục gõ <code>node app.js</code> để chạy Server Backend</li>
   <li>Truy cập vào localhost:3000</li>
 </ul>

@@ -17,13 +17,17 @@ const useStyles = makeStyles((theme) => ({
     height: 2,
     borderRadius: 2,
   },
+  badge: {
+    right: 3,
+    top: 3,
+  },
   icon: {
     transition: "all 0.2s",
   },
   tab: {
     height: 50,
     minWidth: 0,
-  }
+  },
 }));
 
 const routes = ["/", "/friends", "/messages", "/notifications"];
@@ -49,7 +53,7 @@ export default function NavigationTab(props) {
         setNotSeenRooms(new Set(notifications.notSeenRooms));
       });
 
-    props.socket.on("newFriendRequest", (data) => {
+    props.socket.on("friendRequestUpdate", (data) => {
       setNewFriendRequests(data.newFriendRequests);
     });
 
@@ -64,6 +68,12 @@ export default function NavigationTab(props) {
         return temp;
       });
     });
+
+    return () => {
+      props.socket.off("friendRequestUpdate");
+      props.socket.off("newMessage");
+      props.socket.off("seen");
+    }
   }, [props.socket]);
 
   React.useEffect(() => {
@@ -80,6 +90,7 @@ export default function NavigationTab(props) {
         value={tabIndex === -1 ? false : tabIndex}
         onChange={changeRoute}
         variant="fullWidth"
+        indicatorColor="primary"
         centered
       >
         <Tab
@@ -88,6 +99,7 @@ export default function NavigationTab(props) {
             <Badge badgeContent={0} max={0} color="secondary">
               <HomeIcon
                 className={classes.icon}
+                color={tabIndex === 0 ? "primary" : "inherit"}
                 fontSize={tabIndex === 0 ? "large" : "default"}
               />
             </Badge>
@@ -96,9 +108,15 @@ export default function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={newFriendRequests} max={99} color="secondary">
+            <Badge
+              classes={{ badge: classes.badge }}
+              badgeContent={newFriendRequests}
+              max={99}
+              color="secondary"
+            >
               <FriendIcon
                 className={classes.icon}
+                color={tabIndex === 1 ? "primary" : "inherit"}
                 fontSize={tabIndex === 1 ? "large" : "default"}
               />
             </Badge>
@@ -107,9 +125,15 @@ export default function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={notSeenRooms.size} max={99} color="secondary">
+            <Badge
+              classes={{ badge: classes.badge }}
+              badgeContent={notSeenRooms.size}
+              max={99}
+              color="secondary"
+            >
               <MessageIcon
                 className={classes.icon}
+                color={tabIndex === 2 ? "primary" : "inherit"}
                 fontSize={tabIndex === 2 ? "large" : "default"}
               />
             </Badge>
@@ -118,9 +142,15 @@ export default function NavigationTab(props) {
         <Tab
           className={classes.tab}
           label={
-            <Badge badgeContent={0} max={99} color="secondary">
+            <Badge
+              classes={{ badge: classes.badge }}
+              badgeContent={0}
+              max={99}
+              color="secondary"
+            >
               <NotificationsIcon
                 className={classes.icon}
+                color={tabIndex === 3 ? "primary" : "inherit"}
                 fontSize={tabIndex === 3 ? "large" : "default"}
               />
             </Badge>

@@ -58,7 +58,7 @@ export default function MessageHistory(props) {
         clearTimeout(temp[userId]);
         temp[userId] = setTimeout(()=>{
           removeATypingUser(userId);
-        }, 500);
+        }, 200);
         return temp;
       });
     }
@@ -102,7 +102,6 @@ export default function MessageHistory(props) {
     );
   });
 
-  console.log(Object.keys(typingUsers));
   const typingUserList = Object.keys(typingUsers).filter((key)=>{
     return typingUsers[key] !== null;
   });

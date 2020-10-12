@@ -10,9 +10,8 @@ import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import { connect } from "react-redux";
-import { getProfile } from "../../actions/getProfile";
-import {HOST} from "../../config/constant";
+import ReactLoading from "react-loading";
+import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -34,8 +33,10 @@ function SignInForm(props) {
   const { register, handleSubmit } = useForm();
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertTitle, setAlertTitle] = React.useState("");
+  const [isSigningIn, setIsSigningIn] = React.useState(false);
 
   function LogUserIn(data) {
+    setIsSigningIn(true);
     fetch(`${HOST}/signin`, {
       method: "POST",
       headers: {
@@ -51,11 +52,12 @@ function SignInForm(props) {
         setAlertOpen(true);
         setAlertTitle(message);
         if (message === "Successfully Login") {
-          props.getProfile();
           props.history.push("/");
+        } else {
+          setIsSigningIn(false);
         }
       })
-      .catch((err) => console.log);
+      .catch((err) => setIsSigningIn(false));
   }
 
   return (
@@ -114,23 +116,25 @@ function SignInForm(props) {
               autoComplete="current-password"
             />
           </Grid>
-          {/* <Grid item xs={12}>
-          <Box display="flex" justifyContent="center" marginTop="10px" className={classes.rememberBox}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  value="remember"
-                  color="primary"
-                  className={classes.checkBox}
-                />
-              }
-              label="Remember me"
-            />
-          </Box>
-        </Grid> */}
+
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
-              Sign In
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isSigningIn}
+              fullWidth
+            >
+              {!isSigningIn ? (
+                "Sign In"
+              ) : (
+                <ReactLoading
+                  type="bubbles"
+                  height={24}
+                  width={24}
+                  color="black"
+                />
+              )}
             </Button>
           </Grid>
           <Grid item xs={12}>
@@ -146,12 +150,4 @@ function SignInForm(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getProfile: () => {
-      dispatch(getProfile);
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(SignInForm);
+export default SignInForm;

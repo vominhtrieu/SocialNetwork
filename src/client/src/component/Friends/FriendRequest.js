@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { HOST } from "../../config/constant";
 import moment from "moment/moment";
-import io from "socket.io-client";
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -42,9 +41,17 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-function FriendRequest(props) {
-  const { request } = props;
-  const [socket] = React.useState(io(HOST));
+function FriendRequest({ requestId, socket }) {
+  const [request, setRequest] = React.useState(null);
+
+  React.useEffect(() => {
+    fetch(`${HOST}/friendrequest?id=${requestId}`, {
+      method: "GET",
+      credentials: "include"
+    })
+      .then((res) => res.json())
+      .then((requestData) => setRequest(requestData));
+  }, [requestId]);
 
   function respondRequest(response) {
     fetch(HOST + "/respondfriendrequest", {
@@ -56,31 +63,33 @@ function FriendRequest(props) {
       body: JSON.stringify(response),
     }).then((res) => {
       if (res.ok) {
-        socket.emit("respondFriendRequest");
-        props.deleteRequest(request.requestId);
+        socket.emit("respondFriendRequest", response);
       }
     });
   }
 
   const classes = useStyle();
+  if (!request)
+    return null;
+  console.log(request);
   return (
-    <Box display="flex" justifyContent="center" marginBottom={2}>
+    <Box display="flex" justifyContent="center" marginBottom={2} width="100%">
       <Card variant="outlined" className={classes.root}>
         <CardContent>
-          <Box display="block">
-            <Link className={classes.link} to={"/" + request.userId}>
+          <Box display="block" flexGrow={1}>
+            <Link className={classes.link} to={"/" + request.user._id}>
               <Avatar
-                src={HOST + "/image/" + request.avatar}
+                src={request.user.avatar ? `${HOST}/image/${request.user.avatar}` : null}
                 className={classes.avatar}
-              ></Avatar>
+              />
             </Link>
-            <Link className={classes.link} to={"/" + request.userId}>
+            <Link className={classes.link} to={"/" + request.user._id}>
               <Typography className={classes.name} variant="h5">
-                {request.firstName + " " + request.lastName}
+                {request.user.firstName + " " + request.user.lastName}
               </Typography>
             </Link>
             <Typography className={classes.date} color="textSecondary">
-              {moment(request.date).fromNow()}
+              {moment(request.requestedDate).fromNow()}
             </Typography>
           </Box>
           <Box marginTop={1}>
@@ -90,7 +99,7 @@ function FriendRequest(props) {
               color="primary"
               variant="contained"
               onClick={() => {
-                respondRequest({ accept: true, requestId: request.requestId });
+                respondRequest({ accept: true, requestId: request._id });
               }}
             >
               Accept
@@ -101,7 +110,7 @@ function FriendRequest(props) {
               color="secondary"
               variant="outlined"
               onClick={() => {
-                respondRequest({ accept: false, requestId: request.requestId });
+                respondRequest({ accept: false, requestId: request._id });
               }}
             >
               Reject

@@ -12,6 +12,8 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import ReactLoading from "react-loading";
 import { HOST } from "../../config/constant";
+import { getProfile } from "../../actions/getProfile";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -52,6 +54,7 @@ function SignInForm(props) {
         setAlertOpen(true);
         setAlertTitle(message);
         if (message === "Successfully Login") {
+          props.getProfile();
           props.history.push("/");
         } else {
           setIsSigningIn(false);
@@ -150,4 +153,10 @@ function SignInForm(props) {
   );
 }
 
-export default SignInForm;
+const mapDispatchToProps = (dispatch) => ({
+  getProfile: () => {
+    dispatch(getProfile);
+  },
+});
+
+export default connect(null, mapDispatchToProps)(SignInForm);

@@ -12,13 +12,13 @@ import {
 } from "@material-ui/core";
 import { Link, withRouter } from "react-router-dom";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import MessageIcon from "@material-ui/icons/Message";
 import CameraIcon from "@material-ui/icons/CameraAlt";
 import TimelineIcon from "@material-ui/icons/Timeline";
 import ImageIcon from "@material-ui/icons/Image";
 import FriendIcon from "@material-ui/icons/People";
 import PersonIcon from "@material-ui/icons/Person";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
-import io from "socket.io-client";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
@@ -97,8 +97,7 @@ function ProfileIntro(props) {
       body: JSON.stringify({ addId: profileUser.id }),
     }).then((res) => {
       if (res.ok) {
-        const socket = io(HOST);
-        socket.emit("sendFriendRequest", { friendId: profileUser.id });
+        props.socket.emit("sendFriendRequest", { friendId: profileUser.id });
       }
     });
   }
@@ -176,14 +175,27 @@ function ProfileIntro(props) {
             display="flex"
             flexGrow={1}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ flexGrow: 1 }}
-              startIcon={<PersonAddIcon />}
-            >
-              Add Friend
-            </Button>
+            {profileUser.isFriend ? (
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ flexGrow: 1 }}
+                startIcon={<MessageIcon />}
+              >
+                Message
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={addFriend}
+                style={{ flexGrow: 1 }}
+                startIcon={<PersonAddIcon />}
+              >
+                Add Friend
+              </Button>
+            )}
+
             <Button
               variant="outlined"
               color="secondary"

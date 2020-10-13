@@ -43,7 +43,7 @@ function App(props) {
   React.useEffect(() => {
     getProfile();
   }, [getProfile]);
-
+  
   if (isPending)
     return (
       <Box

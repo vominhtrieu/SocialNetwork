@@ -7,7 +7,6 @@ import ProfileFriends from "../component/Profile/ProfileFriends";
 import ProfileDetail from "../component/Profile/ProfileDetail";
 import { Helmet } from "react-helmet";
 import { Switch, Route } from "react-router-dom";
-import { getProfile } from "../actions/getProfile";
 import { connect } from "react-redux";
 import { HOST } from "../config/constant";
 
@@ -103,6 +102,7 @@ class Profile extends React.Component {
             profileUser={profileUser}
             uploadAvatar={this.uploadAvatar}
             uploadCover={this.uploadCover}
+            socket={this.props.socket}
           />
           <Switch>
             <Route exact path={`${url}/`}>
@@ -127,15 +127,8 @@ class Profile extends React.Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
+    socket: state.socket,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getProfile: () => {
-      dispatch(getProfile);
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps)(Profile);

@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const Image = require("../models/Image");
 const mime = require("mime-types");
 const multer = require("multer");
@@ -31,10 +30,10 @@ exports.uploadAvatar = function (req, res) {
   let img = null;
 
   const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (_req, _file, cb) {
       cb(null, "./public/images");
     },
-    filename: async function (req, file, cb) {
+    filename: async function (_req, file, cb) {
       img = new Image({
         user: Number(user.id),
         extension: mime.extension(file.mimetype),
@@ -72,10 +71,10 @@ exports.uploadCover = function (req, res) {
   let img = null;
 
   const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (_req, _file, cb) {
       cb(null, "./public/images");
     },
-    filename: async function (req, file, cb) {
+    filename: async function (_req, file, cb) {
       img = new Image({
         user: Number(user.id),
         extension: mime.extension(file.mimetype),

@@ -1,17 +1,10 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Avatar,
-  Box,
-  IconButton,
-} from "@material-ui/core";
+import { Typography, Avatar, Box, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { HOST } from "../../config/constant";
 import UnfriendIcon from "@material-ui/icons/RemoveCircleOutline";
-import BlockIcon from "@material-ui/icons/Block";
+import AddFriendIcon from "@material-ui/icons/PersonAdd";
 
 const useStyle = makeStyles((theme) => ({
   root: {
@@ -20,63 +13,69 @@ const useStyle = makeStyles((theme) => ({
   avatar: {
     width: 50,
     height: 50,
-    float: "left",
-    marginRight: 10,
   },
   link: {
-    color: "inherit",
     textDecoration: "none",
+    marginLeft: theme.spacing(1),
+    color: theme.palette.common.black,
   },
   name: {
-    paddingTop: 2,
-    marginBottom: 0,
     fontWeight: "bold",
-    lineHeight: 1.1,
-    fontSize: 20,
   },
 }));
 
 function FriendInfo(props) {
-  const { user } = props;
+  const { friend, user } = props;
 
-  const Unfriend = () => {
+  const unFriend = () => {
     fetch(HOST + "/unfriend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ friendId: user.id }),
+      body: JSON.stringify({ friendId: friend.id }),
+    }).then((res) => {
+      if (res.ok) {
+        //...
+      }
     });
   };
+  
   const classes = useStyle();
   return (
-    <Box marginTop={2} marginBottom={2}>
-      <Card variant="outlined" className={classes.root}>
-        <CardContent>
-          <Box display="block">
-            <Link className={classes.link} to={"/" + user.id}>
-              <Avatar
-                src={HOST + "/image/" + user.avatar}
-                className={classes.avatar}
-              ></Avatar>
-            </Link>
-            <Link className={classes.link} to={"/" + user.id}>
-              <Typography className={classes.name} variant="h5">
-                {user.firstName + " " + user.lastName}
-              </Typography>
-            </Link>
-            <Box padding={0}>
-              <IconButton onClick={Unfriend} size="small">
-                <UnfriendIcon color="secondary" size="large" />
-              </IconButton>
-              <IconButton size="small">
-                <BlockIcon color="error" size="large" />
-              </IconButton>
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
+    <Box display="flex" alignItems="center" marginTop={1} marginBottom={1}>
+      <Link className={classes.link} to={"/" + friend.id}>
+        <Avatar
+          src={HOST + "/image/" + friend.avatar}
+          className={classes.avatar}
+        ></Avatar>
+      </Link>
+      <Link className={classes.link} to={"/" + friend.id}>
+        <Typography className={classes.name} variant="h6">
+          {friend.firstName + " " + friend.lastName}
+        </Typography>
+      </Link>
+      <Box flexGrow={1} display="flex" justifyContent="flex-end">
+        {user.id === friend.id ? null : friend.isFriend ? (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={unFriend}
+            startIcon={<UnfriendIcon />}
+          >
+            Unfriend
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddFriendIcon />}
+          >
+            Add Friend
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 }

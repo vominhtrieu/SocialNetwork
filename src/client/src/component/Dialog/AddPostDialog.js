@@ -3,15 +3,19 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import EmojiPicker from "../Common/EmojiPicker";
 import { InputBase, Button, Box, IconButton } from "@material-ui/core";
-import { Image as ImageIcon } from "@material-ui/icons";
+import {
+  Image as ImageIcon,
+  EmojiEmotions as EmojiIcon,
+} from "@material-ui/icons";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
   input: {
-    width: "min(500px, 90vw)",
-    maxHeight: 500,
-    marginBottom: 10,
+    marginBottom: theme.spacing(1),
+    fontSize: 18,
+    overflowY: "auto",
   },
   title: {
     textAlign: "center",
@@ -29,7 +33,7 @@ export default function AddPostDialog(props) {
   const classes = useStyles();
 
   const [postText, setPostText] = React.useState("");
-
+  const [isEmojiOpened, setIsEmojiOpened] = React.useState(false);
   const submitPost = () => {
     fetch(HOST + "/newpost", {
       method: "POST",
@@ -45,11 +49,15 @@ export default function AddPostDialog(props) {
     });
   };
 
+  const addEmoji = (emoji) => {
+    setPostText((text) => text + emoji);
+  };
+
   return (
     <Dialog
-      style={{ overflowY: "scroll"}}
+      style={{ overflowY: "scroll" }}
       classes={{
-        paper: classes.paper
+        paper: classes.paper,
       }}
       onClose={props.closeDialog}
       aria-labelledby="addPostDialogTitle"
@@ -66,6 +74,7 @@ export default function AddPostDialog(props) {
         <InputBase
           className={classes.input}
           autoFocus
+          value={postText}
           placeholder="What are you thinking...?"
           multiline
           onChange={(e) => setPostText(e.target.value)}
@@ -74,19 +83,31 @@ export default function AddPostDialog(props) {
           inputProps={{ "aria-label": "Add new post" }}
         />
         <Box display="flex" alignItems="center">
-          <Box mr={1}>
+          <Box display="flex" flexGrow={1} flexDirection="row" mr={1}>
+            <Button
+              onClick={submitPost}
+              variant="contained"
+              color="primary"
+              style={{flexGrow: 1}}
+            >
+              Post
+            </Button>
+            <Box display="flex" alignItems="center">
+              <IconButton onClick={() => setIsEmojiOpened(true)} size="small">
+                <EmojiIcon color="primary" />
+                {isEmojiOpened ? (
+                  <EmojiPicker
+                    isOpened={isEmojiOpened}
+                    addEmoji={addEmoji}
+                    onClose={() => setIsEmojiOpened(false)}
+                  />
+                ) : null}
+              </IconButton>
+            </Box>
             <IconButton size="small">
               <ImageIcon color="primary" fontSize="large" />
-            </IconButton> 
+            </IconButton>
           </Box>
-          <Button
-            onClick={submitPost}
-            variant="contained"
-            color="primary"
-            fullWidth
-          >
-            Post
-          </Button>
         </Box>
       </DialogContent>
     </Dialog>

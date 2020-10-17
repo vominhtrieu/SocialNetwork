@@ -3,22 +3,17 @@ import {
   Box,
   Avatar,
   Typography,
-  Tabs,
-  Tab,
   IconButton,
   makeStyles,
   Card,
   Button,
 } from "@material-ui/core";
-import { Link, withRouter } from "react-router-dom";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import MessageIcon from "@material-ui/icons/Message";
 import CameraIcon from "@material-ui/icons/CameraAlt";
-import TimelineIcon from "@material-ui/icons/Timeline";
-import ImageIcon from "@material-ui/icons/Image";
-import FriendIcon from "@material-ui/icons/People";
-import PersonIcon from "@material-ui/icons/Person";
 import MoreIcon from "@material-ui/icons/MoreHoriz";
+
+import ProfileTabs from "./ProfileTabs";
 import { HOST } from "../../config/constant";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,9 +43,6 @@ const useStyles = makeStyles((theme) => ({
     color: "black",
     fontWeight: "bold",
     textShadow: "1px 1px white",
-  },
-  tab: {
-    minWidth: 50,
   },
   addCoverButton: {
     position: "absolute",
@@ -82,9 +74,6 @@ const useStyles = makeStyles((theme) => ({
 
 function ProfileIntro(props) {
   const { user, profileUser, uploadAvatar, uploadCover } = props;
-  const url = `/${profileUser.id}`;
-  let path = props.history.location.pathname;
-  path = path.substr(path.length - 1) === "/" ? path.slice(0, -1) : path;
   const classes = useStyles();
 
   function addFriend() {
@@ -175,7 +164,7 @@ function ProfileIntro(props) {
             display="flex"
             flexGrow={1}
           >
-            {profileUser.isFriend ? (
+            {profileUser.friendStatus === "Friend" ? (
               <Button
                 variant="contained"
                 color="primary"
@@ -184,7 +173,7 @@ function ProfileIntro(props) {
               >
                 Message
               </Button>
-            ) : (
+            ) : profileUser.friendStatus === "Nothing" ? (
               <Button
                 variant="contained"
                 color="primary"
@@ -194,6 +183,8 @@ function ProfileIntro(props) {
               >
                 Add Friend
               </Button>
+            ) : (
+              <Button variant="contained">Pending Request</Button>
             )}
 
             <Button
@@ -205,39 +196,11 @@ function ProfileIntro(props) {
             </Button>
           </Box>
         ) : null}
-        <Tabs value={path} variant="fullWidth">
-          <Tab
-            component={Link}
-            to={`${url}`}
-            value={`${url}`}
-            className={classes.tab}
-            label={<TimelineIcon />}
-          />
-          <Tab
-            component={Link}
-            to={`${url}/images`}
-            value={`${url}/images`}
-            className={classes.tab}
-            label={<ImageIcon />}
-          />
-          <Tab
-            component={Link}
-            to={`${url}/friends`}
-            value={`${url}/friends`}
-            className={classes.tab}
-            label={<FriendIcon />}
-          />
-          <Tab
-            component={Link}
-            to={`${url}/detail`}
-            value={`${url}/detail`}
-            className={classes.tab}
-            label={<PersonIcon />}
-          />
-        </Tabs>
       </Box>
+
+      <ProfileTabs profileUser={profileUser} />
     </Card>
   );
 }
 
-export default withRouter(ProfileIntro);
+export default ProfileIntro;

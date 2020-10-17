@@ -44,15 +44,21 @@ let emojiList = [
   "😛",
   "😜",
   "😝",
-  "🤤"
+  "🤤",
 ];
 
 const useStyles = makeStyles((theme) => ({
-    card: {
-        position: "relative",
-        boxShadow: "0 0 5px rgba(0,0,0,0.4)",
-        zIndex: 1000000
-    },
+  card: {
+    position: "relative",
+    boxShadow: "0 0 5px rgba(0,0,0,0.4)",
+    zIndex: 10000000,
+  },
+  alignLeft: {
+    right: 0,
+  },
+  alignRight: {
+    left: 0,
+  },
   gridContainer: {
     width: 200,
   },
@@ -68,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EmojiPicker(props) {
   const classes = useStyles();
-  const {isOpened, onClose} = props;
+  const { isOpened, onClose, align } = props;
   const wrapperRef = React.createRef();
 
   React.useEffect(() => {
@@ -76,32 +82,40 @@ export default function EmojiPicker(props) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
         onClose();
       }
-    }
-    
+    };
+
     document.addEventListener("mousedown", checkCloseEmojiPicker);
     return () =>
       document.removeEventListener("mousedown", checkCloseEmojiPicker);
   }, [wrapperRef, onClose]);
 
-  if (!isOpened)
-    return null;
+  if (!isOpened) return null;
   return (
-    <Box ref={wrapperRef} position="absolute" bottom={30} right={0}>
-        <Card variant="outlined" className={classes.card}>
-          <CardContent>
-            <Grid container>
-              {emojiList.map((emoji, index) => {
-                return (
-                  <Grid key={index} item xs={2} className={classes.gridContainer}>
-                    <Button onClick={() => props.addEmoji(emoji)} size="small" className={classes.emojiButton}>
-                      {emoji}
-                    </Button>
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </CardContent>
-        </Card>
+    <Box
+      ref={wrapperRef}
+      position="absolute"
+      bottom={30}
+      className={align === "right" ? classes.alignRight : classes.alignLeft}
+    >
+      <Card variant="outlined" className={classes.card}>
+        <CardContent>
+          <Grid container>
+            {emojiList.map((emoji, index) => {
+              return (
+                <Grid key={index} item xs={2} className={classes.gridContainer}>
+                  <Button
+                    onClick={() => props.addEmoji(emoji)}
+                    size="small"
+                    className={classes.emojiButton}
+                  >
+                    {emoji}
+                  </Button>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </CardContent>
+      </Card>
     </Box>
   );
 }

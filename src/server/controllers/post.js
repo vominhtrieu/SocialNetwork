@@ -23,9 +23,9 @@ exports.addNewPost = (req, res) => {
 };
 
 exports.getUserPost = (req, res) => {
-  User.findById(req.params.id, (err, user) => {
+  User.findById(req.params.id).exec((err, user) => {
     if (err) return res.status(500).json("Unable to find this user");
-    res.json(user.posts);
+    res.json(user.posts.reverse());
   });
 };
 

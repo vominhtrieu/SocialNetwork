@@ -112,7 +112,7 @@ class Profile extends React.Component {
               <ProfileImages />
             </Route>
             <Route exact path={`${url}/friends`}>
-              <ProfileFriends profileUser={profileUser} />
+              <ProfileFriends user={user} profileUser={profileUser} />
             </Route>
             <Route exact path={`${url}/detail`}>
               <ProfileDetail />

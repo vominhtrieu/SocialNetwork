@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import FriendInfo from "./FriendInfo";
 import { HOST } from "../../config/constant";
+import { Box, Card, CardContent } from "@material-ui/core";
 
 export default function ProfileFriends(props) {
-  const { profileUser } = props;
+  const { user, profileUser } = props;
   const [friends, setFriends] = React.useState([]);
   useEffect(() => {
     fetch(`${HOST}/${profileUser.id}/friends`, {
@@ -24,7 +25,13 @@ export default function ProfileFriends(props) {
   }, [profileUser.id]);
 
   const friendList = friends.map((friend, index) => {
-    return <FriendInfo user={friend} key={index} />;
+    return <FriendInfo user={user} friend={friend} key={index} />;
   });
-  return friendList;
+  return (
+    <Box marginTop={2}>
+      <Card>
+        <CardContent>{friendList}</CardContent>
+      </Card>
+    </Box>
+  );
 }

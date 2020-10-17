@@ -97,7 +97,10 @@ exports.respondFriendRequest = async (req, res) => {
         req.body.user.chatRooms.length === 0 &&
         request.user.chatRooms.length === 0
       ) {
-        const participants = [{ user: req.body.id }, { user: request.user._id }];
+        const participants = [
+          { user: req.body.id },
+          { user: request.user._id },
+        ];
         const room = new ChatRoom({
           participants: participants,
         });
@@ -156,6 +159,9 @@ exports.getFriendList = (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             avatar: user.avatar,
+            isFriend:
+              req.body.user.friends.filter((friend) => friend.user === user._id)
+                .length === 1,
           };
         });
         res.json(friendList);

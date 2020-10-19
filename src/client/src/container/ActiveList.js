@@ -6,19 +6,20 @@ import {
   Typography,
   Card,
   CardContent,
-  Box, makeStyles
+  Box,
+  makeStyles,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import UserAvatar from "../component/Common/UserAvatar";
 
 const useStyles = makeStyles((theme) => ({
-  cardRoot: { flexGrow: 1, marginTop: theme.spacing(8), marginBottom: theme.spacing(2) }
+  cardRoot: { flexGrow: 1, marginTop: theme.spacing(8) },
 }));
 
 function ActiveList({ socket }) {
   const classes = useStyles();
   const [users, setUsers] = React.useState([]);
-  
+
   React.useEffect(() => {
     socket.on("userList", (userList) => {
       setUsers(userList);

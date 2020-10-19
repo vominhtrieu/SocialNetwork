@@ -1,103 +1,63 @@
 const Image = require("../models/Image");
-const mime = require("mime-types");
-const multer = require("multer");
-const path = require("path");
+const { s3 } = require("../services/fileUpload");
 
 exports.getImage = function (req, res) {
+  if (req.params.id === "undefined") {
+    return res.json(null);
+  }
   Image.findById(Number(req.params.id), (err, img) => {
-    if (err) res.status(400).json("Image not found");
-    else {
-      if (img.privacy != 0) res.status(400).json("Unauthorization");
-      else
-        res.sendFile(
-          path.join(
-            __dirname,
-            "../public/images",
-            req.params.id + "." + img.extension
-          )
-        );
-    }
+    if (err) return res.status(400).json("Image not found");
+    s3.getObject(
+      {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: img.key,
+      },
+      (err, data) => {
+        if (err) {
+          return res.status(500).json("Image seem to be lost");
+        }
+        res.writeHead(200, { "Content-Type": "image/jpeg" });
+        res.write(data.Body, "binary");
+        res.end(null, "binary");
+      }
+    );
   });
 };
 
 exports.uploadAvatar = function (req, res) {
-  const user = req.body.user;
-  if (user.avatar) {
-    Image.deleteOne({ _id: user.avatar }, (err) => {
-      if (err) console.log(err);
-    });
-  }
-  let img = null;
-
-  const storage = multer.diskStorage({
-    destination: function (_req, _file, cb) {
-      cb(null, "./public/images");
-    },
-    filename: async function (_req, file, cb) {
-      img = new Image({
-        user: Number(user.id),
-        extension: mime.extension(file.mimetype),
-      });
-      await img.save();
-      cb(null, String(img._id) + "." + img.extension);
-    },
+  const image = new Image({
+    user: Number(req.user.id),
+    type: "avatar",
+    key: req.file.key,
+    privacy: 0,
   });
-
-  const imageUploader = multer({ storage });
-  const uploader = imageUploader.single("avatar");
-  uploader(req, res, function (err) {
-    if (err) res.status(500).json("Unable to upload");
-    else {
-      user.avatar = img._id;
-      user
-        .save()
-        .then(() => {
-          res.json("Successfully upload");
-        })
-        .catch(() => {
-          res.status(500).json("Unable to upload");
-        });
+  image.save((err) => {
+    if (err) {
+      return res.status(500);
     }
+    req.user.avatar = image._id;
+    req.user.save((err) => {
+      if (err) return res.status(500);
+      return res.status(200);
+    });
   });
 };
 
 exports.uploadCover = function (req, res) {
-  const user = req.body.user;
-  if (user.cover) {
-    Image.deleteOne({ _id: user.cover }, (err) => {
-      if (err) console.log(err);
-    });
-  }
-  let img = null;
-
-  const storage = multer.diskStorage({
-    destination: function (_req, _file, cb) {
-      cb(null, "./public/images");
-    },
-    filename: async function (_req, file, cb) {
-      img = new Image({
-        user: Number(user.id),
-        extension: mime.extension(file.mimetype),
-      });
-      await img.save();
-      cb(null, String(img._id) + "." + img.extension);
-    },
+  const image = new Image({
+    user: Number(req.user.id),
+    type: "cover",
+    key: req.file.key,
+    privacy: 0,
   });
-
-  const imageUploader = multer({ storage });
-  const uploader = imageUploader.single("cover");
-  uploader(req, res, function (err) {
-    if (err) res.status(500).json("Unable to upload");
-    else {
-      user.cover = img._id;
-      user
-        .save()
-        .then(() => {
-          res.json("Successfully upload");
-        })
-        .catch(() => {
-          res.status(500).json("Unable to upload");
-        });
+  image.save((err) => {
+    if (err) {
+      return res.status(500);
     }
+    req.user.cover = image._id;
+    req.user.save((err) => {
+      if (err) return res.status(500);
+      return res.status(200);
+    });
   });
 };

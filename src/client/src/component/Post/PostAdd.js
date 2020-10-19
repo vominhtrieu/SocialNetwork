@@ -10,13 +10,13 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     "&:hover": {
-      cursor: "pointer"
-    }
+      cursor: "pointer",
+    },
   },
   avatar: {
     float: "left",
     width: 40,
-    marginRight: 10
+    marginRight: 10,
   },
 }));
 
@@ -27,8 +27,9 @@ function PostAdd(props) {
     setOpen(true);
   };
 
-  const closeDialog = () => {
+  const closeDialog = (id) => {
     setOpen(false);
+    props.addPost(id);
   };
 
   return (

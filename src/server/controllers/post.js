@@ -12,7 +12,7 @@ exports.addNewPost = (req, res) => {
       req.body.user.posts.push(post);
       req.body.user
         .save()
-        .then(() => res.json("Added your post"))
+        .then(() => res.json({ id: post.id }))
         .catch((err) => {
           res.status(500).json("Internal error" + err);
         });
@@ -47,19 +47,21 @@ exports.getPost = (req, res) => {
         images: post.images,
         liked: post.likes.indexOf(req.body.id) !== -1,
         likeCount: post.likes.length,
-        comments: post.comments
+        comments: post.comments,
       });
     });
 };
 
 exports.getFeed = (req, res) => {
-  const friendIds = req.body.user.friends.map((friend) => {
+  const userList = req.body.user.friends.map((friend) => {
     return friend.user;
   });
 
+  userList.push(req.body.id);
+
   Post.find({
     user: {
-      $in: friendIds,
+      $in: userList,
     },
   })
     .sort({ date: -1 })

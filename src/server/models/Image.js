@@ -10,7 +10,12 @@ var imageSchema = new mongoose.Schema({
     required: true,
     ref: "User",
   },
-  extension: String,
+  key: String,
+  type: String,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   privacy: {
     type: Number,
     require: true,

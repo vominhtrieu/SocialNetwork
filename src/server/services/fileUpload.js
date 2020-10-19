@@ -1,5 +1,3 @@
-require("dotenv")();
-
 const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
@@ -19,8 +17,19 @@ const upload = multer({
     metadata: function (_req, file, cb) {
       cb(null, { fieldname: file.fieldname });
     },
-    key: function (_req, _file, cb) {
-      cb(null, Date.now().toString());
+    key: function (_req, file, cb) {
+      cb(
+        null,
+        //Some random number for preventing duplicate name
+        `${Date.now().toString()}-${file.originalname}-${Math.floor(
+          Math.random() * 1000
+        )}`
+      );
     },
   }),
 });
+
+module.exports = {
+  s3,
+  upload,
+};

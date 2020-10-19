@@ -18,6 +18,10 @@ function Home({ socket }) {
       });
   }, []);
 
+  const addPost = (id) => {
+    setPosts((posts) => [...posts, id]);
+  };
+
   const renderPost = posts.map((postId, index) => {
     return <Post key={index} id={postId} />;
   });
@@ -27,7 +31,7 @@ function Home({ socket }) {
       <Helmet>
         <title>MTNET - Home</title>
       </Helmet>
-      <PostAdd />
+      <PostAdd addPost={addPost} />
       {renderPost}
     </Box>
   );

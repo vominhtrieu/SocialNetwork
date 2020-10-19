@@ -17,6 +17,7 @@ module.exports = (req, res, next) => {
             res.json("Not found user");
           } else {
             req.body.user = user;
+            req.user = user;
             next();
           }
         });

@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     textAlign: "center",
   },
+  content: {
+    overflow: "visible",
+  },
   paper: { margin: 0, width: "100%" },
 }));
 
@@ -44,8 +47,9 @@ export default function AddPostDialog(props) {
       body: JSON.stringify({ post: { textContent: postText } }),
     }).then((res) => {
       if (res.ok) {
-        props.closeDialog();
+        return res.json();
       }
+      return null;
     });
   };
 
@@ -55,7 +59,7 @@ export default function AddPostDialog(props) {
 
   return (
     <Dialog
-      style={{ overflowY: "scroll" }}
+      style={{ overflowY: "scroll", zIndex: 999999 }}
       classes={{
         paper: classes.paper,
       }}
@@ -70,7 +74,7 @@ export default function AddPostDialog(props) {
       >
         New post
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers className={classes.content}>
         <InputBase
           className={classes.input}
           autoFocus
@@ -83,15 +87,18 @@ export default function AddPostDialog(props) {
           inputProps={{ "aria-label": "Add new post" }}
         />
         <Box display="flex" alignItems="center">
-          <Box display="flex" flexGrow={1} flexDirection="row" mr={1}>
-            <Button
-              onClick={submitPost}
-              variant="contained"
-              color="primary"
-              style={{flexGrow: 1}}
-            >
-              Post
-            </Button>
+          <Box display="flex" flexGrow={1} flexDirection="row">
+            <Box flexGrow={1} marginRight={2}>
+              <Button
+                onClick={submitPost}
+                variant="contained"
+                color="primary"
+                fullWidth
+              >
+                Post
+              </Button>
+            </Box>
+
             <Box display="flex" alignItems="center">
               <IconButton onClick={() => setIsEmojiOpened(true)} size="small">
                 <EmojiIcon color="primary" />
@@ -105,7 +112,7 @@ export default function AddPostDialog(props) {
               </IconButton>
             </Box>
             <IconButton size="small">
-              <ImageIcon color="primary" fontSize="large" />
+              <ImageIcon color="primary" />
             </IconButton>
           </Box>
         </Box>

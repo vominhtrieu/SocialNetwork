@@ -1,4 +1,5 @@
 const ChatRoom = require("../models/ChatRoom");
+const User = require("../models/User");
 
 exports.getRoomList = async (req, res) => {
   ChatRoom.aggregate()
@@ -34,8 +35,7 @@ exports.getRoomList = async (req, res) => {
           },
         ],
         (err, rooms) => {
-          if (err)
-          console.log(err);
+          if (err) console.log(err);
           if (err || !rooms) return res.status(500);
           return res.json(rooms);
         }

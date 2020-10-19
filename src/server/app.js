@@ -2,12 +2,13 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
 
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const databaseController = require("./controllers/database");
+const initial = require("./initial");
 
 //Socket
 require("./socket/socket")(io);
@@ -17,6 +18,7 @@ if (app.get("env") === "production") {
 }
 
 databaseController.connectToDatabase();
+initial();
 
 //Middlewares
 app.use(cors({ credentials: true, origin: process.env.ORIGIN }));

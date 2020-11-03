@@ -173,7 +173,9 @@ function ProfileIntro(props) {
               >
                 Message
               </Button>
-            ) : profileUser.friendStatus === "Nothing" ? (
+            ) : profileUser.friendStatus === "Pending" ? (
+              <Button variant="contained">Pending Request</Button>
+            ) : (
               <Button
                 variant="contained"
                 color="primary"
@@ -183,8 +185,6 @@ function ProfileIntro(props) {
               >
                 Add Friend
               </Button>
-            ) : (
-              <Button variant="contained">Pending Request</Button>
             )}
 
             <Button

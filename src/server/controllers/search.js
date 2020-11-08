@@ -1,54 +1,68 @@
-const User = require("../models/User");
-const { use } = require("../routes/auth");
-  
+const User = require('../models/User');
+const { use } = require('../routes/auth');
+
+const replaceSpecialCharacter = (s) => {
+  let result = '';
+  for (const c of s) {
+    let newChar = c;
+    switch (c) {
+      case 'ă':
+      case 'â':
+        newChar = a;
+        break;
+      case 'đ':
+        newChar = d;
+    }
+  }
+};
 
 exports.searchForUser = (req, res) => {
-    const text = req.query.q;
-    if (text == "")
-        return res.status(400);
-    if (!isNaN(text)) {
-        User.findById(text, (err, user) => {
-            if (err || !user)
-                res.status(400);
-            else
-                res.json([{
-                    id: user._id,
-                    fullName: user.firstName + " " + user.lastName,
-                    avatar: user.avatar
-                }]);
-        });
-    }
-    else {
-        User.aggregate([
-            {
-                $project: {
-                    "fullName": {
-                        $concat: ["$firstName", " ", "$lastName"]
-                    },
-                    avatar: 1,
-                }
-            },
-            {
-                $match: {
-                    "fullName": {
-                        $regex: text,
-                        $options: "i"
-                    }
-                }
-            },
-            {
-                $limit: 10
-            }
-        ]).exec((err, users) => {
-            if (err || !users)
-                res.status(400);
-            else {
-                res.json(users.map(user => ({
-                    id: user._id,
-                    fullName: user.fullName,
-                    avatar: user.avatar
-                })));
-            }
-        })
-    }
-}
+  const text = req.query.q;
+  if (text == '') return res.status(400);
+  if (!isNaN(text)) {
+    User.findById(text, (err, user) => {
+      if (err || !user) res.status(400);
+      else
+        res.json([
+          {
+            id: user._id,
+            fullName: user.firstName + ' ' + user.lastName,
+            avatar: user.avatar,
+          },
+        ]);
+    });
+  } else {
+    User.aggregate([
+      {
+        $project: {
+          fullName: {
+            $concat: ['$firstName', ' ', '$lastName'],
+          },
+          avatar: 1,
+        },
+      },
+      {
+        $match: {
+          fullName: {
+            $regex: text,
+            $options: 'i',
+          },
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]).exec((err, users) => {
+      if (err || !users) res.status(400);
+      else {
+        res.json(
+          users.map((user) => ({
+            id: user._id,
+            fullName: user.fullName,
+            avatar: user.avatar,
+          }))
+        );
+      }
+    });
+  }
+};

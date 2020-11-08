@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
-const IdRecord = require("./IdRecord");
-const fs = require("fs");
-const path = require("path");
+const mongoose = require('mongoose');
+const IdRecord = require('./IdRecord');
+const fs = require('fs');
+const path = require('path');
 
 var imageSchema = new mongoose.Schema({
   _id: Number,
   user: {
     type: Number,
     required: true,
-    ref: "User",
+    ref: 'User',
   },
   key: String,
   type: String,
@@ -23,11 +23,11 @@ var imageSchema = new mongoose.Schema({
   },
 });
 
-imageSchema.pre("save", function (next) {
+imageSchema.pre('save', function (next) {
   if (this.isNew) {
     const document = this;
     IdRecord.findOneAndUpdate(
-      { model: "Image" },
+      { model: 'Image' },
       { $inc: { recentId: 1 } },
       { new: true, useFindAndModify: false },
       (err, data) => {
@@ -41,7 +41,7 @@ imageSchema.pre("save", function (next) {
   } else next();
 });
 
-imageSchema.pre("deleteOne", function (next) {
+imageSchema.pre('deleteOne', function (next) {
   this.model.findById(this._conditions._id, (err, image) => {
     if (err) {
       next(err);
@@ -49,8 +49,8 @@ imageSchema.pre("deleteOne", function (next) {
       fs.unlink(
         path.join(
           __dirname,
-          "../public/images/",
-          image._id + "." + image.extension
+          '../public/images/',
+          image._id + '.' + image.extension
         ),
         (err) => {
           next(err);
@@ -60,4 +60,4 @@ imageSchema.pre("deleteOne", function (next) {
   });
 });
 
-module.exports = mongoose.model("Image", imageSchema);
+module.exports = mongoose.model('Image', imageSchema);

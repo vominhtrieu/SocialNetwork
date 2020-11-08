@@ -7,11 +7,25 @@ import {
   Box,
   makeStyles,
 } from '@material-ui/core';
+import { PeopleAlt } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import UserRow from '../component/ActiveList/UserRow';
 
 const useStyles = makeStyles((theme) => ({
-  cardRoot: { flexGrow: 1, marginTop: theme.spacing(8) },
+  peopleIcon: {
+    fontSize: 80,
+  },
+  cardRoot: {
+    flexGrow: 1,
+    paddingTop: theme.spacing(6),
+    width: 320,
+    borderRight: 'none',
+    borderRadius: 0,
+    overflowY: 'auto',
+    [theme.breakpoints.down('md')]: {
+      width: 200,
+    },
+  },
 }));
 
 function ActiveList({ socket }) {
@@ -29,23 +43,49 @@ function ActiveList({ socket }) {
         else return users;
       });
     });
+
+    socket.on('offline', (friendId) => {
+      setUsers((users) => users.filter((user) => user !== friendId));
+    });
   }, [socket]);
-  console.log(users);
+
   return (
-    <Box display="flex" height="100vh" width="100%">
+    <Box
+      position="fixed"
+      display="flex"
+      height="100vh"
+      top={0}
+      right={0}
+      overflow="hidden"
+    >
       <Card className={classes.cardRoot} variant="outlined">
-        <CardContent>
-          <Box paddingLeft={2}>
-            <Typography variant="body1">
-              <b>Active</b>
-            </Typography>
+        {users.length > 0 ? (
+          <CardContent>
+            <Box paddingLeft={2}>
+              <Typography variant="body1">
+                <b>Active</b>
+              </Typography>
+            </Box>
+
+            <List>
+              {users.map((user, index) => (
+                <UserRow key={index} userId={user} />
+              ))}
+            </List>
+          </CardContent>
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+            width="100%"
+            height="100%"
+          >
+            <PeopleAlt className={classes.peopleIcon} />
+            <Typography variant="h6">No one is online</Typography>
           </Box>
-          <List>
-            {users.map((user, index) => (
-              <UserRow key={index} userId={user} />
-            ))}
-          </List>
-        </CardContent>
+        )}
       </Card>
     </Box>
   );

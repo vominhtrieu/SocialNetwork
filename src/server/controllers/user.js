@@ -71,5 +71,5 @@ exports.getProfileById = (req, res) => {
 };
 
 exports.auth = (_req, res) => {
-  res.json('Authenticated');
+  res.sendStatus(200);
 };

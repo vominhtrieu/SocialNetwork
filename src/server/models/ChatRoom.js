@@ -1,17 +1,17 @@
-const mongoose = require("mongoose");
-const IdRecord = require("./IdRecord");
+const mongoose = require('mongoose');
+const IdRecord = require('./IdRecord');
 
 var chatRoomSchema = new mongoose.Schema({
   _id: Number,
   roomName: {
     type: String,
-    default: "",
+    default: '',
   },
   participants: [
     {
       user: {
         type: Number,
-        ref: "User",
+        ref: 'User',
       },
       messageSeen: {
         type: Number,
@@ -22,16 +22,16 @@ var chatRoomSchema = new mongoose.Schema({
   messages: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
+      ref: 'Message',
     },
   ],
 });
 
-chatRoomSchema.pre("save", function (next) {
+chatRoomSchema.pre('save', function (next) {
   if (this.isNew) {
     const document = this;
     IdRecord.findOneAndUpdate(
-      { model: "ChatRoom" },
+      { model: 'ChatRoom' },
       { $inc: { recentId: 1 } },
       { new: true, useFindAndModify: false },
       (err, data) => {
@@ -45,4 +45,4 @@ chatRoomSchema.pre("save", function (next) {
   } else next();
 });
 
-module.exports = mongoose.model("ChatRoom", chatRoomSchema);
+module.exports = mongoose.model('ChatRoom', chatRoomSchema);

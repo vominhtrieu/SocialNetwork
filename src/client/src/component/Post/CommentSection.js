@@ -1,13 +1,36 @@
-import React from "react";
-import Comment from "./Comment";
+import React from 'react';
+import { HOST } from '../../config/constant';
+import Comment from './Comment';
 
-function CommentSection({ comments, isVisible, socket, id }) {
+function CommentSection({ isVisible, socket, postId }) {
+  const [comments, setComments] = React.useState([]);
+
   React.useEffect(() => {
-    console.log(id);
+    if (isVisible) {
+      console.log('On');
+      fetch(`${HOST}/${postId}/comments`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((comments) => {
+          setComments(comments);
+        });
+
+      socket.on('newComment', (data) => {
+        if (postId === data.postId) {
+          setComments((comments) => [...comments, data.commentId]);
+        }
+      });
+    } else {
+      console.log('Off');
+      socket.off('newComment');
+    }
     return () => {
-      socket.removeAllListeners("newLike");
+      socket.off('newComment');
     };
-  }, [isVisible, id, socket]);
+  }, [isVisible, postId, socket]);
+
   const renderComments = comments.map((comment, index) => (
     <Comment key={index} id={comment} />
   ));

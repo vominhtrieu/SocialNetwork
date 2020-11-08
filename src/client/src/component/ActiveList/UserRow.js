@@ -13,8 +13,10 @@ const useStyles = makeStyles((theme) => ({
   link: {
     color: 'inherit',
     textDecoration: 'none',
+  },
+  listItem: {
     '&:hover': {
-      color: theme.palette.primary,
+      backgroundColor: 'blue',
     },
   },
 }));
@@ -34,7 +36,7 @@ export default function UserRow({ userId }) {
   if (!user) return null;
   return (
     <Link to={`/${userId}`} className={classes.link}>
-      <ListItem>
+      <ListItem className={classes.listItem}>
         <ListItemAvatar>
           <UserAvatar imageId={user.avatar} />
         </ListItemAvatar>

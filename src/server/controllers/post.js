@@ -1,5 +1,5 @@
-const Post = require("../models/Post");
-const User = require("../models/User");
+const Post = require('../models/Post');
+const User = require('../models/User');
 
 exports.addNewPost = (req, res) => {
   const post = new Post({
@@ -12,28 +12,28 @@ exports.addNewPost = (req, res) => {
       req.body.user.posts.push(post);
       req.body.user
         .save()
-        .then(() => res.json({ id: post.id }))
+        .then(() => res.json({ postId: post.id }))
         .catch((err) => {
-          res.status(500).json("Internal error" + err);
+          res.status(500).json('Internal error' + err);
         });
     })
     .catch((err) => {
-      res.status(500).json("Internal error" + err);
+      res.status(500).json('Internal error' + err);
     });
 };
 
 exports.getUserPost = (req, res) => {
   User.findById(req.params.id).exec((err, user) => {
-    if (err) return res.status(500).json("Unable to find this user");
+    if (err) return res.status(500).json('Unable to find this user');
     res.json(user.posts.reverse());
   });
 };
 
 exports.getPost = (req, res) => {
   Post.findById(Number(req.params.id))
-    .populate("user")
+    .populate('user')
     .exec((err, post) => {
-      if (err) return res.status(500).json("Unable to find this post");
+      if (err) return res.status(500).json('Unable to find this post');
       res.json({
         postId: post._id,
         user: {
@@ -47,7 +47,7 @@ exports.getPost = (req, res) => {
         images: post.images,
         liked: post.likes.indexOf(req.body.id) !== -1,
         likeCount: post.likes.length,
-        comments: post.comments,
+        commentCount: post.comments.length,
       });
     });
 };
@@ -66,7 +66,7 @@ exports.getFeed = (req, res) => {
   })
     .sort({ date: -1 })
     .exec((err, posts) => {
-      if (err) return res.status(500).json("Internal error");
+      if (err) return res.status(500).json('Internal error');
       const data = posts.map((post) => post._id);
       res.json(data);
     });

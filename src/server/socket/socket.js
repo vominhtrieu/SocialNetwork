@@ -15,8 +15,7 @@ module.exports = (io) => {
 
             user.friends.forEach((friend, index) => {
               redisClient.get(friend.user, (err, friendClientCount) => {
-                if (!err && friendClientCount) {
-                  if (socket.userId === null) console.log("Why it's null");
+                if (!err && friendClientCount && friendClientCount > 0) {
                   io.to('u/' + friend.user).emit('online', socket.userId);
                   onlineUserList.push(friend.user);
 
@@ -46,9 +45,7 @@ module.exports = (io) => {
           User.findById(socket.userId, (err, user) => {
             if (!err && user) {
               user.friends.forEach((friend) => {
-                io.to('u/' + friend.user).emit('offline', {
-                  friendId: socket.userId,
-                });
+                io.to('u/' + friend.user).emit('offline', socket.userId);
               });
             }
           });

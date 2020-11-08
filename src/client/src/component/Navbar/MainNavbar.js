@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   AppBar,
   Typography,
@@ -7,17 +7,18 @@ import {
   Avatar,
   IconButton,
   Grid,
-} from "@material-ui/core";
-import { ArrowDropDown as ArrowDropDownIcon } from "@material-ui/icons";
+} from '@material-ui/core';
+import { ArrowDropDown as ArrowDropDownIcon } from '@material-ui/icons';
 
-import { makeStyles } from "@material-ui/core/styles";
-import NavigationTab from "./NavigitionTab";
-import Logo from "../../resources/Logo.svg";
-import { HOST } from "../../config/constant";
-import { connect } from "react-redux";
-import NavbarMenu from "./NavbarMenu";
-import SearchBar from "./SearchBar";
-import { useHistory } from "react-router-dom";
+import { makeStyles } from '@material-ui/core/styles';
+import NavigationTab from './NavigitionTab';
+import Logo from '../../resources/Logo.svg';
+import { HOST } from '../../config/constant';
+import { connect } from 'react-redux';
+import NavbarMenu from './NavbarMenu';
+import SearchBar from './SearchBar';
+import { useHistory } from 'react-router-dom';
+import { signOut } from '../../actions/signOut';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -26,45 +27,45 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     height: 50,
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('sm')]: {
       height: 100,
     },
   },
   brand: {
-    cursor: "default",
-    display: "flex",
-    alignItems: "center",
+    cursor: 'default',
+    display: 'flex',
+    alignItems: 'center',
     paddingLeft: theme.spacing(1),
   },
   searchBar: {
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
     flexGrow: 1,
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
   accountButton: {
     marginRight: theme.spacing(1),
-    [theme.breakpoints.up("md")]: {
-      display: "none",
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
     },
   },
   accountGrid: {
-    [theme.breakpoints.down("sm")]: {
-      display: "none",
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
     },
   },
   accountAvatar: {
     width: 35,
     height: 35,
-    backgroundColor: "#bdbdbd",
-    border: "1.7px solid white",
+    backgroundColor: '#bdbdbd',
+    border: '1.7px solid white',
   },
   userInfo: {
     padding: 0,
-    textTransform: "none",
-    "&:hover": {
-      backgroundColor: "inherit",
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: 'inherit',
     },
   },
 }));
@@ -74,6 +75,10 @@ export function MainNavbar(props) {
   const history = useHistory();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  if (!user) {
+    history.push('/signin');
+  }
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -105,7 +110,7 @@ export function MainNavbar(props) {
                 <IconButton disableRipple onClick={handleMenu} size="small">
                   <Avatar
                     className={classes.accountAvatar}
-                    src={HOST + "/image/" + user.avatar}
+                    src={HOST + '/image/' + user.avatar}
                   />
                 </IconButton>
               </Box>
@@ -127,11 +132,11 @@ export function MainNavbar(props) {
                 <Box marginRight={1}>
                   <Avatar
                     className={classes.accountAvatar}
-                    src={HOST + "/image/" + user.avatar}
+                    src={HOST + '/image/' + user.avatar}
                     alt={user.firstName + "'s avatar"}
                   />
                 </Box>
-                <Typography>{user.firstName + " " + user.lastName}</Typography>
+                <Typography>{user.firstName + ' ' + user.lastName}</Typography>
                 <ArrowDropDownIcon />
               </Button>
             </Box>
@@ -140,6 +145,7 @@ export function MainNavbar(props) {
             history={props.history}
             anchorEl={anchorEl}
             closeMenu={closeMenu}
+            signOut={props.signOut}
             user={user}
           />
         </Grid>
@@ -155,4 +161,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(MainNavbar);
+const mapDispatchToProps = (dispatch) => ({
+  signOut: () => dispatch(signOut),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainNavbar);

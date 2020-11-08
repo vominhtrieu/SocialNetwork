@@ -1,11 +1,11 @@
-const Post = require("../models/Post");
+const Post = require('../models/Post');
 
 module.exports = (io, socket) => {
-  socket.on("joinPost", ({ postId }) => {
-    socket.join("post/" + String(postId));
+  socket.on('joinPost', ({ postId }) => {
+    socket.join('post/' + String(postId));
   });
 
-  socket.on("like", ({ postId }) => {
+  socket.on('like', ({ postId }) => {
     Post.findById(postId, (err, post) => {
       if (!post) return;
       if (post.likes.indexOf(socket.userId) !== -1) {
@@ -23,8 +23,9 @@ module.exports = (io, socket) => {
           },
           (err, post) => {
             if (!err && post) {
-              socket.to("post/" + String(post._id)).emit("newLike", {
-                likeCount: post.likes.length,
+              io.to('post/' + String(post._id)).emit('removeLike', {
+                postId: post._id,
+                userId: socket.userId,
               });
             }
           }
@@ -43,13 +44,21 @@ module.exports = (io, socket) => {
           },
           (err, post) => {
             if (!err && post) {
-              socket.to("post/" + String(post._id)).emit("newLike", {
-                likeCount: post.likes.length,
+              io.to('post/' + String(post._id)).emit('newLike', {
+                postId: post._id,
+                userId: socket.userId,
               });
             }
           }
         );
       }
+    });
+  });
+
+  socket.on('comment', ({ postId, commentId }) => {
+    io.to('post/' + String(postId)).emit('newComment', {
+      postId: postId,
+      commentId: commentId,
     });
   });
 };

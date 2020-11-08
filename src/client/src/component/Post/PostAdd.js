@@ -1,20 +1,20 @@
-import React from "react";
-import Card from "@material-ui/core/Card";
-import { CardContent, Avatar, Box, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import AddPostDialog from "../Dialog/AddPostDialog";
-import { HOST } from "../../config/constant";
-import { connect } from "react-redux";
+import React from 'react';
+import Card from '@material-ui/core/Card';
+import { CardContent, Avatar, Box, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import AddPostDialog from '../Dialog/AddPostDialog';
+import { HOST } from '../../config/constant';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
-    "&:hover": {
-      cursor: "pointer",
+    width: '100%',
+    '&:hover': {
+      cursor: 'pointer',
     },
   },
   avatar: {
-    float: "left",
+    float: 'left',
     width: 40,
     marginRight: 10,
   },
@@ -27,9 +27,9 @@ function PostAdd(props) {
     setOpen(true);
   };
 
-  const closeDialog = (id) => {
+  const closeDialog = ({ postId }) => {
     setOpen(false);
-    props.addPost(id);
+    if (postId) props.addPost(postId);
   };
 
   return (
@@ -45,7 +45,7 @@ function PostAdd(props) {
         <CardContent>
           <Box display="flex" alignItems="center">
             <Avatar
-              src={HOST + "/image/" + props.user.avatar}
+              src={HOST + '/image/' + props.user.avatar}
               className={classes.avatar}
             ></Avatar>
             <Typography variant="body2">What are you thinking...?</Typography>

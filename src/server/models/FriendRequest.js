@@ -1,16 +1,16 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 var friendRequestSchema = new mongoose.Schema({
-    user: {
-        type: Number,
-        required: true,
-        ref: "User"
-    },
-    requestedDate: {
-        type: Date,
-        required: true,
-        default: Date.now
-    }
-})
+  user: {
+    type: Number,
+    required: true,
+    ref: 'User',
+  },
+  requestedDate: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+});
 
-module.exports = mongoose.model("FriendRequest", friendRequestSchema);
+module.exports = mongoose.model('FriendRequest', friendRequestSchema);

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Menu,
   MenuItem,
@@ -6,15 +6,14 @@ import {
   Typography,
   Box,
   makeStyles,
-} from "@material-ui/core";
+} from '@material-ui/core';
 import {
   Person as PersonIcon,
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
   Help as HelpIcon,
-} from "@material-ui/icons";
-import { HOST } from "../../config/constant";
-import { useHistory } from "react-router-dom";
+} from '@material-ui/icons';
+import { HOST } from '../../config/constant';
 
 const useStyles = makeStyles((theme) => ({
   avatarMenuItem: {
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   name: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     lineHeight: 1,
   },
   menuIcon: {
@@ -34,19 +33,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NavbarMenu(props) {
   const classes = useStyles();
-  const history = useHistory();
-  
+
   const { anchorEl, closeMenu, user } = props;
   function SignOut() {
-    fetch(HOST + "/signout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    }).then((res) => {
-      if (res.ok) history.push("/signin");
-    });
+    props.signOut();
   }
 
   const open = Boolean(anchorEl);
@@ -57,33 +47,33 @@ export default function NavbarMenu(props) {
       anchorEl={anchorEl}
       getContentAnchorEl={null}
       anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
+        vertical: 'bottom',
+        horizontal: 'right',
       }}
       disableScrollLock={true}
       keepMounted
       transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: 'top',
+        horizontal: 'right',
       }}
       open={open}
       onClose={closeMenu}
     >
       <MenuItem
         onClick={() => {
-          closeMenu("/" + user.id);
+          closeMenu('/' + user.id);
         }}
       >
         <Box>
           <Avatar
             className={classes.avatarMenuItem}
-            src={HOST + "/image/" + user.avatar}
+            src={HOST + '/image/' + user.avatar}
             alt={user.firstName + "'s avatar"}
           />
         </Box>
         <Box marginLeft={1} minWidth={120}>
           <Typography className={classes.name}>
-            {user.firstName + " " + user.lastName}
+            {user.firstName + ' ' + user.lastName}
           </Typography>
           <Typography color="textSecondary" variant="body2">
             View your profile
@@ -96,7 +86,7 @@ export default function NavbarMenu(props) {
       </MenuItem>
       <MenuItem
         onClick={() => {
-          closeMenu("/");
+          closeMenu('/');
         }}
       >
         <SettingsIcon className={classes.menuIcon} />
@@ -104,7 +94,7 @@ export default function NavbarMenu(props) {
       </MenuItem>
       <MenuItem
         onClick={() => {
-          closeMenu("/about");
+          closeMenu('/about');
         }}
       >
         <HelpIcon className={classes.menuIcon} />

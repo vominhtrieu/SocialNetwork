@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 var commentSchema = new mongoose.Schema({
   user: {
     type: Number,
     required: true,
-    ref: "User",
+    ref: 'User',
   },
   textContent: {
     type: String,
@@ -18,15 +18,15 @@ var commentSchema = new mongoose.Schema({
   likes: [
     {
       type: Number,
-      ref: "User",
+      ref: 'User',
     },
   ],
   replies: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",   
+      ref: 'Comment',
     },
   ],
 });
 
-module.exports = mongoose.model("Comment", commentSchema);
+module.exports = mongoose.model('Comment', commentSchema);

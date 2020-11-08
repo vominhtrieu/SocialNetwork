@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 var idRecordShcema = new mongoose.Schema({
   model: {
@@ -11,4 +11,4 @@ var idRecordShcema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("IdRecord", idRecordShcema);
+module.exports = mongoose.model('IdRecord', idRecordShcema);

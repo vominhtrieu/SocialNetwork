@@ -1,4 +1,4 @@
-const IdRecord = require("./models/IdRecord");
+const IdRecord = require('./models/IdRecord');
 
 module.exports = () => {
   IdRecord.find({}, (err, records) => {
@@ -8,19 +8,19 @@ module.exports = () => {
 
       const startingRecords = [
         {
-          model: "User",
+          model: 'User',
           recentId: startingNumber,
         },
         {
-          model: "Image",
+          model: 'Image',
           recentId: startingNumber,
         },
         {
-          model: "ChatRoom",
+          model: 'ChatRoom',
           recentId: startingNumber,
         },
         {
-          model: "Post",
+          model: 'Post',
           recentId: startingNumber,
         },
       ];

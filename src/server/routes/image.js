@@ -1,21 +1,21 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const checkAuth = require("../middlewares/checkAuth");
-const { upload } = require("../services/fileUpload");
-const imageController = require("../controllers/image");
+const checkAuth = require('../middlewares/checkAuth');
+const { upload } = require('../services/fileUpload');
+const imageController = require('../controllers/image');
 
 router.post(
-  "/avatar",
+  '/avatar',
   checkAuth,
-  upload.single("avatar"),
+  upload.single('avatar'),
   imageController.uploadAvatar
 );
 router.post(
-  "/cover",
+  '/cover',
   checkAuth,
-  upload.single("cover"),
+  upload.single('cover'),
   imageController.uploadCover
 );
-router.get("/image/:id", checkAuth, imageController.getImage);
+router.get('/image/:id', checkAuth, imageController.getImage);
 
 module.exports = router;

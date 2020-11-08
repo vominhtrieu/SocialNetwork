@@ -1,16 +1,16 @@
-const ChatRoom = require("../models/ChatRoom");
-const Message = require("../models/Message");
+const ChatRoom = require('../models/ChatRoom');
+const Message = require('../models/Message');
 
 module.exports = (io, socket) => {
-  socket.on("joinRoom", ({roomId}) => {
-    socket.join("r/" + roomId);
+  socket.on('joinRoom', ({ roomId }) => {
+    socket.join('r/' + roomId);
   });
 
-  socket.on("leaveRoom", ({roomId}) => {
-    socket.leave("r/" + roomId);
+  socket.on('leaveRoom', ({ roomId }) => {
+    socket.leave('r/' + roomId);
   });
 
-  socket.on("message", (data) => {
+  socket.on('message', (data) => {
     ChatRoom.findById(data.roomId, (err, room) => {
       if (!err && room) {
         const message = new Message({
@@ -41,10 +41,10 @@ module.exports = (io, socket) => {
 
               room.participants.forEach((participant) => {
                 if (participant.user !== socket.userId)
-                  io.to("u/" + participant.user).emit("newMessage", updateData);
-                io.to("u/" + participant.user).emit("message", respondData);
+                  io.to('u/' + participant.user).emit('newMessage', updateData);
+                io.to('u/' + participant.user).emit('message', respondData);
               });
-              io.to("u/", socket.userId).emit("seen", updateData);
+              io.to('u/', socket.userId).emit('seen', updateData);
             });
           })
           .catch((err) => console.log(err));
@@ -52,23 +52,23 @@ module.exports = (io, socket) => {
     });
   });
 
-  socket.on("typing", ({ roomId }) => {
-    socket.to("r/" + roomId).emit("typing", {
+  socket.on('typing', ({ roomId }) => {
+    socket.to('r/' + roomId).emit('typing', {
       sender: socket.userId,
     });
   });
 
-  socket.on("seen", ({ roomId, messageSeen }) => {
+  socket.on('seen', ({ roomId, messageSeen }) => {
     ChatRoom.updateOne(
-      { _id: roomId, "participants.user": socket.userId },
+      { _id: roomId, 'participants.user': socket.userId },
       {
         $set: {
-          "participants.$.messageSeen": messageSeen,
+          'participants.$.messageSeen': messageSeen,
         },
       },
       (err) => {
         if (!err) {
-          io.to("u/" + socket.userId).emit("seen", { roomId: roomId });
+          io.to('u/' + socket.userId).emit('seen', { roomId: roomId });
         }
       }
     );

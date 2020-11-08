@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
-import { Box } from "@material-ui/core";
-import Post from "../component/Post/Post";
-import PostAdd from "../component/Post/PostAdd";
-import { HOST } from "../config/constant";
-import { Helmet } from "react-helmet";
+import React, { useEffect } from 'react';
+import { Box } from '@material-ui/core';
+import Post from '../component/Post/Post';
+import PostAdd from '../component/Post/PostAdd';
+import { HOST } from '../config/constant';
+import { Helmet } from 'react-helmet';
 
-function Home({ socket }) {
+function Home() {
   const [posts, setPosts] = React.useState([]);
   useEffect(() => {
     fetch(`${HOST}/feed`, {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((newPosts) => {
@@ -19,7 +19,7 @@ function Home({ socket }) {
   }, []);
 
   const addPost = (id) => {
-    setPosts((posts) => [...posts, id]);
+    setPosts((posts) => [id, ...posts]);
   };
 
   const renderPost = posts.map((postId, index) => {

@@ -1,25 +1,25 @@
-import React from "react";
-import { Box, Avatar, IconButton, makeStyles } from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import CustimizedTextField from "../Common/CustimizedTextField";
-import { HOST } from "../../config/constant";
+import React from 'react';
+import { Box, Avatar, IconButton, makeStyles } from '@material-ui/core';
+import SendIcon from '@material-ui/icons/Send';
+import CustimizedTextField from '../Common/CustimizedTextField';
+import { HOST } from '../../config/constant';
 
 const useStyle = makeStyles((theme) => ({
-    avatar: {
-      float: "left",
-      width: 40,
-      marginRight: 10,
-    },
-    sendButton: {
-      float: "right",
-      marginTop: 2,
-      marginLeft: 10,
-    },
-  }));
+  avatar: {
+    float: 'left',
+    width: 40,
+    marginRight: 10,
+  },
+  sendButton: {
+    float: 'right',
+    marginTop: 2,
+    marginLeft: 10,
+  },
+}));
 
 export default function CommentInput(props) {
-    const classes = useStyle();
-  const [textInput, setTextInput] = React.useState("");
+  const classes = useStyle();
+  const [textInput, setTextInput] = React.useState('');
 
   const onInput = (text) => {
     setTextInput(text);
@@ -27,19 +27,31 @@ export default function CommentInput(props) {
 
   const makeAComment = () => {
     fetch(`${HOST}/comment`, {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         postId: props.postId,
         textContent: textInput,
         images: [],
       }),
-    }).then((res) => {
-      if (res.ok) setTextInput("");
-    });
+    })
+      .then((res) => {
+        if (res.ok) {
+          setTextInput('');
+        }
+        return res.json();
+      })
+      .then(({ commentId }) => {
+        if (commentId) {
+          props.socket.emit('comment', {
+            postId: props.postId,
+            commentId: commentId,
+          });
+        }
+      });
   };
   return (
     <Box marginTop={2}>

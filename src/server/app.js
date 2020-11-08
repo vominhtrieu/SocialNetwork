@@ -1,20 +1,20 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const express = require("express");
+const express = require('express');
 const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const databaseController = require("./controllers/database");
-const initial = require("./initial");
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const databaseController = require('./controllers/database');
+const initial = require('./initial');
 
 //Socket
-require("./socket/socket")(io);
+require('./socket/socket')(io);
 
-if (app.get("env") === "production") {
-  app.set("trust proxy", 1);
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1);
 }
 
 databaseController.connectToDatabase();
@@ -26,17 +26,17 @@ app.use(express.json());
 app.use(cookieParser());
 
 //Routes
-app.use("/", require("./routes/auth"));
-app.use("/", require("./routes/friend"));
-app.use("/", require("./routes/image"));
-app.use("/", require("./routes/notification"));
-app.use("/", require("./routes/chatRoom"));
-app.use("/", require("./routes/post"));
-app.use("/", require("./routes/comment"));
-app.use("/", require("./routes/search"));
-app.use("/", require("./routes/user"));
+app.use('/', require('./routes/auth'));
+app.use('/', require('./routes/friend'));
+app.use('/', require('./routes/image'));
+app.use('/', require('./routes/notification'));
+app.use('/', require('./routes/chatRoom'));
+app.use('/', require('./routes/post'));
+app.use('/', require('./routes/comment'));
+app.use('/', require('./routes/search'));
+app.use('/', require('./routes/user'));
 
 server.listen(process.env.SERVER_PORT, function () {
   console.clear();
-  console.log("Server has been started on " + process.env.SERVER_PORT);
+  console.log('Server has been started on ' + process.env.SERVER_PORT);
 });

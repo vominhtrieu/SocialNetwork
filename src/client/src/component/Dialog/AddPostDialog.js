@@ -1,29 +1,29 @@
-import React from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import EmojiPicker from "../Common/EmojiPicker";
-import { InputBase, Button, Box, IconButton } from "@material-ui/core";
+import React from 'react';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import EmojiPicker from '../Common/EmojiPicker';
+import { InputBase, Button, Box, IconButton } from '@material-ui/core';
 import {
   Image as ImageIcon,
   EmojiEmotions as EmojiIcon,
-} from "@material-ui/icons";
-import { HOST } from "../../config/constant";
+} from '@material-ui/icons';
+import { HOST } from '../../config/constant';
 
 const useStyles = makeStyles((theme) => ({
   input: {
     marginBottom: theme.spacing(1),
     fontSize: 18,
-    overflowY: "auto",
+    overflowY: 'auto',
   },
   title: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   content: {
-    overflow: "visible",
+    overflow: 'visible',
   },
-  paper: { margin: 0, width: "100%" },
+  paper: { margin: 0, width: '100%' },
 }));
 
 const DialogContent = withStyles((theme) => ({
@@ -35,22 +35,24 @@ const DialogContent = withStyles((theme) => ({
 export default function AddPostDialog(props) {
   const classes = useStyles();
 
-  const [postText, setPostText] = React.useState("");
+  const [postText, setPostText] = React.useState('');
   const [isEmojiOpened, setIsEmojiOpened] = React.useState(false);
   const submitPost = () => {
-    fetch(HOST + "/newpost", {
-      method: "POST",
-      credentials: "include",
+    fetch(HOST + '/newpost', {
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ post: { textContent: postText } }),
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return null;
-    });
+    })
+      .then((res) => res.json())
+      .then(({ postId }) => {
+        if (postId) {
+          setPostText('');
+          props.closeDialog({ postId: postId });
+        }
+      });
   };
 
   const addEmoji = (emoji) => {
@@ -59,7 +61,7 @@ export default function AddPostDialog(props) {
 
   return (
     <Dialog
-      style={{ overflowY: "scroll", zIndex: 999999 }}
+      style={{ overflowY: 'scroll', zIndex: 999999 }}
       classes={{
         paper: classes.paper,
       }}
@@ -84,7 +86,7 @@ export default function AddPostDialog(props) {
           onChange={(e) => setPostText(e.target.value)}
           fullWidth
           rows={10}
-          inputProps={{ "aria-label": "Add new post" }}
+          inputProps={{ 'aria-label': 'Add new post' }}
         />
         <Box display="flex" alignItems="center">
           <Box display="flex" flexGrow={1} flexDirection="row">
@@ -102,6 +104,8 @@ export default function AddPostDialog(props) {
             <Box display="flex" alignItems="center">
               <IconButton onClick={() => setIsEmojiOpened(true)} size="small">
                 <EmojiIcon color="primary" />
+              </IconButton>
+              <Box position="relative">
                 {isEmojiOpened ? (
                   <EmojiPicker
                     isOpened={isEmojiOpened}
@@ -109,7 +113,7 @@ export default function AddPostDialog(props) {
                     onClose={() => setIsEmojiOpened(false)}
                   />
                 ) : null}
-              </IconButton>
+              </Box>
             </Box>
             <IconButton size="small">
               <ImageIcon color="primary" />

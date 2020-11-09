@@ -1,9 +1,9 @@
-import React from "react";
-import ReceiveMessage from "./ReceiveMessage";
-import SentMessage from "./SentMessage";
-import { Box } from "@material-ui/core";
-import { HOST } from "../../config/constant";
-import TypingMessage from "./TypingMessage";
+import React from 'react';
+import ReceiveMessage from './ReceiveMessage';
+import SentMessage from './SentMessage';
+import { Box } from '@material-ui/core';
+import { HOST } from '../../config/constant';
+import TypingMessage from './TypingMessage';
 export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
   const messageHistory = React.useRef(null);
@@ -18,12 +18,12 @@ export default function MessageHistory(props) {
 
   //Join and leave room
   React.useEffect(() => {
-    socket.emit("joinRoom", {
+    socket.emit('joinRoom', {
       roomId: roomInfo._id,
     });
 
     return () => {
-      socket.emit("leaveRoom", {
+      socket.emit('leaveRoom', {
         roomId: roomInfo._id,
       });
     };
@@ -32,8 +32,8 @@ export default function MessageHistory(props) {
   //Fetch room's messages
   React.useEffect(() => {
     fetch(`${HOST}/room/${roomInfo._id}/messages`, {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((messages) => {
@@ -46,40 +46,40 @@ export default function MessageHistory(props) {
   React.useEffect(() => {
     const removeATypingUser = (userId) => {
       setTypingUsers((typingUsers) => {
-        const temp = {...typingUsers};
+        const temp = { ...typingUsers };
         temp[userId] = null;
         return temp;
       });
-    }
-    
+    };
+
     const addNewTypingUser = (userId) => {
+      clearTimeout(typingUsers[userId]);
       setTypingUsers((typingUsers) => {
-        const temp = {...typingUsers};
-        clearTimeout(temp[userId]);
-        temp[userId] = setTimeout(()=>{
+        const temp = { ...typingUsers };
+        temp[userId] = setTimeout(() => {
           removeATypingUser(userId);
-        }, 200);
+        }, 500);
         return temp;
       });
-    }
+    };
 
-    socket.on("message", (data) => {
+    socket.on('message', (data) => {
       setMessages((messages) => [...messages, data]);
       scrollToBottom();
     });
-    socket.on("typing", ({ sender }) => {
+    socket.on('typing', ({ sender }) => {
       addNewTypingUser(sender);
       scrollToBottom();
     });
     return () => {
-      socket.removeAllListeners("message");
-      socket.removeAllListeners("typing");
+      socket.removeAllListeners('message');
+      socket.removeAllListeners('typing');
     };
-  }, [socket]);
+  }, [socket, typingUsers]);
 
   //Listen to seen event
   React.useEffect(() => {
-    socket.emit("seen", {
+    socket.emit('seen', {
       roomId: roomInfo._id,
       messageSeen: messages.length,
     });
@@ -102,7 +102,7 @@ export default function MessageHistory(props) {
     );
   });
 
-  const typingUserList = Object.keys(typingUsers).filter((key)=>{
+  const typingUserList = Object.keys(typingUsers).filter((key) => {
     return typingUsers[key] !== null;
   });
 

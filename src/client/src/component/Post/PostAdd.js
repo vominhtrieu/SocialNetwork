@@ -1,6 +1,6 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
-import { CardContent, Avatar, Box, Typography } from '@material-ui/core';
+import { CardContent, Avatar, Box, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddPostDialog from '../Dialog/AddPostDialog';
 import { HOST } from '../../config/constant';
@@ -48,7 +48,13 @@ function PostAdd(props) {
               src={HOST + '/image/' + props.user.avatar}
               className={classes.avatar}
             ></Avatar>
-            <Typography variant="body2">What are you thinking...?</Typography>
+            <TextField
+              placeholder="What are you thinking?"
+              fullWidth
+              inputProps={{
+                readOnly: true,
+              }}
+            />
           </Box>
         </CardContent>
       </Card>

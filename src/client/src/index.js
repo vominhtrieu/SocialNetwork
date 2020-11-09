@@ -9,9 +9,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import reduxThunk from 'redux-thunk';
 import { profile as profileReducer } from './reducers/profile';
-//import logger from 'redux-logger';
+import logger from 'redux-logger';
 
-const middlewares = [reduxThunk];
+const middlewares = [reduxThunk, logger];
 const store = compose(applyMiddleware(...middlewares))(createStore)(
   profileReducer
 );

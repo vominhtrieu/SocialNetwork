@@ -89,6 +89,11 @@ export function MainNavbar(props) {
     setAnchorEl(null);
   };
 
+  const signOut = () => {
+    props.socket.disconnect();
+    props.signOut();
+  };
+
   return (
     <Box className={classes.root}>
       <AppBar color="default" className={classes.appbar}>
@@ -145,7 +150,7 @@ export function MainNavbar(props) {
             history={props.history}
             anchorEl={anchorEl}
             closeMenu={closeMenu}
-            signOut={props.signOut}
+            signOut={signOut}
             user={user}
           />
         </Grid>

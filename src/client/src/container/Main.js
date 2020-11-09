@@ -6,6 +6,7 @@ import Home from './Home';
 import Notification from './Notification';
 import About from '../component/About/About';
 import MainNavbar from '../component/Navbar/MainNavbar';
+import LeftNavigation from '../component/Navbar/LeftNavigation';
 
 import { Switch, Route } from 'react-router-dom';
 import { Box, Grid, makeStyles, withWidth, isWidthUp } from '@material-ui/core';
@@ -34,11 +35,14 @@ function Main(props) {
       <MainNavbar />
       <Box className={classes.container}>
         <Grid container style={{ flexGrow: 1 }}>
-          <Grid item xs={false} md={3} />
+          <Grid item xs={false} md={3}>
+            {isWidthUp('md', props.width) ? <LeftNavigation /> : null}
+          </Grid>
           <Grid item xs={12} md={6} style={{ flexGrow: 1, display: 'flex' }}>
             <Box
               className={classes.content}
               display="flex"
+              flexDirection="column"
               marginX="auto"
               width="min(100%, 580px)"
             >
@@ -57,11 +61,9 @@ function Main(props) {
             </Box>
           </Grid>
 
-          {isWidthUp('md', props.width) ? (
-            <Grid item xs={false} md={3}>
-              <ActiveList />
-            </Grid>
-          ) : null}
+          <Grid item xs={false} md={3}>
+            {isWidthUp('md', props.width) ? <ActiveList /> : null}
+          </Grid>
         </Grid>
       </Box>
     </React.Fragment>

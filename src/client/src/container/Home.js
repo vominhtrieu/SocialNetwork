@@ -22,8 +22,8 @@ function Home() {
     setPosts((posts) => [id, ...posts]);
   };
 
-  const renderPost = posts.map((postId, index) => {
-    return <Post key={index} id={postId} />;
+  const renderPost = posts.map((postId) => {
+    return <Post key={postId} id={postId} />;
   });
 
   return (

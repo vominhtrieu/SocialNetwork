@@ -4,10 +4,18 @@ import Dialog from '@material-ui/core/Dialog';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import EmojiPicker from '../Common/EmojiPicker';
-import { InputBase, Button, Box, IconButton } from '@material-ui/core';
+import {
+  InputBase,
+  Button,
+  Box,
+  IconButton,
+  GridList,
+  GridListTile,
+} from '@material-ui/core';
 import {
   Image as ImageIcon,
   EmojiEmotions as EmojiIcon,
+  Cancel as CancelIcon,
 } from '@material-ui/icons';
 import { HOST } from '../../config/constant';
 
@@ -16,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontSize: 18,
     overflowY: 'auto',
+  },
+  image: {
+    borderRadius: 5,
+  },
+  fileInput: {
+    display: 'none',
   },
   title: {
     textAlign: 'center',
@@ -37,6 +51,20 @@ export default function AddPostDialog(props) {
 
   const [postText, setPostText] = React.useState('');
   const [isEmojiOpened, setIsEmojiOpened] = React.useState(false);
+  const [imageUrls, setImagesUrls] = React.useState([]);
+
+  const onImageChange = (e) => {
+    const files = e.target.files;
+    for (const file of files) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onloadend = () => {
+        setImagesUrls((imageUrls) => [...imageUrls, reader.result]);
+      };
+    }
+  };
+
   const submitPost = () => {
     fetch(HOST + '/newpost', {
       method: 'POST',
@@ -53,6 +81,10 @@ export default function AddPostDialog(props) {
           props.closeDialog({ postId: postId });
         }
       });
+  };
+
+  const removeImage = (url) => {
+    setImagesUrls((urls) => urls.filter((u) => u !== url));
   };
 
   const addEmoji = (emoji) => {
@@ -85,12 +117,36 @@ export default function AddPostDialog(props) {
           multiline
           onChange={(e) => setPostText(e.target.value)}
           fullWidth
-          rows={10}
+          rows={8}
           inputProps={{ 'aria-label': 'Add new post' }}
         />
+
+        <GridList cols={4} cellHeight={140}>
+          {imageUrls.map((url, index) => (
+            <GridListTile key={index} cols={1}>
+              <img className={classes.image} src={url} alt="Selected" />
+              <Box position="absolute" top={-10} right={-10}>
+                <IconButton
+                  onClick={() => removeImage(url)}
+                  disableFocusRipple
+                  disableTouchRipple
+                  disableRipple
+                >
+                  <CancelIcon color="secondary" />
+                </IconButton>
+              </Box>
+            </GridListTile>
+          ))}
+        </GridList>
+
         <Box display="flex" alignItems="center">
           <Box display="flex" flexGrow={1} flexDirection="row">
-            <Box flexGrow={1} marginRight={2}>
+            <Box
+              display="flex"
+              alignItems="center"
+              flexGrow={1}
+              marginRight={2}
+            >
               <Button
                 onClick={submitPost}
                 variant="contained"
@@ -115,9 +171,25 @@ export default function AddPostDialog(props) {
                 ) : null}
               </Box>
             </Box>
-            <IconButton size="small">
-              <ImageIcon color="primary" />
-            </IconButton>
+
+            <input
+              accept="image/*"
+              name="image-file"
+              id="image-file"
+              type="file"
+              multiple
+              onChange={onImageChange}
+              className={classes.fileInput}
+            />
+            <label htmlFor="image-file">
+              <IconButton
+                color="primary"
+                aria-label="Upload images"
+                component="span"
+              >
+                <ImageIcon />
+              </IconButton>
+            </label>
           </Box>
         </Box>
       </DialogContent>

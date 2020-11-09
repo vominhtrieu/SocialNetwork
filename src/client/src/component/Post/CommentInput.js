@@ -26,6 +26,8 @@ export default function CommentInput(props) {
   };
 
   const makeAComment = () => {
+    setTextInput('');
+
     fetch(`${HOST}/comment`, {
       method: 'POST',
       credentials: 'include',
@@ -39,9 +41,6 @@ export default function CommentInput(props) {
       }),
     })
       .then((res) => {
-        if (res.ok) {
-          setTextInput('');
-        }
         return res.json();
       })
       .then(({ commentId }) => {

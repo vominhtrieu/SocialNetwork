@@ -20,7 +20,6 @@ module.exports = (io) => {
                   onlineUserList.push(friend.user);
 
                   if (index === user.friends.length - 1) {
-                    console.log(onlineUserList);
                     io.to(socket.id).emit('onlineList', onlineUserList);
                   }
                 }

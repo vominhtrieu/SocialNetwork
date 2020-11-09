@@ -7,7 +7,6 @@ function CommentSection({ isVisible, socket, postId }) {
 
   React.useEffect(() => {
     if (isVisible) {
-      console.log('On');
       fetch(`${HOST}/${postId}/comments`, {
         method: 'GET',
         credentials: 'include',
@@ -23,7 +22,6 @@ function CommentSection({ isVisible, socket, postId }) {
         }
       });
     } else {
-      console.log('Off');
       socket.off('newComment');
     }
     return () => {
@@ -31,8 +29,8 @@ function CommentSection({ isVisible, socket, postId }) {
     };
   }, [isVisible, postId, socket]);
 
-  const renderComments = comments.map((comment, index) => (
-    <Comment key={index} id={comment} />
+  const renderComments = comments.map((comment) => (
+    <Comment key={comment} id={comment} />
   ));
   return renderComments;
 }

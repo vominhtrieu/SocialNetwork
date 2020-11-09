@@ -1,13 +1,13 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Box, IconButton, List, Card } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import SearchIcon from "@material-ui/icons/Search";
-import NewMessageDialog from "../Dialog/NewMessage";
-import { connect } from "react-redux";
-import RoomItem from "./RoomItem";
-import { HOST } from "../../config/constant";
-import { Helmet } from "react-helmet";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Box, IconButton, List, Card } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import SearchIcon from '@material-ui/icons/Search';
+import NewMessageDialog from '../Dialog/NewMessage';
+import { connect } from 'react-redux';
+import RoomItem from './RoomItem';
+import { HOST } from '../../config/constant';
+import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,8 +25,8 @@ function Messages(props) {
   const [rooms, setRooms] = React.useState([]);
   React.useEffect(() => {
     fetch(`${HOST}/chatrooms`, {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {
@@ -36,7 +36,7 @@ function Messages(props) {
 
   React.useEffect(() => {
     props.socket.on(
-      "message",
+      'message',
       (message) => {
         setRooms((rooms) => {
           const index = rooms.findIndex((room) => room._id === message.roomId);
@@ -54,19 +54,19 @@ function Messages(props) {
         });
 
         return () => {
-          props.socket.removeAllListeners("message");
+          props.socket.removeAllListeners('message');
         };
       },
       [props.socket]
     );
 
     return () => {
-      props.socket.removeAllListeners("message");
+      props.socket.removeAllListeners('message');
     };
   }, [props.socket]);
 
-  const renderedRooms = rooms.map((room, index) => (
-    <RoomItem key={index} room={room} userId={props.user.id} />
+  const renderedRooms = rooms.map((room) => (
+    <RoomItem key={room._id} room={room} userId={props.user.id} />
   ));
 
   return (

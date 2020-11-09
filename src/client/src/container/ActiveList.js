@@ -69,7 +69,7 @@ function ActiveList({ socket }) {
 
             <List>
               {users.map((user, index) => (
-                <UserRow key={index} userId={user} />
+                <UserRow key={user} userId={user} />
               ))}
             </List>
           </CardContent>

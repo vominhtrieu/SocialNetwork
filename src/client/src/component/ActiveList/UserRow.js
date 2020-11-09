@@ -6,6 +6,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import UserAvatar from '../Common/UserAvatar';
+import Skeleton from 'react-loading-skeleton';
 import { HOST } from '../../config/constant';
 import { Link } from 'react-router-dom';
 
@@ -33,7 +34,7 @@ export default function UserRow({ userId }) {
       .then((res) => res.json())
       .then((data) => setUser(data));
   }, [userId]);
-  if (!user) return null;
+  if (!user) return <Skeleton />;
   return (
     <Link to={`/${userId}`} className={classes.link}>
       <ListItem className={classes.listItem}>

@@ -36,6 +36,6 @@ app.use('/', require('./routes/comment'));
 app.use('/', require('./routes/search'));
 app.use('/', require('./routes/user'));
 
-server.listen(process.env.SERVER_PORT, function () {
+server.listen(process.env.PORT || 4000, function () {
   console.log('Server has started on PORT ' + process.env.SERVER_PORT);
 });

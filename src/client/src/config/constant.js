@@ -1,4 +1,4 @@
-export const HOST = 'http://localhost:4000';
+export const HOST = process.env.HOST_URL || 'http://localhost:4000';
 
 export const GET_PROFILE_PENDING = 0;
 export const GET_PROFILE_SUCCESS = 1;

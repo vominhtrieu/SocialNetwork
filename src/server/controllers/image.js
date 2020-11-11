@@ -37,7 +37,7 @@ exports.uploadAvatar = function (req, res) {
     }
     req.user.avatar = image._id;
     req.user.save((err) => {
-      if (err) return res.status(500);
+      if (err) return res.status(500).json(err);
       return res.status(200);
     });
   });

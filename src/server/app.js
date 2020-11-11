@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const path = require('path');
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -25,17 +26,30 @@ app.use(cors({ credentials: true, origin: process.env.ORIGIN }));
 app.use(express.json());
 app.use(cookieParser());
 
-//Routes
-app.use('/', require('./routes/auth'));
-app.use('/', require('./routes/friend'));
-app.use('/', require('./routes/image'));
-app.use('/', require('./routes/notification'));
-app.use('/', require('./routes/chatRoom'));
-app.use('/', require('./routes/post'));
-app.use('/', require('./routes/comment'));
-app.use('/', require('./routes/search'));
-app.use('/', require('./routes/user'));
+//API Routes
+app.use('/api/', require('./routes/auth'));
+app.use('/api/', require('./routes/friend'));
+app.use('/api/', require('./routes/image'));
+app.use('/api/', require('./routes/notification'));
+app.use('/api/', require('./routes/chatRoom'));
+app.use('/api/', require('./routes/post'));
+app.use('/api/', require('./routes/comment'));
+app.use('/api/', require('./routes/search'));
+app.use('/api/', require('./routes/user'));
+
+//Static Route
+app.use(
+  '/',
+  express.static(path.join(__dirname, process.env.CLIENT_BUILD_DIRECTORY))
+);
+
+//Serve all other routes as index.html
+app.get('*', function (_req, res) {
+  res.sendFile('index.html', {
+    root: path.join(__dirname, process.env.CLIENT_BUILD_DIRECTORY),
+  });
+});
 
 server.listen(process.env.PORT || 4000, function () {
-  console.log('Server has started on PORT ' + process.env.SERVER_PORT);
+  console.log('Server has started on PORT ' + process.env.PORT);
 });

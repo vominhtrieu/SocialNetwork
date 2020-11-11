@@ -61,6 +61,7 @@ exports.getProfileById = (req, res) => {
           res.json({
             firstName: user.firstName,
             lastName: user.lastName,
+            email: user.email,
             avatar: user.avatar,
             cover: user.cover,
             friendStatus,

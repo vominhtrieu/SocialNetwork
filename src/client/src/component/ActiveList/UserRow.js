@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  makeStyles,
-} from '@material-ui/core';
+import { ListItem, ListItemAvatar, ListItemText, makeStyles } from '@material-ui/core';
 import UserAvatar from '../Common/UserAvatar';
 import Skeleton from 'react-loading-skeleton';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,7 +22,7 @@ export default function UserRow({ userId }) {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    fetch(`${HOST}/${userId}`, {
+    fetch(`${API_HOST}/${userId}`, {
       method: 'GET',
       credentials: 'include',
     })

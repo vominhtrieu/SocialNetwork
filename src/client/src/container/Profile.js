@@ -8,17 +8,13 @@ import ProfileDetail from "../component/Profile/ProfileDetail";
 import { Helmet } from "react-helmet";
 import { Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
-import { HOST } from "../config/constant";
+import { API_HOST } from "../config/constant";
+import { axios } from "axios";
 
 function getUserProfile(id, callBack) {
-  fetch(HOST + "/" + id, {
-    method: "GET",
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((user) => {
-      callBack(null, user);
-    })
+  axios
+    .get(`${API_HOST}/id`)
+    .then((res) => callBack(null, res.data))
     .catch((err) => callBack(err));
 }
 
@@ -53,7 +49,7 @@ class Profile extends React.Component {
     event.preventDefault();
     const formData = new FormData();
     formData.append(type, event.target.files[0]);
-    fetch(HOST + "/" + type, {
+    fetch(API_HOST + "/" + type, {
       method: "POST",
       credentials: "include",
       body: formData,
@@ -93,9 +89,7 @@ class Profile extends React.Component {
       return (
         <Box marginTop={2} width="100%">
           <Helmet>
-            <title>
-              {"MTNET - " + profileUser.firstName + " " + profileUser.lastName}
-            </title>
+            <title>{"MTNET - " + profileUser.firstName + " " + profileUser.lastName}</title>
           </Helmet>
           <ProfileIntro
             user={user}
@@ -115,7 +109,7 @@ class Profile extends React.Component {
               <ProfileFriends user={user} profileUser={profileUser} />
             </Route>
             <Route exact path={`${url}/detail`}>
-              <ProfileDetail />
+              <ProfileDetail profileUser={profileUser} />
             </Route>
           </Switch>
         </Box>

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Avatar,
-  Typography,
-  Card,
-  CardContent,
-  IconButton,
-} from '@material-ui/core';
+import { Box, Avatar, Typography, Card, CardContent, IconButton } from '@material-ui/core';
 import Skeleton from 'react-loading-skeleton';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,7 +9,7 @@ import moment from 'moment/moment';
 
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import TrackVisibility from 'react-on-screen';
 import PostMenu from './PostMenu';
 
@@ -68,7 +61,7 @@ function Post(props) {
   const [menuOpened, setMenuOpened] = React.useState(false);
 
   React.useEffect(() => {
-    fetch(`${HOST}/post/${props.id}`, {
+    fetch(`${API_HOST}/post/${props.id}`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -122,14 +115,8 @@ function Post(props) {
   };
 
   return (
-    <Box
-      flexGrow={1}
-      display="flex"
-      justifyContent="center"
-      paddingTop={1}
-      paddingBottom={1}
-    >
-      <Card variant="outlined" className={classes.root}>
+    <Box flexGrow={1} display='flex' justifyContent='center' paddingTop={1} paddingBottom={1}>
+      <Card variant='outlined' className={classes.root}>
         <CardContent>
           {!post.user ? (
             <Skeleton count={5} />
@@ -138,31 +125,21 @@ function Post(props) {
               <Avatar
                 component={Link}
                 to={`/${post.user.Id}`}
-                src={`${HOST}/image/${post.user.avatar}`}
+                src={`${API_HOST}/image/${post.user.avatar}`}
                 className={classes.avatar}
               >
                 {post.user.firstName[0]}
               </Avatar>
               <Box>
-                <Typography
-                  component={Link}
-                  to={`/${post.user.Id}`}
-                  className={classes.name}
-                  variant="h5"
-                >
+                <Typography component={Link} to={`/${post.user.Id}`} className={classes.name} variant='h5'>
                   {post.user.firstName + ' ' + post.user.lastName}
                 </Typography>
-                <Typography className={classes.date} color="textSecondary">
+                <Typography className={classes.date} color='textSecondary'>
                   {moment(post.date).fromNow()}
                 </Typography>
               </Box>
               <Box className={classes.moreButton}>
-                <IconButton
-                  onClick={openMenu}
-                  size="small"
-                  disableFocusRipple
-                  disableRipple
-                >
+                <IconButton onClick={openMenu} size='small' disableFocusRipple disableRipple>
                   <MoreIcon />
                 </IconButton>
                 <PostMenu
@@ -172,7 +149,7 @@ function Post(props) {
                   closeMenu={() => setMenuOpened(false)}
                 />
               </Box>
-              <Typography className={classes.cardBody} variant="body2">
+              <Typography className={classes.cardBody} variant='body2'>
                 {post.textContent}
               </Typography>
 

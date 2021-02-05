@@ -2,7 +2,7 @@ import React from 'react';
 import ReceiveMessage from './ReceiveMessage';
 import SentMessage from './SentMessage';
 import { Box } from '@material-ui/core';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import TypingMessage from './TypingMessage';
 export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
@@ -12,8 +12,7 @@ export default function MessageHistory(props) {
 
   //Scroll to bottom of component
   const scrollToBottom = () => {
-    if (messageHistory.current !== null)
-      messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
+    if (messageHistory.current !== null) messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
   };
 
   //Join and leave room
@@ -31,7 +30,7 @@ export default function MessageHistory(props) {
 
   //Fetch room's messages
   React.useEffect(() => {
-    fetch(`${HOST}/room/${roomInfo._id}/messages`, {
+    fetch(`${API_HOST}/room/${roomInfo._id}/messages`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -89,16 +88,9 @@ export default function MessageHistory(props) {
     if (message.sender === user.id) {
       return <SentMessage key={index} message={message} room={props.room} />;
     }
-    let showAvatar =
-      index === messages.length - 1 ||
-      messages[index + 1].sender !== message.sender;
+    let showAvatar = index === messages.length - 1 || messages[index + 1].sender !== message.sender;
     return (
-      <ReceiveMessage
-        key={index}
-        message={message}
-        participants={roomInfo.participants}
-        showAvatar={showAvatar}
-      />
+      <ReceiveMessage key={index} message={message} participants={roomInfo.participants} showAvatar={showAvatar} />
     );
   });
 
@@ -107,20 +99,10 @@ export default function MessageHistory(props) {
   });
 
   return (
-    <Box
-      ref={messageHistory}
-      flexGrow={1}
-      flexBasis={0}
-      padding={2}
-      display="block"
-      overflow="auto"
-    >
+    <Box ref={messageHistory} flexGrow={1} flexBasis={0} padding={2} display='block' overflow='auto'>
       {renderMessages}
       {typingUserList.length > 0 ? (
-        <TypingMessage
-          typingUsers={typingUserList}
-          participants={roomInfo.participants}
-        />
+        <TypingMessage typingUsers={typingUserList} participants={roomInfo.participants} />
       ) : null}
     </Box>
   );

@@ -1,9 +1,9 @@
-const User = require('../models/User');
-const ChatRoom = require('../models/ChatRoom');
+const User = require("../models/User");
+const ChatRoom = require("../models/ChatRoom");
 
 exports.getProfile = (req, res) => {
   User.findById(req.body.id, (err, user) => {
-    if (err || !user) res.status(400).json('Unable to find user');
+    if (err || !user) res.status(400).json("Unable to find user");
     else
       res.json({
         id: user._id,
@@ -17,10 +17,10 @@ exports.getProfile = (req, res) => {
 
 exports.getProfileById = (req, res) => {
   User.findById(Number(req.params.id))
-    .populate('friendRequests', 'user')
+    .populate("friendRequests", "user")
     .exec((err, user) => {
-      if (err || !user) return res.status(400).json('Unable to find user');
-      let friendStatus = 'Nothing';
+      if (err || !user) return res.status(400).json("Unable to find user");
+      let friendStatus = "Nothing";
       ChatRoom.aggregate()
         .match({
           participants: {
@@ -46,17 +46,9 @@ exports.getProfileById = (req, res) => {
         })
         .exec((err, room) => {
           if (err) return res.status(500);
-          if (
-            user.friends.filter((friend) => friend.user === req.body.id)
-              .length === 1
-          )
-            friendStatus = 'Friend';
-          else if (
-            user.friendRequests.filter(
-              (request) => request.user === req.body.id
-            ).length > 0
-          )
-            friendStatus = 'Pending';
+          if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) friendStatus = "Friend";
+          else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0)
+            friendStatus = "Pending";
 
           res.json({
             firstName: user.firstName,

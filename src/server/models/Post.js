@@ -13,7 +13,7 @@ var postSchema = new mongoose.Schema({
     required: true,
   },
   image: [String],
-  date: {
+  date: { 
     type: Date,
     default: Date.now,
   },

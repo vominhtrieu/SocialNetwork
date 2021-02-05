@@ -1,178 +1,135 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import { Form, Input, Button, Spin, Alert, Card } from "antd";
+import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 
-import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { useForm } from 'react-hook-form';
-import Alert from '@material-ui/lab/Alert';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { HOST } from '../../config/constant';
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(2),
-  },
-  checkBox: {
-    padding: '0 4px 0 0',
-  },
-  rememberBox: {
-    transform: 'scale(0.95)',
-  },
-  submit: {
-    margin: theme.spacing(1, 0, 1),
-  },
-}));
-
-function validatePassword(event) {
-  const password = document.getElementById('password');
-  const confirmPassword = document.getElementById('confirmPassword');
-  if (password.value !== confirmPassword.value)
-    confirmPassword.setCustomValidity("Passwords Don't Match");
-  else confirmPassword.setCustomValidity('');
-}
+import { useHistory } from "react-router-dom";
+import { API_HOST } from "../../config/constant";
+import axios from "axios";
 
 function SignUpForm(props) {
-  const classes = useStyles();
+  const [form] = Form.useForm();
   const history = useHistory();
-  const { register, handleSubmit } = useForm();
-  const [alertOpen, setAlertOpen] = React.useState(false);
-  const [alertTitle, setAlertTitle] = React.useState('');
-  const [alertType, setAlertType] = React.useState('success');
+  const [alertTitle, setAlertTitle] = React.useState("");
+  const [isSigningUp, setIsSigningUp] = React.useState(false);
+  const [alertType, setAlertType] = React.useState("success");
 
-  const RegisterUser = (data) => {
-    fetch(`${HOST}/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((message) => {
-        setAlertOpen(true);
-        setAlertTitle(message);
-        setAlertType(
-          message === 'Successfully registered' ? 'success' : 'error'
-        );
-        if (message === 'Successfully registered') history.push('/signin');
-      })
-      .catch(console.log);
+  React.useEffect(() => {
+    return () => {};
+  }, [alertType]);
+
+  const validatePassword = (_rule, value, callback) => {
+    if (value && value !== form.getFieldValue("password")) {
+      callback(new Error("Password mismatch"));
+    } else {
+      callback();
+    }
   };
 
-  return (
-    <form onSubmit={handleSubmit(RegisterUser)} className={classes.form}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Collapse in={alertOpen}>
-            <Alert
-              severity={alertType}
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    setAlertOpen(false);
-                  }}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              {alertTitle}
-            </Alert>
-          </Collapse>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            inputProps={{
-              ref: register,
-            }}
-            name="firstName"
-            variant="outlined"
-            required
-            fullWidth
-            id="firstName"
-            label="First Name"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            inputProps={{
-              ref: register,
-            }}
-            variant="outlined"
-            required
-            fullWidth
-            id="lastName"
-            label="Last Name"
-            name="lastName"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            required
-            fullWidth
-            id="email"
-            inputProps={{
-              ref: register,
-              pattern: '^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$',
-              title: 'Email is not valid',
-            }}
-            label="Email Address"
-            name="email"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            inputProps={{
-              ref: register,
-              pattern: '[A-Za-z\\d@$!%*#?&]{8,60}$',
-              title:
-                'Password must have length between 8 and 60 character and contain only English letters, numbers and special characters',
-            }}
-            onChange={validatePassword}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            variant="outlined"
-            required
-            fullWidth
-            label="Confirm Password"
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            onKeyUp={validatePassword}
-          />
-        </Grid>
+  const RegisterUser = (data) => {
+    setIsSigningUp(true);
+    axios
+      .post(`${API_HOST}/signup`, data)
+      .then(({ data }) => {
+        setAlertTitle(data);
+        setAlertType("success");
+        if (data === "Successfully registered") history.push("/signin");
+      })
+      .catch((err) => {
+        setAlertTitle(err.response.data);
+        setAlertType("error");
+      })
+      .then(() => {
+        setIsSigningUp(false);
+      });
+  };
 
-        <Grid item xs={12}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            className={classes.submit}
-          >
+  function closeAlert() {
+    setAlertTitle("");
+  }
+
+  return (
+    <Card title="Sign up">
+      {alertTitle ? <Alert type="error" showIcon closable afterClose={closeAlert} message={alertTitle} /> : null}
+
+      <Form form={form} onFinish={RegisterUser}>
+        <Form.Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              type: "email",
+              message: "Please input a valid email!",
+            },
+          ]}
+        >
+          <Input type="email" prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
+        </Form.Item>
+
+        <Form.Item
+          name="firstName"
+          rules={[
+            {
+              required: true,
+              type: "string",
+              message: "Please input your first name!",
+            },
+          ]}
+        >
+          <Input type="text" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="First name" />
+        </Form.Item>
+
+        <Form.Item
+          name="lastName"
+          rules={[
+            {
+              required: true,
+              type: "string",
+              message: "Please input your name!",
+            },
+          ]}
+        >
+          <Input type="text" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Last name" />
+        </Form.Item>
+
+        <Form.Item
+          name="password"
+          rules={[
+            {
+              required: true,
+              pattern: /[A-Za-z\d@$!%*#?&]{8,60}$/,
+              message: "Password must have length between 8 and 60",
+            },
+          ]}
+        >
+          <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+        </Form.Item>
+
+        <Form.Item
+          name="retypePassword"
+          rules={[
+            {
+              required: true,
+              message: "Please retype your password!",
+            },
+            { validator: validatePassword },
+          ]}
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Retype your password"
+          />
+        </Form.Item>
+
+        <Form.Item className="align-center">
+          <Button block type="primary" htmlType="submit" disabled={isSigningUp}>
             Sign Up
+            {isSigningUp && <Spin />}
           </Button>
-        </Grid>
-      </Grid>
-    </form>
+          Already have account? <a href="/signin">Sign in!</a>
+        </Form.Item>
+      </Form>
+    </Card>
   );
 }
 

@@ -6,7 +6,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import NewMessageDialog from '../Dialog/NewMessage';
 import { connect } from 'react-redux';
 import RoomItem from './RoomItem';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +24,7 @@ function Messages(props) {
   const [messageOpen, setMessageOpen] = React.useState(false);
   const [rooms, setRooms] = React.useState([]);
   React.useEffect(() => {
-    fetch(`${HOST}/chatrooms`, {
+    fetch(`${API_HOST}/chatrooms`, {
       method: 'GET',
       credentials: 'include',
     })
@@ -44,11 +44,7 @@ function Messages(props) {
             const newRoom = { ...rooms[index] };
             newRoom.recentMessage = message;
             newRoom.messageCount++;
-            return [
-              newRoom,
-              ...rooms.slice(0, index),
-              ...rooms.slice(index + 1),
-            ];
+            return [newRoom, ...rooms.slice(0, index), ...rooms.slice(index + 1)];
           }
           return rooms;
         });
@@ -65,21 +61,15 @@ function Messages(props) {
     };
   }, [props.socket]);
 
-  const renderedRooms = rooms.map((room) => (
-    <RoomItem key={room._id} room={room} userId={props.user.id} />
-  ));
+  const renderedRooms = rooms.map((room) => <RoomItem key={room._id} room={room} userId={props.user.id} />);
 
   return (
-    <Card variant="outlined" className={classes.root}>
+    <Card variant='outlined' className={classes.root}>
       <Helmet>
         <title>MTNET - Messages</title>
       </Helmet>
-      <NewMessageDialog
-        open={messageOpen}
-        closeDialog={() => setMessageOpen(false)}
-        userId={props.user.id}
-      />
-      <Box borderBottom="1px solid rgba(0,0,0,0.12)">
+      <NewMessageDialog open={messageOpen} closeDialog={() => setMessageOpen(false)} userId={props.user.id} />
+      <Box borderBottom='1px solid rgba(0,0,0,0.12)'>
         <IconButton onClick={() => setMessageOpen(true)}>
           <AddIcon />
         </IconButton>

@@ -73,13 +73,13 @@ function PostInteraction(props) {
       <ButtonGroup
         className={classes.buttonGroup}
         fullWidth
-        variant="outlined"
-        aria-label="outlined primary button group"
+        variant='outlined'
+        aria-label='outlined primary button group'
       >
         <Button
           onClick={likeThisPost}
           className={classes.button}
-          size="large"
+          size='large'
           startIcon={<LikeIcon color={props.liked ? 'primary' : 'inherit'} />}
         >
           {numToFixedLengthString(props.likeCount)}
@@ -87,16 +87,12 @@ function PostInteraction(props) {
         <Button
           onClick={() => setOpenComment(!openComment)}
           className={classes.button}
-          size="large"
+          size='large'
           startIcon={<CommentIcon />}
         >
           {numToFixedLengthString(props.commentCount)}
         </Button>
-        <Button
-          className={classes.button}
-          size="large"
-          startIcon={<ShareIcon />}
-        >
+        <Button className={classes.button} size='large' startIcon={<ShareIcon />}>
           0
         </Button>
       </ButtonGroup>
@@ -104,18 +100,10 @@ function PostInteraction(props) {
       {openComment ? (
         <React.Fragment>
           {/* Area shows comments from this post */}
-          <CommentSection
-            isVisible={props.isVisible}
-            socket={props.socket}
-            postId={props.postId}
-          />
+          <CommentSection isVisible={props.isVisible} socket={props.socket} postId={props.postId} />
 
           {/* Field for user type their comments */}
-          <CommentInput
-            socket={props.socket}
-            postId={props.postId}
-            user={props.user}
-          />
+          <CommentInput socket={props.socket} postId={props.postId} user={props.user} />
         </React.Fragment>
       ) : null}
     </Box>

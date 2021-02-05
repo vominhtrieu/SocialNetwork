@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Avatar, IconButton, makeStyles } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import CustimizedTextField from '../Common/CustimizedTextField';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 
 const useStyle = makeStyles((theme) => ({
   avatar: {
@@ -28,7 +28,7 @@ export default function CommentInput(props) {
   const makeAComment = () => {
     setTextInput('');
 
-    fetch(`${HOST}/comment`, {
+    fetch(`${API_HOST}/comment`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -54,25 +54,22 @@ export default function CommentInput(props) {
   };
   return (
     <Box marginTop={2}>
-      <Avatar
-        src={`${HOST}/image/${props.user.avatar}`}
-        className={classes.avatar}
-      ></Avatar>
-      <Box marginLeft={6} marginBottom={2} display="flex">
+      <Avatar src={`${API_HOST}/image/${props.user.avatar}`} className={classes.avatar}></Avatar>
+      <Box marginLeft={6} marginBottom={2} display='flex'>
         <CustimizedTextField
           className={classes.commentInput}
           onChange={onInput}
           onSubmit={makeAComment}
           value={textInput}
-          variant="textField"
+          variant='textField'
           autoFocus
         />
         <IconButton
           className={classes.sendButton}
           onClick={makeAComment}
-          size="small"
-          variant="contained"
-          color="secondary"
+          size='small'
+          variant='contained'
+          color='secondary'
         >
           <SendIcon />
         </IconButton>

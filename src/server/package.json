@@ -6,7 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.771.0",
+    "aws-sdk": "^2.834.0",
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -15,12 +15,13 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.0",
+    "mongoose": "^5.11.14",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
     "redis": "^3.0.2",
-    "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.0"
+    "sharp": "^0.27.1",
+    "socket.io": "^3.1.0",
+    "socket.io-client": "^3.1.0"
   },
   "author": "Vo Minh Trieu",
   "license": "MIT",

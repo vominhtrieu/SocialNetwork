@@ -1,5 +1,5 @@
 import React from 'react';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import Comment from './Comment';
 
 function CommentSection({ isVisible, socket, postId }) {
@@ -7,7 +7,7 @@ function CommentSection({ isVisible, socket, postId }) {
 
   React.useEffect(() => {
     if (isVisible) {
-      fetch(`${HOST}/${postId}/comments`, {
+      fetch(`${API_HOST}/${postId}/comments`, {
         method: 'GET',
         credentials: 'include',
       })
@@ -29,9 +29,7 @@ function CommentSection({ isVisible, socket, postId }) {
     };
   }, [isVisible, postId, socket]);
 
-  const renderComments = comments.map((comment) => (
-    <Comment key={comment} id={comment} />
-  ));
+  const renderComments = comments.map((comment) => <Comment key={comment} id={comment} />);
   return renderComments;
 }
 

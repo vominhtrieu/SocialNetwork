@@ -2,7 +2,7 @@ import React from "react";
 import { Typography, Avatar, Box, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import { HOST } from "../../config/constant";
+import { API_HOST } from "../../config/constant";
 import UnfriendIcon from "@material-ui/icons/RemoveCircleOutline";
 import AddFriendIcon from "@material-ui/icons/PersonAdd";
 
@@ -28,7 +28,7 @@ function FriendInfo(props) {
   const { friend, user } = props;
 
   const unFriend = () => {
-    fetch(HOST + "/unfriend", {
+    fetch(API_HOST + "/unfriend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,15 +41,12 @@ function FriendInfo(props) {
       }
     });
   };
-  
+
   const classes = useStyle();
   return (
     <Box display="flex" alignItems="center" marginTop={1} marginBottom={1}>
       <Link className={classes.link} to={"/" + friend.id}>
-        <Avatar
-          src={HOST + "/image/" + friend.avatar}
-          className={classes.avatar}
-        ></Avatar>
+        <Avatar src={API_HOST + "/image/" + friend.avatar} className={classes.avatar}></Avatar>
       </Link>
       <Link className={classes.link} to={"/" + friend.id}>
         <Typography className={classes.name} variant="h6">
@@ -58,20 +55,11 @@ function FriendInfo(props) {
       </Link>
       <Box flexGrow={1} display="flex" justifyContent="flex-end">
         {user.id === friend.id ? null : friend.isFriend ? (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={unFriend}
-            startIcon={<UnfriendIcon />}
-          >
+          <Button variant="contained" color="secondary" onClick={unFriend} startIcon={<UnfriendIcon />}>
             Unfriend
           </Button>
         ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddFriendIcon />}
-          >
+          <Button variant="contained" color="primary" startIcon={<AddFriendIcon />}>
             Add Friend
           </Button>
         )}

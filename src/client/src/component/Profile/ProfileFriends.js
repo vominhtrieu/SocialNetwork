@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
-import FriendInfo from "./FriendInfo";
-import { HOST } from "../../config/constant";
-import { Box, Card, CardContent } from "@material-ui/core";
+import React, { useEffect } from 'react';
+import FriendInfo from './FriendInfo';
+import { API_HOST } from '../../config/constant';
+import { Box, Card, CardContent } from '@material-ui/core';
 
 export default function ProfileFriends(props) {
   const { user, profileUser } = props;
   const [friends, setFriends] = React.useState([]);
   useEffect(() => {
-    fetch(`${HOST}/${profileUser.id}/friends`, {
-      method: "GET",
-      credentials: "include",
+    fetch(`${API_HOST}/${profileUser.id}/friends`, {
+      method: 'GET',
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {

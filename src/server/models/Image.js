@@ -10,7 +10,7 @@ var imageSchema = new mongoose.Schema({
     required: true,
     ref: 'User',
   },
-  key: String,
+  path: String,
   type: String,
   date: {
     type: Date,
@@ -46,16 +46,9 @@ imageSchema.pre('deleteOne', function (next) {
     if (err) {
       next(err);
     } else {
-      fs.unlink(
-        path.join(
-          __dirname,
-          '../public/images/',
-          image._id + '.' + image.extension
-        ),
-        (err) => {
-          next(err);
-        }
-      );
+      fs.unlink(path.join(__dirname, '../images/', image.path), (err) => {
+        next(err);
+      });
     }
   });
 });

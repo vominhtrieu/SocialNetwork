@@ -1,35 +1,39 @@
-const aws = require('aws-sdk');
+// const aws = require('aws-sdk');
+// const fs = require('fs');
+
+// aws.config.update({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   region: process.env.AWS_REGION,
+// });
+
+// const s3 = new aws.S3();
+
+// exports.uploadImage = (file, next) => {
+//   fs.readFile(file.path, (err, data) => {
+//     if (err) {
+//       next(err);
+//     } else {
+//       const readStream = fs.createReadStream(file);
+//       const transform = sharp
+//     }
+//   });
+// };
+
 const multer = require('multer');
-const multerS3 = require('multer-s3');
+const sharp = require('sharp');
 
-aws.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
-const s3 = new aws.S3();
-
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,
-    metadata: function (_req, file, cb) {
-      cb(null, { fieldname: file.fieldname });
+module.exports = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, callback) {
+      callback(null, '../images');
     },
-    key: function (_req, file, cb) {
-      cb(
-        null,
-        //Some random number for preventing duplicate name
-        `${Date.now().toString()}-${file.originalname}-${Math.floor(
-          Math.random() * 1000
-        )}`
-      );
+    filename: function (_req, file, callback) {
+      callback(null, file.fieldname + '-' + Date.now());
     },
   }),
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    return callback(null, ext === '.png' || ext === '.jpg' || ext === '.jpeg');
+  },
 });
-
-module.exports = {
-  s3,
-  upload,
-};

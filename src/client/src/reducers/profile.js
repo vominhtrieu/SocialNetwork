@@ -6,14 +6,14 @@ import {
   SIGN_OUT_SUCCESS,
   SIGN_OUT_FAILED,
   HOST,
-} from '../config/constant';
-import io from 'socket.io-client';
+} from "../config/constant";
+import io from "socket.io-client";
 
 const initialState = {
   user: {},
   socket: null,
   isPending: true,
-  error: '',
+  error: "",
 };
 
 export function profile(state = initialState, action = {}) {

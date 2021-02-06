@@ -3,7 +3,7 @@ import { Layout } from "antd";
 import SignInForm from "../component/Auth/SignInForm";
 import SignUpForm from "../component/Auth/SignUpForm";
 import { Switch, Route } from "react-router-dom";
-import "./auth.css";
+import "./auth.less";
 
 const { Content } = Layout;
 

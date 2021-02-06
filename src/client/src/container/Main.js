@@ -6,10 +6,9 @@ import Home from "./Home";
 import Notification from "./Notification";
 import About from "../component/About/About";
 import MainNavbar from "../component/Navbar/MainNavbar";
-import LeftNavigation from "../component/Navbar/LeftNavigation";
 
 import { Switch, Route } from "react-router-dom";
-import { Row, Col, Layout } from "antd";
+import { Layout } from "antd";
 import PrivateRoute from "../component/Common/PrivateRoute";
 import Profile from "./Profile";
 import ActiveList from "./ActiveList";
@@ -20,11 +19,11 @@ const { Content, Header, Sider } = Layout;
 function Main() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Header style={{ display: "flex", alignItems: "center", padding: "0 200px" }}>
+      <Header className="nav-bar">
         <MainNavbar />
       </Header>
-      <Layout style={{ height: "100%", padding: "0 200px" }}>
-        <Content>
+      <Layout className="main-body">
+        <Content className="main-content">
           <Switch>
             <PrivateRoute exact path="/" component={Home} />
             <PrivateRoute exact path="/friends" component={Friends} />
@@ -34,7 +33,13 @@ function Main() {
             <PrivateRoute path="/:id" component={Profile} />
           </Switch>
         </Content>
-        <Sider>
+        <Sider
+          style={{ height: "100%", backgroundColor: "#333333" }}
+          width={300}
+          reverseArrow
+          breakpoint="lg"
+          collapsedWidth={0}
+        >
           <ActiveList />
         </Sider>
       </Layout>

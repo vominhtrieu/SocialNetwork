@@ -32,7 +32,7 @@ export function profile(state = initialState, action = {}) {
     case GET_PROFILE_SUCCESS:
       return Object.assign({}, state, {
         user: action.payload,
-        socket: io(HOST),
+        socket: io(HOST, { withCredentials: true }),
         isPending: false,
         error: null,
       });

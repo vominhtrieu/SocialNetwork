@@ -1,69 +1,43 @@
-const Image = require('../models/Image');
-const { s3 } = require('../services/fileUpload');
-const imageResizer = require('../services/imageResize');
+const Image = require("../models/Image");
+const path = require("path");
 
 exports.getImage = function (req, res) {
-  if (req.params.id === 'undefined') {
+  if (req.params.id === "undefined") {
     return res.json(null);
   }
-  Image.findById(Number(req.params.id), (err, img) => {
-    if (err) return res.status(400).json('Image not found');
-    s3.getObject(
-      {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: img.key,
-      },
-      (err, data) => {
-        if (err) {
-          return res.status(500).json('Image seem to be lost');
-        }
-        res.writeHead(200, { 'Content-Type': 'image/jpeg' });
-        res.write(data.Body, 'binary');
-        res.end(null, 'binary');
-      }
-    );
-  });
+  res.sendFile(path.join(__dirname, `../images/${req.params.id}`));
 };
 
-exports.uploadAvatar = function (req, res) {
-  imageResizer.resize(req.files.file, (err, url, shortUrl) => {
-    if (err) return res.status(500);
-
+exports.uploadAvatar = async function (req, res) {
+  try {
     const image = new Image({
+      _id: req.file.filename,
       user: Number(req.user.id),
-      type: 'avatar',
-      key: req.file.key,
+      type: "avatar",
       privacy: 0,
     });
-
-    image.save((err) => {
-      if (err) {
-        return res.status(500);
-      }
-      req.user.avatar = image._id;
-      req.user.save((err) => {
-        if (err) return res.status(500).json(err);
-        return res.status(200);
-      });
-    });
-  });
+    await image.save();
+    req.user.avatar = image._id;
+    await req.user.save();
+    res.json({ imageId: image._id });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
-exports.uploadCover = function (req, res) {
-  const image = new Image({
-    user: Number(req.user.id),
-    type: 'cover',
-    key: req.file.key,
-    privacy: 0,
-  });
-  image.save((err) => {
-    if (err) {
-      return res.status(500);
-    }
-    req.user.cover = image._id;
-    req.user.save((err) => {
-      if (err) return res.status(500);
-      return res.status(200);
+exports.uploadCover = async function (req, res) {
+  try {
+    const image = new Image({
+      _id: req.file.filename,
+      user: Number(req.user.id),
+      type: "cover",
+      privacy: 0,
     });
-  });
+    await image.save();
+    req.user.cover = image._id;
+    await req.user.save();
+    res.json({ imageId: image._id });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };

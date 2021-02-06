@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import PostAdd from '../Post/PostAdd';
-import Post from '../Post/Post';
-import { API_HOST } from '../../config/constant';
-import axios from 'axios';
+import React, { useEffect } from "react";
+import Post from "../Post/Post";
+import { API_HOST } from "../../config/constant";
+import axios from "axios";
+import { message } from "antd";
 
 export default function ProfileHome(props) {
   const [posts, setPosts] = React.useState([]);
@@ -10,21 +10,13 @@ export default function ProfileHome(props) {
   useEffect(() => {
     axios
       .get(`${API_HOST}/${props.profileUser.id}/posts`, {
-        credentials: 'include',
+        withCredentials: true,
       })
       .then(({ data }) => {
         setPosts(data);
-      });
+      })
+      .catch((_err) => message.error("Cannot fetch your posts"));
   }, [props.profileUser.id]);
 
-  const renderPosts = posts.map((postId, index) => {
-    return <Post key={index} id={postId} />;
-  });
-
-  return (
-    <div>
-      <PostAdd />
-      {renderPosts}
-    </div>
-  );
+  return posts.map((postId, index) => <Post key={index} id={postId} />);
 }

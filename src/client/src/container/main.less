@@ -1,4 +1,46 @@
+@xl-page-padding: 0 15vw;
+@lg-page-padding: 0 7vw;
+@mobile-nav-padding: 0 1vw;
+@mobile-body-padding: 0vw;
+
 .ant-layout-sider,
 .ant-layout-sider-children {
   height: 100%;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  padding: @xl-page-padding;
+}
+
+.main-body {
+  height: 100%;
+  padding: @xl-page-padding;
+}
+
+.main-content {
+  padding-right: 10px;
+  padding-top: 10px;
+}
+
+@media only screen and (max-width: 1199px) {
+  .nav-bar,
+  .main-body {
+    padding: @lg-page-padding;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .nav-bar {
+    padding: @mobile-nav-padding;
+  }
+
+  .main-body {
+    padding: @mobile-body-padding;
+  }
+
+  .main-content {
+    padding-right: 0;
+  }
 }

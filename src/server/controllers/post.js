@@ -1,5 +1,5 @@
-const Post = require('../models/Post');
-const User = require('../models/User');
+const Post = require("../models/Post");
+const User = require("../models/User");
 
 exports.addNewPost = (req, res) => {
   const post = new Post({
@@ -14,42 +14,38 @@ exports.addNewPost = (req, res) => {
         .save()
         .then(() => res.json({ postId: post.id }))
         .catch((err) => {
-          res.status(500).json('Internal error' + err);
+          res.status(500).json("Internal error" + err);
         });
     })
     .catch((err) => {
-      res.status(500).json('Internal error' + err);
+      res.status(500).json("Internal error" + err);
     });
 };
 
 exports.getUserPost = (req, res) => {
   User.findById(req.params.id).exec((err, user) => {
-    if (err) return res.status(500).json('Unable to find this user');
+    if (err) return res.status(500).json("Unable to find this user");
     res.json(user.posts.reverse());
   });
 };
 
-exports.getPost = (req, res) => {
-  Post.findById(Number(req.params.id))
-    .populate('user')
-    .exec((err, post) => {
-      if (err) return res.status(500).json('Unable to find this post');
-      res.json({
-        postId: post._id,
-        user: {
-          Id: post.user._id,
-          firstName: post.user.firstName,
-          lastName: post.user.lastName,
-          avatar: post.user.avatar,
-        },
-        date: post.date,
-        textContent: post.textContent,
-        images: post.images,
-        liked: post.likes.indexOf(req.body.id) !== -1,
-        likeCount: post.likes.length,
-        commentCount: post.comments.length,
-      });
+exports.getPost = async (req, res) => {
+  try {
+    const post = await Post.findById(Number(req.params.id)).populate("user", "_id firstName lastName avatar").exec();
+    if (!post) res.status(404).json("Cannot find this post");
+    res.json({
+      postId: post._id,
+      user: post.user,
+      date: post.date,
+      textContent: post.textContent,
+      images: post.images,
+      liked: post.likes.indexOf(req.body.id) !== -1,
+      likeCount: post.likes.length,
+      commentCount: post.comments.length,
     });
+  } catch (err) {
+    res.status(501).json(err);
+  }
 };
 
 exports.getFeed = (req, res) => {
@@ -66,7 +62,7 @@ exports.getFeed = (req, res) => {
   })
     .sort({ date: -1 })
     .exec((err, posts) => {
-      if (err) return res.status(500).json('Internal error');
+      if (err) return res.status(500).json("Internal error");
       const data = posts.map((post) => post._id);
       res.json(data);
     });

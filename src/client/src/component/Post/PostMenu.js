@@ -1,6 +1,6 @@
-import React from 'react';
-import { Menu, MenuItem } from '@material-ui/core';
-import { API_HOST } from '../../config/constant';
+import React from "react";
+import { Menu, MenuItem } from "@material-ui/core";
+import { API_HOST } from "../../config/constant";
 
 export default function PostMenu({ postId, open, anchorEl, closeMenu }) {
   const deletePost = () => {

@@ -10,6 +10,7 @@ exports.getProfile = (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         avatar: user.avatar,
+        cover: user.cover,
         email: user.email,
       });
   });
@@ -51,6 +52,7 @@ exports.getProfileById = (req, res) => {
             friendStatus = "Pending";
 
           res.json({
+            id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,

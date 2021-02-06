@@ -1,7 +1,7 @@
 import React from "react";
 import Auth from "./container/Auth";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { Space, Spin } from "antd";
+import { message, Space, Spin } from "antd";
 import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
 import { Redirect } from "react-router-dom";
@@ -13,9 +13,13 @@ function App(props) {
     getProfile();
   }, [getProfile]);
 
+  React.useEffect(() => {
+    if (props.socket) props.socket.on("error", (err) => message.error(err));
+  }, [props.socket]);
+
   if (isPending)
     return (
-      <Space display="flex" height="100vh" justifyContent="center" alignItems="center">
+      <Space style={{ display: "flex", height: "100vh", justifyContent: "center", alignItems: "center" }}>
         <Spin />
       </Space>
     );
@@ -36,6 +40,7 @@ function App(props) {
 }
 
 const mapStateToProps = (state) => ({
+  socket: state.socket,
   isPending: state.isPending,
   error: state.error,
   user: state.user,

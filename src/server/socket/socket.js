@@ -1,11 +1,11 @@
-const socketAuth = require('../middlewares/socketAuth');
-const User = require('../models/User');
-const redisClient = require('../services/redisClient');
+const socketAuth = require("../middlewares/socketAuth");
+const User = require("../models/User");
+const redisClient = require("../services/redisClient");
 
 module.exports = (io) => {
   io.use(socketAuth);
-  io.on('connection', (socket) => {
-    socket.join('u/' + socket.userId);
+  io.on("connection", (socket) => {
+    socket.join("u/" + socket.userId);
     redisClient.get(socket.userId, (err, clientCount) => {
       if (!err && clientCount) {
         //Emit to all friend online event
@@ -16,11 +16,11 @@ module.exports = (io) => {
             user.friends.forEach((friend, index) => {
               redisClient.get(friend.user, (err, friendClientCount) => {
                 if (!err && friendClientCount && friendClientCount > 0) {
-                  io.to('u/' + friend.user).emit('online', socket.userId);
+                  io.to("u/" + friend.user).emit("online", socket.userId);
                   onlineUserList.push(friend.user);
 
                   if (index === user.friends.length - 1) {
-                    io.to(socket.id).emit('onlineList', onlineUserList);
+                    io.to(socket.id).emit("onlineList", onlineUserList);
                   }
                 }
               });
@@ -33,11 +33,11 @@ module.exports = (io) => {
       }
     });
 
-    require('./friend')(io, socket);
-    require('./message')(io, socket);
-    require('./post')(io, socket);
+    require("./friend")(io, socket);
+    require("./message")(io, socket);
+    require("./post")(io, socket);
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       redisClient.get(socket.userId, (err, clientCount) => {
         if (err || clientCount === null) return;
         redisClient.set(socket.userId, clientCount - 1);
@@ -45,7 +45,7 @@ module.exports = (io) => {
           User.findById(socket.userId, (err, user) => {
             if (!err && user) {
               user.friends.forEach((friend) => {
-                io.to('u/' + friend.user).emit('offline', socket.userId);
+                io.to("u/" + friend.user).emit("offline", socket.userId);
               });
             }
           });

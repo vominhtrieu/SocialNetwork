@@ -13,18 +13,20 @@ export default function NewPost({ user, visible, closeModal }) {
   const [fileList, setFileList] = React.useState([]);
 
   const addPost = () => {
-    axios
-      .post(
-        `${API_HOST}/posts`,
-        {
-          post: {
-            textContent: text,
-          },
-        },
-        {
-          withCredentials: true,
-        }
-      )
+    const formData = new FormData();
+    formData.set("textContent", text);
+    fileList.forEach(({ file }) => {
+      formData.append("images", file);
+    });
+
+    axios({
+      method: "POST",
+      url: `${API_HOST}/posts`,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then(() => {
         message.success("Successfully posted your status");
         closeModal();
@@ -38,9 +40,10 @@ export default function NewPost({ user, visible, closeModal }) {
       return false;
     }
     const url = URL.createObjectURL(file);
-    setFileList((list) => [...list, { uid: uid++, url: url }]);
+    setFileList((list) => [...list, { uid: uid++, url: url, file }]);
     return true;
   };
+  console.log(fileList);
 
   const handleChange = ({ fileList }) => setFileList(fileList);
 

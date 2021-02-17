@@ -10,6 +10,7 @@ import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { API_HOST } from "../config/constant";
 import axios from "axios";
+import Title from "../component/Common/Title";
 
 function getUserProfile(id, callBack) {
   axios
@@ -36,9 +37,7 @@ function Profile({ user, socket }) {
     const url = `/${profileUser.id}`;
     return (
       <Space direction="vertical" style={{ width: "100%" }}>
-        <Helmet>
-          <title>{"MTNET - " + profileUser.firstName + " " + profileUser.lastName}</title>
-        </Helmet>
+        <Title title={`${profileUser.firstName} ${profileUser.lastName}`} />
         <ProfileIntro user={user} profileUser={profileUser} socket={socket} />
         <Switch>
           <Route exact path={`${url}/`}>

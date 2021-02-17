@@ -3,6 +3,7 @@ import { Box } from "@material-ui/core";
 import Post from "../component/Post/Post";
 import { API_HOST } from "../config/constant";
 import { Helmet } from "react-helmet";
+import Title from "../component/Common/Title";
 
 function Home() {
   const [posts, setPosts] = React.useState([]);
@@ -27,9 +28,7 @@ function Home() {
 
   return (
     <Box width="100%">
-      <Helmet>
-        <title>MTNET - Home</title>
-      </Helmet>
+      <Title title="Home" />
       {renderPost}
     </Box>
   );

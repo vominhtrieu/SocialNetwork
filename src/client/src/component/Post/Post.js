@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Skeleton, Space, Typography } from "antd";
+import { Card, Dropdown, Skeleton, Space, Typography, Menu, message, Image, Row, Col } from "antd";
 import { LikeOutlined, CommentOutlined, ShareAltOutlined, MoreOutlined, LikeFilled } from "@ant-design/icons";
 import Comments from "./Comments";
 import moment from "moment/moment";
@@ -10,7 +10,10 @@ import Meta from "antd/lib/card/Meta";
 import UserAvatar from "../Common/UserAvatar";
 import Modal from "antd/lib/modal/Modal";
 import ShareDialog from "./ShareDialog";
+import emojione from "emojione";
 import "./post.less";
+import axios from "axios";
+import Grid from "antd/lib/card/Grid";
 
 const { Paragraph } = Typography;
 
@@ -18,15 +21,20 @@ function Post(props) {
   const [post, setPost] = React.useState({});
   const [commentVisible, setCommentVisible] = React.useState(false);
   const [shareVisible, setShareVisible] = React.useState(false);
-  console.log(props);
+  const [deleteVisible, setDeleteVisible] = React.useState(false);
+  const [deleted, setDeleted] = React.useState(false);
+  const [available, setAvailable] = React.useState(true);
+
   React.useEffect(() => {
-    fetch(`${API_HOST}/posts/${props.id}`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((post) => {
-        setPost(post);
+    axios
+      .get(`${API_HOST}/posts/${props.id}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setPost(res.data);
+      })
+      .catch((err) => {
+        setAvailable(false);
       });
 
     props.socket.emit("joinPost", { postId: props.id });
@@ -68,6 +76,18 @@ function Post(props) {
     });
   }, [props.id, props.socket, props.user.id]);
 
+  if (deleted) {
+    return null;
+  }
+
+  if (!available) {
+    return (
+      <Card>
+        <Meta title="Post is not available" description="Post maybe be deleted or hidden by user"></Meta>
+      </Card>
+    );
+  }
+
   const likeThisPost = () => {
     props.socket.emit("like", {
       postId: post.postId,
@@ -88,6 +108,25 @@ function Post(props) {
 
   const closeShare = () => {
     setShareVisible(false);
+  };
+
+  const showDelete = () => {
+    setDeleteVisible(true);
+  };
+
+  const closeDelete = () => {
+    setDeleteVisible(false);
+  };
+
+  const deleteThisPost = () => {
+    axios
+      .delete(`${API_HOST}/posts/${props.id}`)
+      .then((res) => {
+        message.success("Deleted post");
+        setDeleted(true);
+      })
+      .catch((e) => message.error("Some error occurs, please try again"));
+    closeDelete();
   };
 
   const likeButton = post.liked ? (
@@ -115,6 +154,21 @@ function Post(props) {
     </Space>
   );
 
+  const moreMenu = (
+    <Menu>
+      <Menu.Item danger onClick={showDelete}>
+        Delete
+      </Menu.Item>
+      <Menu.Item>Edit</Menu.Item>
+    </Menu>
+  );
+
+  const moreButton = (
+    <Dropdown overlay={moreMenu} placement="topCenter" arrow>
+      <MoreOutlined style={{ fontSize: 24 }} key="more" />
+    </Dropdown>
+  );
+
   const title = (
     <>
       <Link
@@ -129,10 +183,16 @@ function Post(props) {
     </>
   );
 
-  const actions = !props.hideAction
-    ? [likeButton, commentButton, shareButton, <MoreOutlined style={{ fontSize: 24 }} key="more" />]
-    : [];
-  console.log(post);
+  const actions = !props.hideAction ? [likeButton, commentButton, shareButton, moreButton] : [];
+  let span = 0;
+  if (post.images && post.images.length === 1) {
+    span = 24;
+  } else if (post.images && post.images.length === 2) {
+    span = 12;
+  } else {
+    span = 8;
+  }
+
   return (
     <>
       <Modal
@@ -153,6 +213,17 @@ function Post(props) {
 
       <ShareDialog id={post.postId} visible={shareVisible} closeShare={closeShare} />
 
+      <Modal
+        title="Do you really want to delete this post?"
+        visible={deleteVisible}
+        okType="danger"
+        okText="Delete"
+        onCancel={closeDelete}
+        onOk={deleteThisPost}
+      >
+        Once performed, this action cannot be undone
+      </Modal>
+
       <Card style={{ marginBottom: 10 }} actions={actions}>
         <Skeleton loading={Boolean(!post.user)} avatar active>
           <Meta
@@ -164,9 +235,21 @@ function Post(props) {
                   ellipsis={{ expandable: true, rows: 4, symbol: "more" }}
                   style={{ color: "rgba(255,255,255,0.6)" }}
                 >
-                  {post.textContent}
+                  <span
+                    dangerouslySetInnerHTML={post.textContent && { __html: emojione.toImage(post.textContent) }}
+                  ></span>
                 </Paragraph>
                 {post.innerPost && <Post id={post.innerPost} user={props.user} socket={props.socket} hideAction />}
+
+                {post.images && post.images.length > 0 && (
+                  <Row>
+                    {post.images.map((image, index) => (
+                      <Col style={{ paddingRight: 2, paddingBottom: 2 }} span={span}>
+                        <Image src={`${API_HOST}/images/${image}`} alt={`${index}`} />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
               </>
             }
           />

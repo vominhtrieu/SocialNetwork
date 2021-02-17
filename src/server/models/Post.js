@@ -8,11 +8,13 @@ var postSchema = new mongoose.Schema({
     required: true,
     ref: "User",
   },
-  textContent: {
-    type: String,
-    required: true,
-  },
-  image: [String],
+  textContent: String,
+  images: [
+    {
+      type: Number,
+      ref: "Image",
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,

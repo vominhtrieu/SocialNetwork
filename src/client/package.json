@@ -17,6 +17,7 @@
     "axios": "^0.21.1",
     "craco-less": "^1.17.1",
     "customize-cra": "^1.0.0",
+    "emojione": "^4.5.0",
     "less": "^4.1.1",
     "less-loader": "^7.3.0",
     "moment": "^2.29.1",

@@ -1,25 +1,41 @@
 const Post = require("../models/Post");
 const User = require("../models/User");
+const Image = require("../models/Image");
 
-exports.addNewPost = (req, res) => {
-  const post = new Post({
-    user: req.body.id,
-    textContent: req.body.post.textContent,
-  });
-  post
-    .save()
-    .then(() => {
-      req.body.user.posts.push(post);
-      req.body.user
-        .save()
-        .then(() => res.json({ postId: post.id }))
-        .catch((err) => {
-          res.status(500).json("Internal error" + err);
+exports.addNewPost = async (req, res) => {
+  try {
+    let images = [];
+
+    if (req.files && req.files.length > 0) {
+      const fileList = req.files.map(({ filename }) => {
+        const img = new Image({
+          _id: filename,
+          user: Number(req.user.id),
+          type: "normal",
+          privacy: 0,
         });
-    })
-    .catch((err) => {
-      res.status(500).json("Internal error" + err);
+
+        return img.save();
+      });
+
+      images = await Promise.all(fileList);
+      images = images.map(({ _id }) => _id);
+    }
+
+    const post = new Post({
+      user: req.user.id,
+      textContent: req.body.textContent,
+      images: images,
     });
+
+    await post.save();
+    req.user.posts.push(post);
+    await req.user.save();
+    res.json({ postId: post.id });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Internal error" + err);
+  }
 };
 
 exports.getUserPost = (req, res) => {
@@ -32,7 +48,7 @@ exports.getUserPost = (req, res) => {
 exports.getPost = async (req, res) => {
   try {
     const post = await Post.findById(Number(req.params.id)).populate("user", "_id firstName lastName avatar").exec();
-    if (!post) res.status(404).json("Cannot find this post");
+    if (!post) return res.status(404).json("Cannot find this post");
     res.json({
       postId: post._id,
       user: post.user,
@@ -82,5 +98,18 @@ exports.sharePost = async (req, res) => {
     res.json({ postId: post.id });
   } catch (e) {
     res.status(500).json("Internal error" + e);
+  }
+};
+
+exports.deletePost = async (req, res) => {
+  try {
+    const result = await User.updateOne({ _id: req.user.id }, { $pull: { posts: +req.params.postId } });
+    if (result.nModified === 0) {
+      return res.sendStatus(400);
+    }
+    await Post.deleteOne({ _id: +req.params.postId });
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).json(err);
   }
 };

@@ -1,17 +1,12 @@
 import React from "react";
-import { Menu, Space, Modal, message, Input, Button } from "antd";
-import { UserOutlined, FormOutlined } from "@ant-design/icons";
+import { Menu, Space, Button } from "antd";
+import { FormOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import Avatar from "antd/lib/avatar/avatar";
-import axios from "axios";
-import { API_HOST } from "../config/constant";
+import NewPost from "../component/Post/NewPost";
 
-const { TextArea } = Input;
-
-function ActiveList({ socket, user }) {
+function SiderBar({ socket, user }) {
   const [users, setUsers] = React.useState([]);
-  const [text, setText] = React.useState("");
   const [visible, setVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -35,54 +30,13 @@ function ActiveList({ socket, user }) {
     setVisible(true);
   };
 
-  const addPost = () => {
-    axios
-      .post(
-        `${API_HOST}/posts`,
-        {
-          post: {
-            textContent: text,
-          },
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then(() => {
-        message.success("Successfully posted your status");
-        closeModal();
-      })
-      .catch((_err) => message.error("Error occurs, please try again!"));
-  };
-
   const closeModal = () => {
     setVisible(false);
   };
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
-      <Modal
-        title="Add New Post"
-        visible={visible}
-        okButtonProps={{ disabled: text === "" }}
-        okText="Post"
-        onOk={addPost}
-        onCancel={closeModal}
-      >
-        <Space style={{ marginBottom: 10 }}>
-          <Avatar src={`${API_HOST}/images/${user.avatar}`} icon={<UserOutlined />} />
-          <h3>{`${user.firstName} ${user.lastName}`}</h3>
-        </Space>
-        <TextArea
-          onChange={(e) => {
-            setText(e.target.value);
-          }}
-          style={{ resize: "none", height: 100 }}
-          value={text}
-          placeholder="Write something..."
-        />
-      </Modal>
-
+      <NewPost visible={visible} closeModal={closeModal} user={user} />
       <Space style={{ padding: 10, display: "block" }}>
         <Button block icon={<FormOutlined />} type="primary" onClick={showModal}>
           Write a status
@@ -108,4 +62,4 @@ const mapStateToProps = (state) => ({
   user: state.user,
 });
 
-export default connect(mapStateToProps)(ActiveList);
+export default connect(mapStateToProps)(SiderBar);

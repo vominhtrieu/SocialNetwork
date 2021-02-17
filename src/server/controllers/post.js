@@ -42,6 +42,7 @@ exports.getPost = async (req, res) => {
       liked: post.likes.indexOf(req.body.id) !== -1,
       likeCount: post.likes.length,
       commentCount: post.comments.length,
+      innerPost: post.innerPost,
     });
   } catch (err) {
     res.status(501).json(err);
@@ -66,4 +67,20 @@ exports.getFeed = (req, res) => {
       const data = posts.map((post) => post._id);
       res.json(data);
     });
+};
+
+exports.sharePost = async (req, res) => {
+  try {
+    const post = new Post({
+      user: req.body.id,
+      textContent: req.body.post.textContent,
+      innerPost: req.params.postId,
+    });
+    await post.save();
+    req.body.user.posts.push(post);
+    await req.body.user.save();
+    res.json({ postId: post.id });
+  } catch (e) {
+    res.status(500).json("Internal error" + e);
+  }
 };

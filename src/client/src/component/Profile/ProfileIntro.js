@@ -2,6 +2,7 @@ import React from "react";
 import { Space, Upload, message, Button, Spin } from "antd";
 import { CameraOutlined } from "@ant-design/icons";
 import UserAvatar from "../Common/UserAvatar";
+import ImgCrop from "antd-img-crop";
 import ProfileTabs from "./ProfileTabs";
 import { API_HOST } from "../../config/constant";
 import axios from "axios";
@@ -22,6 +23,7 @@ function beforeUpload(file) {
 function ProfileIntro({ user, profileUser, socket }) {
   const [uploadingAvatar, setUploadingAvatar] = React.useState(false);
   const [uploadingCover, setUploadingCover] = React.useState(false);
+  const cover = React.useRef(null);
   const [avatarId, setAvatarId] = React.useState(profileUser.avatar);
   const [coverId, setCoverId] = React.useState(profileUser.cover);
 
@@ -84,51 +86,55 @@ function ProfileIntro({ user, profileUser, socket }) {
         }}
       >
         {user.id === profileUser.id && (
-          <Upload
-            name="cover"
-            listType="picture"
-            showUploadList={false}
-            action={`${API_HOST}/cover`}
-            beforeUpload={beforeUpload}
-            onChange={handleCoverChange}
-            withCredentials
-            accept=".png,.jpg,.jpeg"
-          >
-            <Button
-              style={{ position: "absolute", right: 5, top: 5 }}
-              disabled={uploadingCover}
-              size="large"
-              type="primary"
-              shape="circle"
+          <ImgCrop shape="rect" aspect={16 / 9} zoom modalTitle="Edit your cover">
+            <Upload
+              name="cover"
+              listType="picture"
+              showUploadList={false}
+              action={`${API_HOST}/cover`}
+              beforeUpload={beforeUpload}
+              onChange={handleCoverChange}
+              withCredentials
+              accept=".png,.jpg,.jpeg"
             >
-              {uploadingCover ? <Spin /> : <CameraOutlined />}
-            </Button>
-          </Upload>
+              <Button
+                style={{ position: "absolute", right: 5, top: 5 }}
+                disabled={uploadingCover}
+                size="large"
+                type="primary"
+                shape="circle"
+              >
+                {uploadingCover ? <Spin /> : <CameraOutlined />}
+              </Button>
+            </Upload>
+          </ImgCrop>
         )}
 
         <Space style={{ position: "absolute", bottom: -50, left: 10 }}>
           <UserAvatar style={{ backgroundColor: "#4D4D4D" }} size={150} imageId={avatarId} preview />
           {user.id === profileUser.id && (
-            <Upload
-              name="avatar"
-              listType="picture"
-              showUploadList={false}
-              action={`${API_HOST}/avatar`}
-              beforeUpload={beforeUpload}
-              onChange={handleAvatarChange}
-              withCredentials
-              accept=".png,.jpg,.jpeg"
-            >
-              <Button
-                style={{ position: "absolute", right: 5, bottom: 5 }}
-                disabled={uploadingAvatar}
-                size="large"
-                type="primary"
-                shape="circle"
+            <ImgCrop shape="round" zoom modalTitle="Edit your avatar">
+              <Upload
+                name="avatar"
+                listType="picture"
+                showUploadList={false}
+                action={`${API_HOST}/avatar`}
+                beforeUpload={beforeUpload}
+                onChange={handleAvatarChange}
+                withCredentials
+                accept=".png,.jpg,.jpeg"
               >
-                {uploadingAvatar ? <Spin /> : <CameraOutlined />}
-              </Button>
-            </Upload>
+                <Button
+                  style={{ position: "absolute", right: 5, bottom: 5 }}
+                  disabled={uploadingAvatar}
+                  size="large"
+                  type="primary"
+                  shape="circle"
+                >
+                  {uploadingAvatar ? <Spin /> : <CameraOutlined />}
+                </Button>
+              </Upload>
+            </ImgCrop>
           )}
         </Space>
       </Space>

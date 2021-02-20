@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import FriendInfo from './FriendInfo';
-import { API_HOST } from '../../config/constant';
-import { Box, Card, CardContent } from '@material-ui/core';
+import React, { useEffect } from "react";
+import FriendInfo from "./FriendInfo";
+import { API_HOST } from "../../config/constant";
+import { Modal, List } from "antd";
 
 export default function ProfileFriends(props) {
-  const { user, profileUser } = props;
+  const { user, profileUser, visible, onClose } = props;
   const [friends, setFriends] = React.useState([]);
   useEffect(() => {
     fetch(`${API_HOST}/${profileUser.id}/friends`, {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
@@ -24,14 +24,13 @@ export default function ProfileFriends(props) {
       });
   }, [profileUser.id]);
 
-  const friendList = friends.map((friend, index) => {
-    return <FriendInfo user={user} friend={friend} key={index} />;
-  });
   return (
-    <Box marginTop={2}>
-      <Card>
-        <CardContent>{friendList}</CardContent>
-      </Card>
-    </Box>
+    <Modal title={`${profileUser.lastName}'s friend list`} visible={visible} footer={null} onCancel={onClose}>
+      <List
+        itemLayout="horizontal"
+        dataSource={friends}
+        renderItem={(friend) => <FriendInfo friend={friend} user={user} />}
+      ></List>
+    </Modal>
   );
 }

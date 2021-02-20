@@ -17,8 +17,8 @@ const { Content, Header, Sider } = Layout;
 
 function Main() {
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Header className="nav-bar">
+    <Layout style={{ height: "100vh" }}>
+      <Header style={{ width: "100%", position: "fixed", zIndex: 999 }} className="nav-bar">
         <MainNavbar />
       </Header>
       <Layout className="main-body">
@@ -32,13 +32,7 @@ function Main() {
             <PrivateRoute path="/:id" component={Profile} />
           </Switch>
         </Content>
-        <Sider
-          style={{ height: "100%", backgroundColor: "#333333" }}
-          width={300}
-          reverseArrow
-          breakpoint="lg"
-          collapsedWidth={0}
-        >
+        <Sider id="main-sider" width={300} reverseArrow breakpoint="lg" collapsedWidth={0}>
           <SiderBar />
         </Sider>
       </Layout>

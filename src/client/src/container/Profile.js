@@ -5,7 +5,6 @@ import ProfileHome from "../component/Profile/ProfileHome";
 import ProfileImages from "../component/Profile/ProfileImages";
 import ProfileFriends from "../component/Profile/ProfileFriends";
 import ProfileDetail from "../component/Profile/ProfileDetail";
-import { Helmet } from "react-helmet";
 import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { API_HOST } from "../config/constant";
@@ -32,13 +31,15 @@ function Profile({ user, socket }) {
     });
   }, [params.id, history]);
 
+  const updateProfileUser = (data) => setProfileUser(data);
+
   if (!profileUser.firstName) return null;
   else {
     const url = `/${profileUser.id}`;
     return (
       <Space direction="vertical" style={{ width: "100%" }}>
         <Title title={`${profileUser.firstName} ${profileUser.lastName}`} />
-        <ProfileIntro user={user} profileUser={profileUser} socket={socket} />
+        <ProfileIntro updateProfileUser={updateProfileUser} user={user} profileUser={profileUser} socket={socket} />
         <Switch>
           <Route exact path={`${url}/`}>
             <ProfileHome profileUser={profileUser} />

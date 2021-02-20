@@ -10,10 +10,9 @@ import Meta from "antd/lib/card/Meta";
 import UserAvatar from "../Common/UserAvatar";
 import Modal from "antd/lib/modal/Modal";
 import ShareDialog from "./ShareDialog";
-import emojione from "emojione";
 import "./post.less";
 import axios from "axios";
-import Grid from "antd/lib/card/Grid";
+import { emojify } from "react-emojione";
 
 const { Paragraph } = Typography;
 
@@ -235,9 +234,7 @@ function Post(props) {
                   ellipsis={{ expandable: true, rows: 4, symbol: "more" }}
                   style={{ color: "rgba(255,255,255,0.6)" }}
                 >
-                  <span
-                    dangerouslySetInnerHTML={post.textContent && { __html: emojione.toImage(post.textContent) }}
-                  ></span>
+                  {post.textContent && emojify(post.textContent)}
                 </Paragraph>
                 {post.innerPost && <Post id={post.innerPost} user={props.user} socket={props.socket} hideAction />}
 

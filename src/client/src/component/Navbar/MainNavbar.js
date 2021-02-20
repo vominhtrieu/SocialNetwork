@@ -7,6 +7,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { signOut } from "../../actions/signOut";
 import getMenu from "./DropDownMenu";
 import SearchBar from "./SearchBar";
+import { API_HOST } from "../../config/constant";
 
 const routes = ["/", "/friends", "/messages", "notifications"];
 
@@ -20,6 +21,42 @@ export function MainNavbar(props) {
     history.push("/signin");
   }
 
+  const [newFriendRequests, setNewFriendRequests] = React.useState(0);
+
+  // List of rooms which  message(s) user have not read
+  const [notSeenRooms, setNotSeenRooms] = React.useState(new Set());
+
+  React.useEffect(() => {
+    fetch(`${API_HOST}/update`, { method: "GET", credentials: "include" })
+      .then((res) => res.json())
+      .then((notifications) => {
+        setNewFriendRequests(notifications.newFriendRequests);
+        setNotSeenRooms(new Set(notifications.notSeenRooms));
+      });
+
+    props.socket.on("friendRequestUpdate", (data) => {
+      setNewFriendRequests(data.newFriendRequests);
+    });
+
+    props.socket.on("newMessage", ({ roomId }) => {
+      setNotSeenRooms((notSeenRooms) => new Set(notSeenRooms).add(roomId));
+    });
+
+    props.socket.on("seen", ({ roomId }) => {
+      setNotSeenRooms((notSeenRooms) => {
+        let temp = new Set(notSeenRooms);
+        temp.delete(Number(roomId));
+        return temp;
+      });
+    });
+
+    return () => {
+      props.socket.off("friendRequestUpdate");
+      props.socket.off("newMessage");
+      props.socket.off("seen");
+    };
+  }, [props.socket]);
+
   const signOut = () => {
     props.socket.disconnect();
     props.signOut();
@@ -29,13 +66,7 @@ export function MainNavbar(props) {
     <>
       <SearchBar />
       <Space style={{ marginLeft: "auto" }}>
-        <Menu
-          style={{ marginRight: 20 }}
-          inlineCollapsed={false}
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-        >
+        <Menu style={{ marginRight: 20 }} theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
           <Menu.Item key={routes[0]}>
             <Link to={routes[0]}>
               <Badge count={0}>
@@ -45,7 +76,7 @@ export function MainNavbar(props) {
           </Menu.Item>
           <Menu.Item key={routes[1]}>
             <Link to={routes[1]}>
-              <Badge count={0} overflowCount={99}>
+              <Badge count={newFriendRequests} overflowCount={99}>
                 <TeamOutlined style={{ fontSize: 24, margin: "auto" }} />
               </Badge>
             </Link>
@@ -53,7 +84,7 @@ export function MainNavbar(props) {
 
           <Menu.Item key={routes[2]}>
             <Link to={routes[2]}>
-              <Badge count={2} overflowCount={99}>
+              <Badge count={notSeenRooms} overflowCount={99}>
                 <MessageOutlined style={{ fontSize: 24, margin: "auto" }} />
               </Badge>
             </Link>
@@ -61,7 +92,7 @@ export function MainNavbar(props) {
 
           <Menu.Item key={routes[3]}>
             <Link to={routes[3]}>
-              <Badge count={2} overflowCount={99}>
+              <Badge count={0} overflowCount={99}>
                 <NotificationOutlined style={{ fontSize: 24, margin: "auto" }} />
               </Badge>
             </Link>

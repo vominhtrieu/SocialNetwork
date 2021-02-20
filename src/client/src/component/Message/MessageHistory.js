@@ -1,9 +1,10 @@
-import React from 'react';
-import ReceiveMessage from './ReceiveMessage';
-import SentMessage from './SentMessage';
-import { Box } from '@material-ui/core';
-import { API_HOST } from '../../config/constant';
-import TypingMessage from './TypingMessage';
+import React from "react";
+import ReceiveMessage from "./ReceiveMessage";
+import SentMessage from "./SentMessage";
+import { Box } from "@material-ui/core";
+import { API_HOST } from "../../config/constant";
+import TypingMessage from "./TypingMessage";
+
 export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
   const messageHistory = React.useRef(null);
@@ -17,12 +18,12 @@ export default function MessageHistory(props) {
 
   //Join and leave room
   React.useEffect(() => {
-    socket.emit('joinRoom', {
+    socket.emit("joinRoom", {
       roomId: roomInfo._id,
     });
 
     return () => {
-      socket.emit('leaveRoom', {
+      socket.emit("leaveRoom", {
         roomId: roomInfo._id,
       });
     };
@@ -31,8 +32,8 @@ export default function MessageHistory(props) {
   //Fetch room's messages
   React.useEffect(() => {
     fetch(`${API_HOST}/room/${roomInfo._id}/messages`, {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((messages) => {
@@ -62,23 +63,23 @@ export default function MessageHistory(props) {
       });
     };
 
-    socket.on('message', (data) => {
+    socket.on("message", (data) => {
       setMessages((messages) => [...messages, data]);
       scrollToBottom();
     });
-    socket.on('typing', ({ sender }) => {
+    socket.on("typing", ({ sender }) => {
       addNewTypingUser(sender);
       scrollToBottom();
     });
     return () => {
-      socket.removeAllListeners('message');
-      socket.removeAllListeners('typing');
+      socket.removeAllListeners("message");
+      socket.removeAllListeners("typing");
     };
   }, [socket, typingUsers]);
 
   //Listen to seen event
   React.useEffect(() => {
-    socket.emit('seen', {
+    socket.emit("seen", {
       roomId: roomInfo._id,
       messageSeen: messages.length,
     });
@@ -99,7 +100,7 @@ export default function MessageHistory(props) {
   });
 
   return (
-    <Box ref={messageHistory} flexGrow={1} flexBasis={0} padding={2} display='block' overflow='auto'>
+    <Box ref={messageHistory} flexGrow={1} flexBasis={0} padding={2} display="block" overflow="auto">
       {renderMessages}
       {typingUserList.length > 0 ? (
         <TypingMessage typingUsers={typingUserList} participants={roomInfo.participants} />

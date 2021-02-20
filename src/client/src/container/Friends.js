@@ -1,5 +1,5 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
+import { List, Space } from "antd";
 import FriendRequest from "../component/Friends/FriendRequest";
 import { API_HOST } from "../config/constant";
 import EmptyFriendPage from "../component/Friends/EmptyFriendPage";
@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import Title from "../component/Common/Title";
 
 function Friends({ socket }) {
+  const [loading, setLoading] = React.useState(true);
   const [requests, setRequests] = React.useState([]);
 
   React.useEffect(() => {
@@ -15,7 +16,10 @@ function Friends({ socket }) {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then(({ requests }) => setRequests(requests));
+      .then(({ requests }) => {
+        setLoading(false);
+        setRequests(requests);
+      });
   }, []);
 
   React.useEffect(() => {
@@ -36,18 +40,18 @@ function Friends({ socket }) {
     };
   }, [socket]);
 
-  if (requests.length === 0) {
-    return <EmptyFriendPage />;
-  }
-
-  const FriendRequests = requests.map((request, index) => {
-    return <FriendRequest socket={socket} requestId={request} key={index} />;
-  });
   return (
-    <Box marginTop={2} width="100%">
+    <div marginTop={2} style={{ width: "100%", height: "100%" }}>
       <Title title="Friends" />
-      {FriendRequests}
-    </Box>
+      <List
+        style={{ width: "100%" }}
+        header={<h3>Pending friend requests</h3>}
+        loading={loading}
+        itemLayout="horizontal"
+        dataSource={requests}
+        renderItem={(request) => <FriendRequest socket={socket} requestId={request} />}
+      />
+    </div>
   );
 }
 

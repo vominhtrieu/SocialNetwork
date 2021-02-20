@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
-import { Box } from "@material-ui/core";
 import Post from "../component/Post/Post";
 import { API_HOST } from "../config/constant";
-import { Helmet } from "react-helmet";
+import { List } from "antd";
 import Title from "../component/Common/Title";
 
 function Home() {
@@ -18,19 +17,11 @@ function Home() {
       });
   }, []);
 
-  // const addPost = (id) => {
-  //   setPosts((posts) => [id, ...posts]);
-  // };
-
-  const renderPost = posts.map((postId) => {
-    return <Post key={postId} id={postId} />;
-  });
-
   return (
-    <Box width="100%">
+    <div style={{ width: "100%" }}>
       <Title title="Home" />
-      {renderPost}
-    </Box>
+      <List dataSource={posts} renderItem={(postId) => <Post key={postId} id={postId} />} />
+    </div>
   );
 }
 

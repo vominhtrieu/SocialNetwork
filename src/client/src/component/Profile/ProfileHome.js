@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Post from "../Post/Post";
 import { API_HOST } from "../../config/constant";
 import axios from "axios";
-import { message } from "antd";
+import { List, message } from "antd";
 
 export default function ProfileHome(props) {
   const [posts, setPosts] = React.useState([]);
@@ -18,5 +18,12 @@ export default function ProfileHome(props) {
       .catch((_err) => message.error("Cannot fetch your posts"));
   }, [props.profileUser.id]);
 
-  return posts.map((postId, index) => <Post key={index} id={postId} />);
+  return (
+    <List
+      locale={{ emptyText: "You have not posted anything" }}
+      header={<h2 style={{ marginLeft: 10, marginBottom: 0 }}>Posts</h2>}
+      dataSource={posts}
+      renderItem={(postId) => <Post key={postId} id={postId} />}
+    />
+  );
 }

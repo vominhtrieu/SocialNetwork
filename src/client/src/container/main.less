@@ -3,6 +3,10 @@
 @mobile-nav-padding: 0 1vw;
 @mobile-body-padding: 0vw;
 
+body {
+  overflow-y: scroll;
+}
+
 .ant-layout-sider,
 .ant-layout-sider-children {
   height: 100%;
@@ -17,6 +21,8 @@
 .main-body {
   height: 100%;
   padding: @xl-page-padding;
+  padding-right: calc(15vw + 300px);
+  padding-top: 64px;
 }
 
 .main-content {
@@ -24,10 +30,29 @@
   padding-top: 10px;
 }
 
+#main-sider {
+  position: fixed;
+  top: 0;
+  right: 15vw;
+  padding-top: 64px;
+  height: "100vh";
+  overflow-y: auto;
+  background-color: "#333333";
+}
+
 @media only screen and (max-width: 1199px) {
   .nav-bar,
   .main-body {
     padding: @lg-page-padding;
+  }
+
+  .main-body {
+    padding-top: 64px;
+    padding-right: calc(7vw + 300px);
+  }
+
+  #main-sider {
+    right: 7vw;
   }
 }
 
@@ -38,9 +63,14 @@
 
   .main-body {
     padding: @mobile-body-padding;
+    padding-top: 64px;
   }
 
   .main-content {
     padding-right: 0;
+  }
+
+  #main-sider {
+    right: 0;
   }
 }

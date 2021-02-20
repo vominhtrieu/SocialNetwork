@@ -19,8 +19,7 @@ exports.addFriend = async (req, res) => {
       .populate({ path: "friendRequest", match: { user: addId } })
       .exec();
 
-    if (user.friendRequests.length !== 0)
-      return res.status(400).json("You cannot sent this request");
+    if (user.friendRequests.length !== 0) return res.status(400).json("You cannot sent this request");
     const addUser = await User.findById(addId)
       .populate({ path: "friendRequest", match: { user: req.body.id } })
       .exec();
@@ -28,9 +27,7 @@ exports.addFriend = async (req, res) => {
       return res.status(400).json("Cannot find user to send request");
     }
     if (addUser.friendRequests.length !== 0)
-      return res
-        .status(400)
-        .json("You already sent friend request to this person");
+      return res.status(400).json("You already sent friend request to this person");
 
     const request = new FriendRequest({ user: req.body.id });
     await request.save();
@@ -67,10 +64,7 @@ exports.respondFriendRequest = async (req, res) => {
     if (!request) return res.status(400).json("Cannot respond to this request");
     await request.populate("user").execPopulate();
 
-    await User.updateOne(
-      { _id: req.body.id },
-      { $pull: { friendRequests: req.body.requestId } }
-    );
+    await User.updateOne({ _id: req.body.id }, { $pull: { friendRequests: req.body.requestId } });
 
     if (req.body.accept) {
       req.body.user.friends.push({ user: request.user._id });
@@ -93,14 +87,8 @@ exports.respondFriendRequest = async (req, res) => {
         })
         .execPopulate();
 
-      if (
-        req.body.user.chatRooms.length === 0 &&
-        request.user.chatRooms.length === 0
-      ) {
-        const participants = [
-          { user: req.body.id },
-          { user: request.user._id },
-        ];
+      if (req.body.user.chatRooms.length === 0 && request.user.chatRooms.length === 0) {
+        const participants = [{ user: req.body.id }, { user: request.user._id }];
         const room = new ChatRoom({
           participants: participants,
         });
@@ -119,16 +107,26 @@ exports.respondFriendRequest = async (req, res) => {
   }
 };
 
+exports.cancelRequest = async (req, res) => {
+  try {
+    const request = await FriendRequest.findById(req.body.requestId).exec();
+    if (!request) return res.status(400).json("Cannot respond to this request");
+    await request.populate("user").execPopulate();
+    await User.updateOne({ _id: req.body.id }, { $pull: { friendRequests: req.body.requestId } });
+    await FriendRequest.findByIdAndDelete(request._id);
+    res.status(201).json("Successfully cancel your request");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 exports.unfriend = (req, res) => {
   User.findByIdAndUpdate(
     req.body.id,
     { $pull: { friends: { user: req.body.friendId } } },
     { useFindAndModify: true },
     (err) => {
-      if (err)
-        return res
-          .status(400)
-          .json("Unable to find this person in your friendlist");
+      if (err) return res.status(400).json("Unable to find this person in your friendlist");
       User.findByIdAndUpdate(
         req.body.friendId,
         { $pull: { friends: { user: req.body.id } } },
@@ -154,16 +152,20 @@ exports.getFriendList = (req, res) => {
         res.status(400).json("Unable to get friend list");
       } else {
         const friendList = user.friends.map(({ user }) => {
+          let status = "Nothing";
+          if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) status = "Friend";
+          else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0) status = "Pending";
+
           return {
             id: user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             avatar: user.avatar,
-            isFriend:
-              req.body.user.friends.filter((friend) => friend.user === user._id)
-                .length === 1,
+            friendCount: user.friends.length,
+            status: status,
           };
         });
+
         res.json(friendList);
       }
     });

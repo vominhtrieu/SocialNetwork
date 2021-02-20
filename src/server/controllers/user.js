@@ -16,53 +16,49 @@ exports.getProfile = (req, res) => {
   });
 };
 
-exports.getProfileById = (req, res) => {
-  User.findById(Number(req.params.id))
-    .populate("friendRequests", "user")
-    .exec((err, user) => {
-      if (err || !user) return res.status(400).json("Unable to find user");
-      let friendStatus = "Nothing";
-      ChatRoom.aggregate()
-        .match({
-          participants: {
-            $size: 2,
+exports.getProfileById = async (req, res) => {
+  try {
+    const user = await User.findById(Number(req.params.id)).populate("friendRequests", "user").exec();
+    const room = await ChatRoom.aggregate()
+      .match({
+        participants: {
+          $size: 2,
+          $elemMatch: {
+            user: req.body.id,
           },
-        })
-        .match({
-          participants: {
-            $elemMatch: {
-              user: req.body.id,
-            },
+        },
+      })
+      .match({
+        participants: {
+          $elemMatch: {
+            user: req.params.id,
           },
-        })
-        .match({
-          participants: {
-            $elemMatch: {
-              user: req.params.id,
-            },
-          },
-        })
-        .project({
-          _id: 1,
-        })
-        .exec((err, room) => {
-          if (err) return res.status(500);
-          if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) friendStatus = "Friend";
-          else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0)
-            friendStatus = "Pending";
+        },
+      })
+      .project({
+        _id: 1,
+      })
+      .exec();
 
-          res.json({
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            avatar: user.avatar,
-            cover: user.cover,
-            friendStatus,
-            chatRoom: room ? room._id : null,
-          });
-        });
+    let status = "Nothing";
+    if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) status = "Friend";
+    else if (user.friendRequests.filter((request) => request.user === req.body.id).length === 1) status = "Wait";
+    else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0) status = "Pending";
+
+    res.json({
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      avatar: user.avatar,
+      cover: user.cover,
+      friendCount: user.friends.length,
+      status: status,
+      chatRoom: room ? room._id : null,
     });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
 exports.auth = (_req, res) => {

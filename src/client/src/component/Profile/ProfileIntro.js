@@ -38,14 +38,6 @@ function ProfileIntro({ user, profileUser, socket, updateProfileUser }) {
     setShowFriendList(false);
   }, [profileUser]);
 
-  const addFriend = () => {
-    axios.post(API_HOST + "/addfriend", { addId: profileUser.id }).then((res) => {
-      if (res.ok) {
-        socket.emit("sendFriendRequest", { friendId: profileUser.id });
-      }
-    });
-  };
-
   const handleAvatarChange = (info) => {
     if (info.file.status === "uploading") {
       setUploadingAvatar(true);

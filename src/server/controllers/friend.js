@@ -26,6 +26,7 @@ exports.addFriend = async (req, res) => {
     if (!addUser) {
       return res.status(400).json("Cannot find user to send request");
     }
+
     if (addUser.friendRequests.length !== 0)
       return res.status(400).json("You already sent friend request to this person");
 
@@ -53,6 +54,7 @@ exports.getFriendRequests = (req, res) => {
   User.findById(req.body.id, (err, user) => {
     if (err) res.status(500).json("Unable to get friend requests");
     else {
+      console.log(user.friendRequests);
       res.json({ requests: user.friendRequests });
     }
   });
@@ -113,6 +115,7 @@ exports.cancelRequest = async (req, res) => {
     if (!request) return res.status(400).json("Cannot respond to this request");
     await request.populate("user").execPopulate();
     await User.updateOne({ _id: req.body.id }, { $pull: { friendRequests: req.body.requestId } });
+    await User.updateOne({ _id: req.body.userId }, { $pull: { friendRequests: req.body.requestId } });
     await FriendRequest.findByIdAndDelete(request._id);
     res.status(201).json("Successfully cancel your request");
   } catch (err) {
@@ -140,33 +143,41 @@ exports.unfriend = (req, res) => {
   );
 };
 
-exports.getFriendList = (req, res) => {
-  User.findById(req.params.id)
+exports.getFriendList = async (req, res) => {
+  const user = await User.findById(req.params.id)
     .populate({
       path: "friends.user",
       model: "User",
     })
-    .exec((err, user) => {
-      if (err || !user) {
-        console.log(err);
-        res.status(400).json("Unable to get friend list");
-      } else {
-        const friendList = user.friends.map(({ user }) => {
-          let status = "Nothing";
-          if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) status = "Friend";
-          else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0) status = "Pending";
-
-          return {
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            avatar: user.avatar,
-            friendCount: user.friends.length,
-            status: status,
-          };
-        });
-
-        res.json(friendList);
+    .exec();
+  if (!user) {
+    return res.status(400).json("Unable to get friend list");
+  }
+  const friendList = await Promise.all(
+    user.friends.map(async ({ user }) => {
+      let friend = {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatar: user.avatar,
+        friendCount: user.friends.length,
+      };
+      let status = "Nothing";
+      let requestUser = await User.populate(req.user, "friendRequests");
+      if (user.friends.filter((friend) => friend.user === req.body.id).length === 1) status = "Friend";
+      else if (requestUser.friendRequests.filter((request) => request.user === user._id).length === 1) {
+        friend.request = requestUser.friendRequests.find((request) => request.user === user._id);
+        status = "Wait";
+      } else if (user.friendRequests.filter((request) => request.user === req.body.id).length > 0) {
+        friend.request = user.friendRequests.find((request) => request.user === req.body.id);
+        status = "Pending";
       }
-    });
+
+      friend.status = status;
+
+      return friend;
+    })
+  );
+
+  res.json(friendList);
 };

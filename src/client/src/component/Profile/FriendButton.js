@@ -1,12 +1,11 @@
 import React from "react";
 import { Button, message } from "antd";
-import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_HOST } from "../../config/constant";
 
 export default function FriendButton({ user, friend, socket, style }) {
   const [status, setStatus] = React.useState(friend.status);
-  console.log(friend);
 
   const unfriend = () => {
     setStatus(false);
@@ -30,12 +29,48 @@ export default function FriendButton({ user, friend, socket, style }) {
         socket.emit("sendFriendRequest", { friendId: friend.id });
       })
       .catch((e) => {
+        console.log(e.response.data);
         message.error("Error occurs, please try again!" + e);
         setStatus(temp);
       });
   };
 
-  console.log(status);
+  const accept = () => {
+    const temp = status;
+    setStatus("Friend");
+    axios
+      .post(
+        `${API_HOST}/respondfriendrequest`,
+        { accept: true, requestId: friend.request._id },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        message.success(`You and ${friend.lastName} are friends now`);
+      })
+      .catch((err) => {
+        setStatus(temp);
+        message.error(`Error occurs. Please try again!`);
+      });
+  };
+
+  const cancel = () => {
+    const temp = status;
+    setStatus("Nothing");
+    axios
+      .post(
+        `${API_HOST}/cancelrequest`,
+        { requestId: friend.request._id, userId: friend.id },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        message.success(`You cancelled your friend request`);
+      })
+      .catch((err) => {
+        setStatus(temp);
+        message.error(`Error occurs. Please try again!`);
+      });
+  };
+
   if (user.id === friend.id) {
     return null;
   }
@@ -48,12 +83,16 @@ export default function FriendButton({ user, friend, socket, style }) {
     );
   } else if (status === "Pending") {
     return (
-      <Button icon={<CloseOutlined />} style={style}>
+      <Button onClick={cancel} icon={<CloseOutlined />} style={style}>
         Cancel request
       </Button>
     );
   } else if (status === "Wait") {
-    return <Button style={style}>Accept request</Button>;
+    return (
+      <Button onClick={accept} icon={<CheckOutlined />} type="primary" style={style}>
+        Accept request
+      </Button>
+    );
   }
   return (
     <Button type="primary" icon={<PlusOutlined />} style={style} onClick={addFriend}>

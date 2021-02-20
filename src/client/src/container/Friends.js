@@ -1,8 +1,7 @@
 import React from "react";
-import { List, Space } from "antd";
+import { List } from "antd";
 import FriendRequest from "../component/Friends/FriendRequest";
 import { API_HOST } from "../config/constant";
-import EmptyFriendPage from "../component/Friends/EmptyFriendPage";
 import { connect } from "react-redux";
 import Title from "../component/Common/Title";
 
@@ -41,7 +40,7 @@ function Friends({ socket }) {
   }, [socket]);
 
   return (
-    <div marginTop={2} style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <Title title="Friends" />
       <List
         style={{ width: "100%" }}

@@ -4,7 +4,7 @@ import { API_HOST } from "../../config/constant";
 import { Modal, List } from "antd";
 
 export default function ProfileFriends(props) {
-  const { user, profileUser, visible, onClose } = props;
+  const { user, profileUser, visible, onClose, socket } = props;
   const [friends, setFriends] = React.useState([]);
   useEffect(() => {
     fetch(`${API_HOST}/${profileUser.id}/friends`, {
@@ -29,7 +29,7 @@ export default function ProfileFriends(props) {
       <List
         itemLayout="horizontal"
         dataSource={friends}
-        renderItem={(friend) => <FriendInfo friend={friend} user={user} />}
+        renderItem={(friend) => <FriendInfo friend={friend} user={user} socket={socket} />}
       ></List>
     </Modal>
   );

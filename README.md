@@ -12,6 +12,7 @@ Usage:
 <ul>
   <li>Install Nodejs at https://nodejs.org/en/</li>
   <li>Install MongoDB at https://www.mongodb.com/</li>
+  <li>Install Redis at https://redis.io/</li>
   <li>Clone this repository</li>
   <li>Open CMD/Terminal, change directory to repository's location</li>
   <li>cd to src/client and src/server, in each folder, type <code>npm install</code> to install all necessary package</li>
@@ -28,3 +29,4 @@ Usage:
   <li>Type <code>node app.js</code> to start NodeJs server</li>
   <li>Visit localhost:3000</li>
 </ul>
+

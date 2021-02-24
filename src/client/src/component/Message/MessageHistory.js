@@ -99,7 +99,7 @@ export default function MessageHistory(props) {
   });
 
   return (
-    <div style={{ height: "100%", overflow: "auto" }} ref={messageHistory}>
+    <div style={{ padding: 4, height: "100%", overflow: "auto" }} ref={messageHistory}>
       {renderMessages}
       {typingUserList.length > 0 ? (
         <TypingMessage typingUsers={typingUserList} participants={roomInfo.participants} />

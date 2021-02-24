@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Avatar, Divider, Space } from "antd";
+import { ArrowLeftOutlined, PhoneOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import { Avatar, Button, Divider, Space } from "antd";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { API_HOST } from "../../config/constant";
@@ -48,17 +48,27 @@ function Room(props) {
         width: "100%",
       }}
     >
-      <Space style={{ alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <Link style={{ marginRight: 5 }} to="/messages">
           <ArrowLeftOutlined style={{ fontSize: 20, color: "white" }} />
         </Link>
-        <Avatar.Group max={2}>
+        <Avatar.Group style={{ marginRight: 5 }} max={2}>
           {roomInfo.participants.map(({ user }) => (
             <UserAvatar key={user._id} imageId={user.avatar} />
           ))}
         </Avatar.Group>
-        <h3 style={{ marginBottom: 0 }}>{conversationName}</h3>
-      </Space>
+        <h3 style={{ marginBottom: 0, marginRight: 5 }}>{conversationName}</h3>
+        <div style={{ marginLeft: "auto" }}>
+          <Button
+            style={{ marginRight: 5 }}
+            type="primary"
+            shape="circle"
+            title="Audio call"
+            icon={<PhoneOutlined />}
+          />
+          <Button type="primary" shape="circle" title="Video call" icon={<VideoCameraOutlined />} />
+        </div>
+      </div>
       <Divider style={{ margin: 0, marginTop: 10 }} />
       <div style={{ height: "100%", overflowY: "auto", flexGrow: "1" }}>
         <MessageHistory roomInfo={roomInfo} socket={props.socket} user={props.user} />

@@ -20,7 +20,7 @@ export default function ProfileHome(props) {
 
   return (
     <List
-      locale={{ emptyText: "You have not posted anything" }}
+      locale={{ emptyText: "This profile doesn't have any post" }}
       header={<h2 style={{ marginLeft: 10, marginBottom: 0 }}>Posts</h2>}
       dataSource={posts}
       renderItem={(postId) => <Post key={postId} id={postId} />}

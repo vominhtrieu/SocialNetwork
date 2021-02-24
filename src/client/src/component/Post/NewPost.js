@@ -1,6 +1,6 @@
 import React from "react";
 import { Space, Modal, message, Button, Upload, Input, Avatar } from "antd";
-import { SmileOutlined, CameraOutlined, UserOutlined, PlusOutlined } from "@ant-design/icons";
+import { SmileOutlined, CameraOutlined, UserOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { API_HOST } from "../../config/constant";
 
@@ -43,7 +43,6 @@ export default function NewPost({ user, visible, closeModal }) {
     setFileList((list) => [...list, { uid: uid++, url: url, file }]);
     return true;
   };
-  console.log(fileList);
 
   const handleChange = ({ fileList }) => setFileList(fileList);
 

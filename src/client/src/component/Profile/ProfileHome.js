@@ -1,30 +1,29 @@
 import React, { useEffect } from "react";
-import PostAdd from "../Post/PostAdd";
 import Post from "../Post/Post";
-import { HOST } from "../../config/constant";
+import { API_HOST } from "../../config/constant";
+import axios from "axios";
+import { List, message } from "antd";
 
 export default function ProfileHome(props) {
   const [posts, setPosts] = React.useState([]);
 
   useEffect(() => {
-    fetch(`${HOST}/${props.profileUser.id}/posts`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((posts) => {
-        setPosts(posts);
-      });
+    axios
+      .get(`${API_HOST}/${props.profileUser.id}/posts`, {
+        withCredentials: true,
+      })
+      .then(({ data }) => {
+        setPosts(data);
+      })
+      .catch((_err) => message.error("Cannot fetch your posts"));
   }, [props.profileUser.id]);
-  
-  const renderPosts = posts.map((postId, index) => {
-    return <Post key={index} id={postId} />;
-  });
 
   return (
-    <div>
-      <PostAdd />
-      {renderPosts}
-    </div>
+    <List
+      locale={{ emptyText: "You have not posted anything" }}
+      header={<h2 style={{ marginLeft: 10, marginBottom: 0 }}>Posts</h2>}
+      dataSource={posts}
+      renderItem={(postId) => <Post key={postId} id={postId} />}
+    />
   );
 }

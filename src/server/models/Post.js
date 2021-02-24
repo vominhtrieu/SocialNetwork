@@ -1,18 +1,20 @@
-const mongoose = require('mongoose');
-const IdRecord = require('./IdRecord');
+const mongoose = require("mongoose");
+const IdRecord = require("./IdRecord");
 
 var postSchema = new mongoose.Schema({
   _id: Number,
   user: {
     type: Number,
     required: true,
-    ref: 'User',
+    ref: "User",
   },
-  textContent: {
-    type: String,
-    required: true,
-  },
-  image: [String],
+  textContent: String,
+  images: [
+    {
+      type: Number,
+      ref: "Image",
+    },
+  ],
   date: {
     type: Date,
     default: Date.now,
@@ -20,13 +22,17 @@ var postSchema = new mongoose.Schema({
   likes: [
     {
       type: Number,
-      ref: 'User',
+      ref: "User",
     },
   ],
+  innerPost: {
+    type: Number,
+    ref: "Post",
+  },
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment',
+      ref: "Comment",
     },
   ],
   privacy: {
@@ -36,11 +42,11 @@ var postSchema = new mongoose.Schema({
   },
 });
 
-postSchema.pre('save', function (next) {
+postSchema.pre("save", function (next) {
   if (this.isNew) {
     const document = this;
     IdRecord.findOneAndUpdate(
-      { model: 'Post' },
+      { model: "Post" },
       { $inc: { recentId: 1 } },
       { new: true, useFindAndModify: false },
       (err, data) => {
@@ -54,4 +60,4 @@ postSchema.pre('save', function (next) {
   } else next();
 });
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.model("Post", postSchema);

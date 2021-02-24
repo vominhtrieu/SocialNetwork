@@ -1,42 +1,20 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import {
-  Box,
-  IconButton,
-  Card,
-  Typography,
-  Avatar,
-} from "@material-ui/core";
-import { AvatarGroup } from "@material-ui/lab";
-import NavigateBeforeIcon from "@material-ui/icons/NavigateBefore";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Avatar, Divider, Space } from "antd";
 import { connect } from "react-redux";
-import { HOST } from "../../config/constant";
-import MessageSection from "./MessageHistory";
+import { Link } from "react-router-dom";
+import { API_HOST } from "../../config/constant";
+import UserAvatar from "../Common/UserAvatar";
+import MessageHistory from "./MessageHistory";
 import MessageInput from "./MessageInput";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    marginRight: 10,
-  },
-  avatar: {
-    marginRight: 1,
-  },
-}));
-
 function Room(props) {
-  const classes = useStyles();
   const roomId = props.match.params.id;
   const [roomInfo, setRoomInfo] = React.useState(null);
   const [conversationName, setConversationName] = React.useState(null);
   //Fetch room's infomation
   React.useEffect(() => {
-    fetch(`${HOST}/room/${roomId}`, {
+    fetch(`${API_HOST}/room/${roomId}`, {
       method: "GET",
       credentials: "include",
     })
@@ -61,39 +39,33 @@ function Room(props) {
 
   if (!conversationName || !roomInfo) return null;
   return (
-    <Card variant="outlined" className={classes.root}>
-      <Box height="100%" display="flex" flexDirection="column">
-        <Box display="flex" alignItems="center" borderBottom="1px solid rgba(0,0,0,0.12)">
-          <IconButton
-            className={classes.backButton}
-            onClick={() => props.history.push("/messages")}
-          >
-            <NavigateBeforeIcon fontSize="large" />
-          </IconButton>
-          <Box marginX={1}>
-            <AvatarGroup max={3} spacing="small">
-              {roomInfo.participants.map(({ user }, index) => {
-                if (user._id === props.user.id) return null;
-                return (
-                  <Avatar
-                    key={index}
-                    alt={`${user.firstName}'s avatar`}
-                    src={user.avatar ? `${HOST}/image/${user.avatar}` : null}
-                  />
-                );
-              })}
-            </AvatarGroup>
-          </Box>
-          <Typography>{conversationName}</Typography>
-        </Box>
-        <MessageSection
-          roomInfo={roomInfo}
-          socket={props.socket}
-          user={props.user}
-        />
-        <MessageInput roomInfo={roomInfo} socket={props.socket} />
-      </Box>
-    </Card>
+    <div
+      id="room"
+      style={{
+        display: "flex",
+        height: "calc(100vh - 74px)",
+        flexDirection: "column",
+        width: "100%",
+      }}
+    >
+      <Space style={{ alignItems: "center" }}>
+        <Link style={{ marginRight: 5 }} to="/messages">
+          <ArrowLeftOutlined style={{ fontSize: 20, color: "white" }} />
+        </Link>
+        <Avatar.Group max={2}>
+          {roomInfo.participants.map(({ user }) => (
+            <UserAvatar key={user._id} imageId={user.avatar} />
+          ))}
+        </Avatar.Group>
+        <h3 style={{ marginBottom: 0 }}>{conversationName}</h3>
+      </Space>
+      <Divider style={{ margin: 0, marginTop: 10 }} />
+      <div style={{ height: "100%", overflowY: "auto", flexGrow: "1" }}>
+        <MessageHistory roomInfo={roomInfo} socket={props.socket} user={props.user} />
+      </div>
+
+      <MessageInput roomInfo={roomInfo} socket={props.socket} />
+    </div>
   );
 }
 

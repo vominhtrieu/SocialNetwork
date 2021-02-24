@@ -1,15 +1,17 @@
-const Post = require('../models/Post');
+const Post = require("../models/Post");
 
 module.exports = (io, socket) => {
-  socket.on('joinPost', ({ postId }) => {
-    socket.join('post/' + String(postId));
+  socket.on("joinPost", ({ postId }) => {
+    socket.join("post/" + String(postId));
   });
 
-  socket.on('like', ({ postId }) => {
-    Post.findById(postId, (err, post) => {
-      if (!post) return;
+  socket.on("like", async ({ postId }) => {
+    const post = await Post.findById(postId);
+    if (!post) return socket.emit("error", "This post have been deleted");
+
+    try {
       if (post.likes.indexOf(socket.userId) !== -1) {
-        Post.findOneAndUpdate(
+        const post = await Post.findOneAndUpdate(
           { _id: postId },
           {
             $pull: {
@@ -20,18 +22,16 @@ module.exports = (io, socket) => {
           {
             useFindAndModify: false,
             new: true,
-          },
-          (err, post) => {
-            if (!err && post) {
-              io.to('post/' + String(post._id)).emit('removeLike', {
-                postId: post._id,
-                userId: socket.userId,
-              });
-            }
           }
         );
+        if (post) {
+          io.to("post/" + String(post._id)).emit("removeLike", {
+            postId: post._id,
+            userId: socket.userId,
+          });
+        }
       } else {
-        Post.findOneAndUpdate(
+        const post = await Post.findOneAndUpdate(
           { _id: postId },
           {
             $push: {
@@ -41,22 +41,22 @@ module.exports = (io, socket) => {
           {
             useFindAndModify: false,
             new: true,
-          },
-          (err, post) => {
-            if (!err && post) {
-              io.to('post/' + String(post._id)).emit('newLike', {
-                postId: post._id,
-                userId: socket.userId,
-              });
-            }
           }
         );
+        if (post) {
+          io.to("post/" + String(post._id)).emit("newLike", {
+            postId: post._id,
+            userId: socket.userId,
+          });
+        }
       }
-    });
+    } catch (err) {
+      socket.emit("error", err.message);
+    }
   });
 
-  socket.on('comment', ({ postId, commentId }) => {
-    io.to('post/' + String(postId)).emit('newComment', {
+  socket.on("comment", ({ postId, commentId }) => {
+    io.to("post/" + String(postId)).emit("newComment", {
       postId: postId,
       commentId: commentId,
     });

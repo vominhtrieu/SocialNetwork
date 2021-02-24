@@ -3,7 +3,7 @@ import Room from "../component/Message/Room";
 import RoomList from "../component/Message/RoomList";
 import { Switch, Route } from "react-router-dom";
 
-function Messages(props) {
+function Messages() {
   return (
     <Switch>
       <Route exact path="/messages/:id" component={Room} />

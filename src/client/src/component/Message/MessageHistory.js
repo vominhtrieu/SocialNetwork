@@ -1,9 +1,9 @@
-import React from 'react';
-import ReceiveMessage from './ReceiveMessage';
-import SentMessage from './SentMessage';
-import { Box } from '@material-ui/core';
-import { HOST } from '../../config/constant';
-import TypingMessage from './TypingMessage';
+import React from "react";
+import ReceiveMessage from "./ReceiveMessage";
+import SentMessage from "./SentMessage";
+import { API_HOST } from "../../config/constant";
+import TypingMessage from "./TypingMessage";
+
 export default function MessageHistory(props) {
   const { roomInfo, socket, user } = props;
   const messageHistory = React.useRef(null);
@@ -12,18 +12,17 @@ export default function MessageHistory(props) {
 
   //Scroll to bottom of component
   const scrollToBottom = () => {
-    if (messageHistory.current !== null)
-      messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
+    if (messageHistory.current !== null) messageHistory.current.scrollTop = messageHistory.current.scrollHeight;
   };
 
   //Join and leave room
   React.useEffect(() => {
-    socket.emit('joinRoom', {
+    socket.emit("joinRoom", {
       roomId: roomInfo._id,
     });
 
     return () => {
-      socket.emit('leaveRoom', {
+      socket.emit("leaveRoom", {
         roomId: roomInfo._id,
       });
     };
@@ -31,9 +30,9 @@ export default function MessageHistory(props) {
 
   //Fetch room's messages
   React.useEffect(() => {
-    fetch(`${HOST}/room/${roomInfo._id}/messages`, {
-      method: 'GET',
-      credentials: 'include',
+    fetch(`${API_HOST}/room/${roomInfo._id}/messages`, {
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((messages) => {
@@ -63,23 +62,23 @@ export default function MessageHistory(props) {
       });
     };
 
-    socket.on('message', (data) => {
+    socket.on("message", (data) => {
       setMessages((messages) => [...messages, data]);
       scrollToBottom();
     });
-    socket.on('typing', ({ sender }) => {
+    socket.on("typing", ({ sender }) => {
       addNewTypingUser(sender);
       scrollToBottom();
     });
     return () => {
-      socket.removeAllListeners('message');
-      socket.removeAllListeners('typing');
+      socket.removeAllListeners("message");
+      socket.removeAllListeners("typing");
     };
   }, [socket, typingUsers]);
 
   //Listen to seen event
   React.useEffect(() => {
-    socket.emit('seen', {
+    socket.emit("seen", {
       roomId: roomInfo._id,
       messageSeen: messages.length,
     });
@@ -89,16 +88,9 @@ export default function MessageHistory(props) {
     if (message.sender === user.id) {
       return <SentMessage key={index} message={message} room={props.room} />;
     }
-    let showAvatar =
-      index === messages.length - 1 ||
-      messages[index + 1].sender !== message.sender;
+    let showAvatar = index === messages.length - 1 || messages[index + 1].sender !== message.sender;
     return (
-      <ReceiveMessage
-        key={index}
-        message={message}
-        participants={roomInfo.participants}
-        showAvatar={showAvatar}
-      />
+      <ReceiveMessage key={index} message={message} participants={roomInfo.participants} showAvatar={showAvatar} />
     );
   });
 
@@ -107,21 +99,11 @@ export default function MessageHistory(props) {
   });
 
   return (
-    <Box
-      ref={messageHistory}
-      flexGrow={1}
-      flexBasis={0}
-      padding={2}
-      display="block"
-      overflow="auto"
-    >
+    <div style={{ height: "100%", overflow: "auto" }} ref={messageHistory}>
       {renderMessages}
       {typingUserList.length > 0 ? (
-        <TypingMessage
-          typingUsers={typingUserList}
-          participants={roomInfo.participants}
-        />
+        <TypingMessage typingUsers={typingUserList} participants={roomInfo.participants} />
       ) : null}
-    </Box>
+    </div>
   );
 }

@@ -6,14 +6,14 @@ import {
   SIGN_OUT_SUCCESS,
   SIGN_OUT_FAILED,
   HOST,
-} from '../config/constant';
-import io from 'socket.io-client';
+} from "../config/constant";
+import io from "socket.io-client";
 
 const initialState = {
   user: {},
   socket: null,
   isPending: true,
-  error: '',
+  error: "",
 };
 
 export function profile(state = initialState, action = {}) {
@@ -32,7 +32,7 @@ export function profile(state = initialState, action = {}) {
     case GET_PROFILE_SUCCESS:
       return Object.assign({}, state, {
         user: action.payload,
-        socket: io(HOST),
+        socket: io(HOST, { withCredentials: true }),
         isPending: false,
         error: null,
       });

@@ -1,205 +1,164 @@
 import React from "react";
-import {
-  Box,
-  Avatar,
-  Typography,
-  IconButton,
-  makeStyles,
-  Card,
-  Button,
-} from "@material-ui/core";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import MessageIcon from "@material-ui/icons/Message";
-import CameraIcon from "@material-ui/icons/CameraAlt";
-import MoreIcon from "@material-ui/icons/MoreHoriz";
-
+import { Space, Upload, message, Button, Spin } from "antd";
+import { CameraOutlined, PlusOutlined } from "@ant-design/icons";
+import UserAvatar from "../Common/UserAvatar";
+import ImgCrop from "antd-img-crop";
 import ProfileTabs from "./ProfileTabs";
-import { HOST } from "../../config/constant";
+import { API_HOST } from "../../config/constant";
+import axios from "axios";
+import "./profileIntro.less";
+import ProfileFriends from "./ProfileFriends";
+import FriendButton from "./FriendButton";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    position: "relative",
-    backgroundSize: "cover",
-    backgroundPositionX: "center",
-    backgroundPositionY: "center",
-    height: 140,
-    paddingTop: 160,
-  },
-  avatar: {
-    width: 150,
-    height: 150,
-    border: "5px solid white",
-    margin: "auto",
-  },
-  avatarContainer: {
-    position: "relative",
-    width: 160,
-    margin: "auto",
-  },
-  name: {
-    position: "relative",
-    fontSize: 28,
-    marginTop: 20,
-    color: "black",
-    fontWeight: "bold",
-    textShadow: "1px 1px white",
-  },
-  addCoverButton: {
-    position: "absolute",
-    top: 5,
-    right: 5,
-  },
-  addAvatarButton: {
-    position: "absolute",
-    bottom: 0,
-    right: 15,
-    "&>*": {
-      color: "white",
-    },
-  },
-  addImageButton: {
-    backgroundColor: "rgba(0,0,0,0.4)",
-    padding: 8,
-    "&:hover": {
-      backgroundColor: "rgba(0,0,0,0.6)",
-    },
-    "&>*": {
-      color: "white",
-    },
-  },
-  addFile: {
-    display: "none",
-  },
-}));
-
-function ProfileIntro(props) {
-  const { user, profileUser, uploadAvatar, uploadCover } = props;
-  const classes = useStyles();
-
-  function addFriend() {
-    fetch(HOST + "/addfriend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ addId: profileUser.id }),
-    }).then((res) => {
-      if (res.ok) {
-        props.socket.emit("sendFriendRequest", { friendId: profileUser.id });
-      }
-    });
+function beforeUpload(file) {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
   }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error("Image must smaller than 2MB!");
+  }
+  return isJpgOrPng && isLt2M;
+}
+
+function ProfileIntro({ user, profileUser, socket, updateProfileUser }) {
+  const [uploadingAvatar, setUploadingAvatar] = React.useState(false);
+  const [uploadingCover, setUploadingCover] = React.useState(false);
+  const [avatarId, setAvatarId] = React.useState(profileUser.avatar);
+  const [coverId, setCoverId] = React.useState(profileUser.cover);
+  const [showFriendList, setShowFriendList] = React.useState(false);
+
+  React.useEffect(() => {
+    setAvatarId(profileUser.avatar);
+    setCoverId(profileUser.cover);
+  }, [profileUser]);
+
+  React.useEffect(() => {
+    setShowFriendList(false);
+  }, [profileUser]);
+
+  const handleAvatarChange = (info) => {
+    if (info.file.status === "uploading") {
+      setUploadingAvatar(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      if (info.file.response.imageId) {
+        setAvatarId(info.file.response.imageId);
+        setUploadingAvatar(false);
+      } else {
+        message.error("Cannot change avatar, please try again!");
+      }
+    }
+  };
+
+  const handleCoverChange = (info) => {
+    if (info.file.status === "uploading") {
+      setUploadingCover(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      if (info.file.response.imageId) {
+        setCoverId(info.file.response.imageId);
+        setUploadingCover(false);
+      } else {
+        message.error("Cannot change cover, please try again!");
+      }
+    }
+  };
+
+  const background = coverId ? `url("${API_HOST}/images/${coverId}") center` : "rgba(255,255,255,0.2)";
 
   return (
-    <Card variant="outlined">
-      <Box
-        className={classes.root}
-        style={{
-          backgroundImage: "url(" + HOST + "/image/" + profileUser.cover + ")",
-        }}
-      >
-        {user.id === Number(profileUser.id) ? (
-          <Box className={classes.addCoverButton}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={uploadCover}
-              className={classes.addFile}
-              id="addCover"
-            />
-            <label htmlFor="addCover">
-              <IconButton className={classes.addImageButton} component="span">
-                <CameraIcon />
-              </IconButton>
-            </label>
-          </Box>
-        ) : null}
+    <>
+      <ProfileFriends
+        onClose={() => setShowFriendList(false)}
+        visible={showFriendList}
+        user={user}
+        profileUser={profileUser}
+        socket={socket}
+      />
+      <Space style={{ display: "block", width: "100%", position: "relative" }}>
+        <Space
+          style={{
+            display: "block",
+            width: "100%",
+            height: 250,
+            marginBottom: 50,
+            position: "relative",
+            backgroundSize: "cover",
+            background: background,
+          }}
+        >
+          {user.id === profileUser.id && (
+            <ImgCrop shape="rect" aspect={16 / 9} zoom modalTitle="Edit your cover">
+              <Upload
+                name="cover"
+                listType="picture"
+                showUploadList={false}
+                action={`${API_HOST}/cover`}
+                beforeUpload={beforeUpload}
+                onChange={handleCoverChange}
+                withCredentials
+                accept=".png,.jpg,.jpeg"
+              >
+                <Button
+                  style={{ position: "absolute", right: 5, top: 5 }}
+                  disabled={uploadingCover}
+                  size="large"
+                  type="primary"
+                  shape="circle"
+                >
+                  {uploadingCover ? <Spin /> : <CameraOutlined />}
+                </Button>
+              </Upload>
+            </ImgCrop>
+          )}
 
-        <Box className={classes.avatarContainer}>
-          <Avatar
-            className={classes.avatar}
-            src={
-              profileUser.avatar ? `${HOST}/image/${profileUser.avatar}` : null
-            }
-          />
-          <Box className={classes.addAvatarButton}>
-            {user.id === Number(profileUser.id) ? (
-              <Box>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={uploadAvatar}
-                  className={classes.addFile}
-                  id="addAvatar"
-                />
-                <label htmlFor="addAvatar">
-                  <IconButton
-                    className={classes.addImageButton}
-                    component="span"
+          <Space style={{ position: "absolute", bottom: -50, left: 10 }}>
+            <UserAvatar style={{ backgroundColor: "#4D4D4D" }} size={150} imageId={avatarId} preview />
+            {user.id === profileUser.id && (
+              <ImgCrop shape="round" zoom modalTitle="Edit your avatar">
+                <Upload
+                  name="avatar"
+                  listType="picture"
+                  showUploadList={false}
+                  action={`${API_HOST}/avatar`}
+                  beforeUpload={beforeUpload}
+                  onChange={handleAvatarChange}
+                  withCredentials
+                  accept=".png,.jpg,.jpeg"
+                >
+                  <Button
+                    style={{ position: "absolute", right: 5, bottom: 5 }}
+                    disabled={uploadingAvatar}
+                    size="large"
+                    type="primary"
+                    shape="circle"
                   >
-                    <CameraIcon />
-                  </IconButton>
-                </label>
-              </Box>
-            ) : null}
-          </Box>
-        </Box>
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        style={{ backgroundColor: "white" }}
-      >
-        <Typography className={classes.name} align="center">
-          {profileUser.firstName + " " + profileUser.lastName}
-        </Typography>
-
-        {/* Add Friend/Message row */}
-        {user.id !== Number(profileUser.id) ? (
-          <Box
-            marginTop={1}
-            marginLeft={2}
-            marginRight={2}
-            display="flex"
-            flexGrow={1}
-          >
-            {profileUser.friendStatus === "Friend" ? (
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ flexGrow: 1 }}
-                startIcon={<MessageIcon />}
-              >
-                Message
-              </Button>
-            ) : profileUser.friendStatus === "Pending" ? (
-              <Button variant="contained">Pending Request</Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={addFriend}
-                style={{ flexGrow: 1 }}
-                startIcon={<PersonAddIcon />}
-              >
-                Add Friend
-              </Button>
+                    {uploadingAvatar ? <Spin /> : <CameraOutlined />}
+                  </Button>
+                </Upload>
+              </ImgCrop>
             )}
-
+          </Space>
+        </Space>
+        <div style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 5, display: "flex" }}>
+          <h1 style={{ fontSize: 22, fontWeight: "normal", margin: 0 }}>
+            {`${profileUser.firstName} ${profileUser.lastName}`}{" "}
             <Button
-              variant="outlined"
-              color="secondary"
-              style={{ marginLeft: 16 }}
-            >
-              <MoreIcon />
-            </Button>
-          </Box>
-        ) : null}
-      </Box>
+              type="text"
+              style={{ fontSize: 18, padding: 0, margin: 0, fontWeight: "lighter" }}
+              title={`View ${profileUser.lastName}'s friend list`}
+              onClick={() => setShowFriendList(true)}
+            >{`(${profileUser.friendCount} friend${profileUser.friendCount > 1 ? "s" : ""})`}</Button>
+          </h1>
 
-      <ProfileTabs profileUser={profileUser} />
-    </Card>
+          <FriendButton style={{ marginLeft: "auto" }} user={user} friend={profileUser} socket={socket} />
+        </div>
+      </Space>
+    </>
   );
 }
 

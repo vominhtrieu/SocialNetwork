@@ -1,45 +1,28 @@
-import React from 'react';
-import Auth from './container/Auth';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { Box, Typography } from '@material-ui/core';
-import ReactLoading from 'react-loading';
-import { connect } from 'react-redux';
-import { getProfile } from './actions/getProfile';
-import { Redirect } from 'react-router-dom';
-import Main from './container/Main';
+import React from "react";
+import Auth from "./container/Auth";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { message, Space, Spin } from "antd";
+import { connect } from "react-redux";
+import { getProfile } from "./actions/getProfile";
+import { Redirect } from "react-router-dom";
+import Main from "./container/Main";
 
 function App(props) {
-  const { isPending, error, getProfile } = props;
+  const { isPending, getProfile } = props;
   React.useEffect(() => {
     getProfile();
   }, [getProfile]);
 
+  React.useEffect(() => {
+    if (props.socket) props.socket.on("error", (err) => message.error(err));
+  }, [props.socket]);
+
   if (isPending)
     return (
-      <Box
-        display="flex"
-        height="100vh"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <ReactLoading type="bubbles" color="black" />
-        <Typography variant="body2">Loading</Typography>
-      </Box>
+      <Space style={{ display: "flex", height: "100vh", justifyContent: "center", alignItems: "center" }}>
+        <Spin />
+      </Space>
     );
-
-  if (error && error.message !== 'Unauthenticated') {
-    return (
-      <Box
-        display="flex"
-        height="100vh"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <ReactLoading type="bubbles" color="black" />
-        <Typography variant="body2">Waiting for internet connection</Typography>
-      </Box>
-    );
-  }
 
   return (
     <React.Fragment>
@@ -48,11 +31,7 @@ function App(props) {
           <Route exact path="/signin" component={Auth} />
           <Route exact path="/signup" component={Auth} />
           <Route path="*">
-            {props.user && Object.keys(props.user).length > 0 ? (
-              <Main />
-            ) : (
-              <Redirect to="/signin" />
-            )}
+            {props.user && Object.keys(props.user).length > 0 ? <Main /> : <Redirect to="/signin" />}
           </Route>
         </Switch>
       </BrowserRouter>
@@ -61,6 +40,7 @@ function App(props) {
 }
 
 const mapStateToProps = (state) => ({
+  socket: state.socket,
   isPending: state.isPending,
   error: state.error,
   user: state.user,

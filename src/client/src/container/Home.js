@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
-import { Box } from '@material-ui/core';
-import Post from '../component/Post/Post';
-import PostAdd from '../component/Post/PostAdd';
-import { HOST } from '../config/constant';
-import { Helmet } from 'react-helmet';
+import React, { useEffect } from "react";
+import Post from "../component/Post/Post";
+import { API_HOST } from "../config/constant";
+import { List } from "antd";
+import Title from "../component/Common/Title";
 
 function Home() {
   const [posts, setPosts] = React.useState([]);
   useEffect(() => {
-    fetch(`${HOST}/feed`, {
-      method: 'GET',
-      credentials: 'include',
+    fetch(`${API_HOST}/feed`, {
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((newPosts) => {
@@ -18,22 +17,11 @@ function Home() {
       });
   }, []);
 
-  const addPost = (id) => {
-    setPosts((posts) => [id, ...posts]);
-  };
-
-  const renderPost = posts.map((postId) => {
-    return <Post key={postId} id={postId} />;
-  });
-
   return (
-    <Box width="100%">
-      <Helmet>
-        <title>MTNET - Home</title>
-      </Helmet>
-      <PostAdd addPost={addPost} />
-      {renderPost}
-    </Box>
+    <div style={{ width: "100%" }}>
+      <Title title="Home" />
+      <List dataSource={posts} renderItem={(postId) => <Post key={postId} id={postId} />} />
+    </div>
   );
 }
 

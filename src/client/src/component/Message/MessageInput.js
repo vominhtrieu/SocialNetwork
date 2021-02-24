@@ -1,10 +1,7 @@
 import React from "react";
-import { Box, IconButton } from "@material-ui/core";
-import CustimizedTextField from "../Common/CustimizedTextField";
-import ImageIcon from "@material-ui/icons/Image";
-import SendIcon from "@material-ui/icons/Send";
-import EmojiIcon from "@material-ui/icons/EmojiEmotions";
+import { SendOutlined, CameraOutlined } from "@ant-design/icons";
 import EmojiPicker from "../Common/EmojiPicker";
+import { Button, Input } from "antd";
 
 export default function MessageInput({ socket, roomInfo }) {
   //Text that user input
@@ -12,56 +9,66 @@ export default function MessageInput({ socket, roomInfo }) {
   //Determine is the Emoji Picker is opened or not
   const [isEmojiPickerOpened, setIsEmojiPickerOpened] = React.useState(false);
 
-  const onTyping = (text) => {
-    setTextContent(text);
-    socket.emit("typing", {roomId: roomInfo._id})
-  }
-
-  const addEmoji = (emoji) => {
-    onTyping(textContent + emoji);
+  const onTyping = (e) => {
+    if (e.target.value === "\n") return;
+    setTextContent(e.target.value);
+    if (textContent !== "") socket.emit("typing", { roomId: roomInfo._id });
   };
 
   const closeEmojiPicker = () => {
     setIsEmojiPickerOpened(false);
   };
 
+  let checkEnterKey = (e) => {
+    if (e.keyCode === 13) {
+      if (!e.shiftKey) {
+        sendMessage();
+      }
+    }
+  };
+
   let sendMessage = () => {
+    if (textContent === "") return;
     setTextContent("");
     socket.emit("message", {
       roomId: roomInfo._id,
       textContent: textContent,
     });
   };
+
   return (
-    <Box
-      style={{ flexBasis: 45 }}
-      borderTop="1px solid rgba(0,0,0,0.12)"
-      display="flex"
-      alignItems="center"
-      paddingLeft={1}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "5px 0",
+        width: "100%",
+        borderTop: "1px solid rgba(255, 255, 255, 0.15)",
+      }}
     >
-      <IconButton size="small">
-        <ImageIcon color="primary" />
-      </IconButton>
-      <CustimizedTextField
+      <Button style={{ marginRight: 5 }} shape="circle" icon={<CameraOutlined />} />
+      <Input.TextArea
+        placeholder="Type your message here..."
+        style={{
+          width: "100%",
+          marginRight: 5,
+          borderRadius: 16,
+          backgroundColor: "rgba(255,255,255,0.1)",
+          resize: "none",
+        }}
         value={textContent}
         onChange={onTyping}
-        onSubmit={sendMessage}
+        onKeyDown={checkEnterKey}
       />
-      <Box position="relative">
-        <IconButton onClick={() => setIsEmojiPickerOpened(true)} size="small">
-          <EmojiIcon color="primary" />
-        </IconButton>
-        <EmojiPicker
-          color="primary"
-          isOpened={isEmojiPickerOpened}
-          onClose={closeEmojiPicker}
-          addEmoji={addEmoji}
-        />
-      </Box>
-      <IconButton size="small" onClick={() => sendMessage()}>
-        <SendIcon color="primary" />
-      </IconButton>
-    </Box>
+      <EmojiPicker
+        style={{ marginRight: 5 }}
+        placement="topRight"
+        color="primary"
+        addEmoji={(emoji) => {
+          setTextContent(textContent + emoji);
+        }}
+      />
+      <Button type="primary" shape="circle" onClick={() => sendMessage()} icon={<SendOutlined />} />
+    </div>
   );
 }

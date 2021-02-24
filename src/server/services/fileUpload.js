@@ -1,35 +1,34 @@
-const aws = require('aws-sdk');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
+const path = require("path");
+const fs = require("fs");
+const IdRecord = require("../models/IdRecord");
+const multer = require("multer");
 
-aws.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
+//Create images folder if not existed
+if (!fs.existsSync(path.join(__dirname, "../images"))) {
+  fs.mkdirSync(path.join(__dirname, "../images"));
+}
 
-const s3 = new aws.S3();
-
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME,
-    metadata: function (_req, file, cb) {
-      cb(null, { fieldname: file.fieldname });
+module.exports = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, callback) {
+      callback(null, path.join(__dirname, "../images"));
     },
-    key: function (_req, file, cb) {
-      cb(
-        null,
-        //Some random number for preventing duplicate name
-        `${Date.now().toString()}-${file.originalname}-${Math.floor(
-          Math.random() * 1000
-        )}`
-      );
+    filename: async function (_req, file, callback) {
+      try {
+        const data = await IdRecord.findOneAndUpdate(
+          { model: "Image" },
+          { $inc: { recentId: 1 } },
+          { new: true, useFindAndModify: false }
+        );
+
+        callback(null, data.recentId.toString());
+      } catch (err) {
+        callback(err);
+      }
     },
   }),
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    return callback(null, ext === ".png" || ext === ".jpg" || ext === ".jpeg");
+  },
 });
-
-module.exports = {
-  s3,
-  upload,
-};

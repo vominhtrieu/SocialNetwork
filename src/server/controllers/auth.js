@@ -1,5 +1,5 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 function validateEmail(email) {
   return /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(email);
@@ -12,18 +12,11 @@ function validatePassword(password) {
 exports.signUp = (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
-  if (
-    firstName &&
-    lastName &&
-    email &&
-    password &&
-    validateEmail(email) &&
-    validatePassword(password)
-  ) {
+  if (firstName && lastName && email && password && validateEmail(email) && validatePassword(password)) {
     //Accept data
     User.findOne({ email: email }).then((user) => {
       if (user) {
-        res.json('Email is registered');
+        res.json("Email is registered");
       } else {
         const newUser = new User({
           firstName,
@@ -31,33 +24,29 @@ exports.signUp = (req, res) => {
           email,
           password,
         });
-        newUser.save().then((user) => res.json('Successfully registered'));
+        newUser.save().then((user) => res.json("Successfully registered"));
       }
     });
-  } else res.status(400).json('Refuse data');
+  } else res.status(400).json("Refuse data");
 };
 
 exports.signIn = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email: email }, function (err, user) {
     if (err) {
-      res.status(500).json('Internal error');
+      res.status(500).json("Internal error");
     } else if (!user) {
-      res.status(400).json('Incorrect email or password');
+      res.status(400).json("Incorrect email or password");
     } else {
       user.validatePassword(password, function (err, same) {
         if (err) {
-          res.status(500).json('Internal error');
+          res.status(500).json("Internal error");
         } else if (!same) {
-          res.status(400).json('Incorrect email or password');
+          res.status(400).json("Incorrect email or password");
         } else {
           const payload = { id: user._id };
           const token = jwt.sign(payload, process.env.JWT_TOKEN_SECRET);
-
-          res
-            .cookie('token', token, { httpOnly: true })
-            .status(200)
-            .json('Successfully Login');
+          res.cookie("token", token, { httpOnly: true }).status(200).json("Successfully Login");
         }
       });
     }
@@ -66,7 +55,5 @@ exports.signIn = (req, res) => {
 
 exports.signOut = (req, res) => {
   const token = req.cookies.token;
-  res
-    .cookie('token', token + 'alo test', { httpOnly: true, maxAge: 100 })
-    .sendStatus(200);
+  res.cookie("token", token + "alo test", { httpOnly: true, maxAge: 100 }).sendStatus(200);
 };

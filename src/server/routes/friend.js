@@ -1,17 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const friendController = require('../controllers/friend');
-const checkAuth = require('../middlewares/checkAuth');
+const friendController = require("../controllers/friend");
+const checkAuth = require("../middlewares/checkAuth");
 
-router.post('/addfriend', checkAuth, friendController.addFriend);
-router.get('/friendrequest', checkAuth, friendController.getFriendRequest);
-router.get('/friendrequests', checkAuth, friendController.getFriendRequests);
-router.post(
-  '/respondFriendRequest',
-  checkAuth,
-  friendController.respondFriendRequest
-);
-router.post('/unfriend', checkAuth, friendController.unfriend);
-router.get('/:id/friends', checkAuth, friendController.getFriendList);
+router.post("/addfriend", checkAuth, friendController.addFriend);
+router.get("/friendrequest", checkAuth, friendController.getFriendRequest);
+router.get("/friendrequests", checkAuth, friendController.getFriendRequests);
+router.post("/respondFriendRequest", checkAuth, friendController.respondFriendRequest);
+router.post("/unfriend", checkAuth, friendController.unfriend);
+router.get("/:id/friends", checkAuth, friendController.getFriendList);
+router.post("/cancelrequest", checkAuth, friendController.cancelRequest);
 
 module.exports = router;

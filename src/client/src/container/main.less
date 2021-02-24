@@ -1,0 +1,105 @@
+@xl-page-padding: 0 15vw;
+@lg-page-padding: 0 7vw;
+@mobile-nav-padding: 0 1vw;
+@mobile-body-padding: 0vw;
+
+body {
+  overflow-y: scroll;
+}
+
+.ant-layout-sider,
+.ant-layout-sider-children {
+  height: 100%;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  padding: @xl-page-padding;
+}
+
+.main-body {
+  height: 100%;
+  padding: @xl-page-padding;
+  padding-right: calc(15vw + 300px);
+  padding-top: 64px;
+}
+
+.main-content {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+pre {
+  font-family: inherit !important;
+}
+
+#main-sider {
+  position: fixed;
+  top: 0;
+  right: 15vw;
+  padding-top: 64px;
+  height: "100vh";
+  overflow-y: auto;
+  background: none !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+@media only screen and (max-width: 1199px) {
+  .nav-bar,
+  .main-body {
+    padding: @lg-page-padding;
+  }
+
+  .main-body {
+    padding-top: 64px;
+    padding-right: calc(7vw + 300px);
+  }
+
+  #main-sider {
+    right: 7vw;
+  }
+}
+
+@media only screen and (max-width: 991px) {
+  .nav-bar {
+    padding: @mobile-nav-padding;
+  }
+
+  .main-body {
+    padding: @mobile-body-padding;
+    padding-top: 64px;
+  }
+
+  .main-content {
+    padding-right: 0;
+  }
+
+  #main-sider {
+    right: 0;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar:hover {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bebebe;
+}

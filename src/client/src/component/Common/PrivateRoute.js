@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { HOST } from '../../config/constant';
+import { API_HOST } from '../../config/constant';
 import { useHistory } from 'react-router-dom';
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -8,7 +8,7 @@ function PrivateRoute({ component: Component, ...rest }) {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   React.useEffect(() => {
-    fetch(HOST + '/auth', {
+    fetch(API_HOST + '/auth', {
       method: 'GET',
       credentials: 'include',
     })

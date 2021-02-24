@@ -1,126 +1,61 @@
 import React from "react";
-import { Box } from "@material-ui/core";
+import { Space } from "antd";
 import ProfileIntro from "../component/Profile/ProfileIntro";
 import ProfileHome from "../component/Profile/ProfileHome";
 import ProfileImages from "../component/Profile/ProfileImages";
 import ProfileFriends from "../component/Profile/ProfileFriends";
 import ProfileDetail from "../component/Profile/ProfileDetail";
-import { Helmet } from "react-helmet";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, useParams, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
-import { HOST } from "../config/constant";
+import { API_HOST } from "../config/constant";
+import axios from "axios";
+import Title from "../component/Common/Title";
 
 function getUserProfile(id, callBack) {
-  fetch(HOST + "/" + id, {
-    method: "GET",
-    credentials: "include",
-  })
-    .then((res) => res.json())
-    .then((user) => {
-      callBack(null, user);
-    })
+  axios
+    .get(`${API_HOST}/${id}`, { withCredentials: true })
+    .then((res) => callBack(null, res.data))
     .catch((err) => callBack(err));
 }
 
-class Profile extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      profileUser: null,
-    };
-  }
+function Profile({ user, socket }) {
+  const [profileUser, setProfileUser] = React.useState({});
+  const params = useParams();
+  const history = useHistory();
 
-  componentDidMount() {
-    const id = this.props.match.params.id;
-    getUserProfile(id, (err, user) => {
-      if (err) this.props.history.push("/");
-      else this.setState({ profileUser: user });
-    });
-  }
-
-  componentDidUpdate(prevProps) {
-    const id = this.props.match.params.id;
-
-    if (prevProps.match.params.id === id) return;
-    getUserProfile(id, (err, user) => {
+  React.useEffect(() => {
+    getUserProfile(params.id, (err, user) => {
       if (err) {
-        this.props.history.push("/");
-      } else this.setState({ profileUser: user });
+        history.push("/");
+      } else setProfileUser(user);
     });
-  }
+  }, [params.id, history]);
 
-  uploadFile = (event, type) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append(type, event.target.files[0]);
-    fetch(HOST + "/" + type, {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-      headers: {
-        enctype: "multipart/form-data",
-      },
-    }).then((res) => {
-      if (res.ok) {
-        if (type !== "cover") this.props.getProfile();
-        else {
-          getUserProfile(this.props.user.id, (err, user) => {
-            if (err) this.props.history.push("/");
-            else this.setState({ profileUser: user });
-          });
-        }
-      }
-    });
-  };
+  const updateProfileUser = (data) => setProfileUser(data);
 
-  uploadAvatar = (event) => {
-    this.uploadFile(event, "avatar");
-  };
-
-  uploadCover = (event) => {
-    this.uploadFile(event, "cover");
-  };
-
-  render() {
-    const { user } = this.props;
-    const profileUser = Object.assign({}, this.state.profileUser, {
-      id: this.props.match.params.id,
-    });
+  if (!profileUser.firstName) return null;
+  else {
     const url = `/${profileUser.id}`;
-
-    if (!profileUser.firstName) return <Box />;
-    else {
-      return (
-        <Box marginTop={2} width="100%">
-          <Helmet>
-            <title>
-              {"MTNET - " + profileUser.firstName + " " + profileUser.lastName}
-            </title>
-          </Helmet>
-          <ProfileIntro
-            user={user}
-            profileUser={profileUser}
-            uploadAvatar={this.uploadAvatar}
-            uploadCover={this.uploadCover}
-            socket={this.props.socket}
-          />
-          <Switch>
-            <Route exact path={`${url}/`}>
-              <ProfileHome profileUser={profileUser} />
-            </Route>
-            <Route exact path={`${url}/images`}>
-              <ProfileImages />
-            </Route>
-            <Route exact path={`${url}/friends`}>
-              <ProfileFriends user={user} profileUser={profileUser} />
-            </Route>
-            <Route exact path={`${url}/detail`}>
-              <ProfileDetail />
-            </Route>
-          </Switch>
-        </Box>
-      );
-    }
+    return (
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Title title={`${profileUser.firstName} ${profileUser.lastName}`} />
+        <ProfileIntro updateProfileUser={updateProfileUser} user={user} profileUser={profileUser} socket={socket} />
+        <Switch>
+          <Route exact path={`${url}/`}>
+            <ProfileHome profileUser={profileUser} />
+          </Route>
+          <Route exact path={`${url}/images`}>
+            <ProfileImages />
+          </Route>
+          <Route exact path={`${url}/friends`}>
+            <ProfileFriends user={user} profileUser={profileUser} />
+          </Route>
+          <Route exact path={`${url}/detail`}>
+            <ProfileDetail profileUser={profileUser} />
+          </Route>
+        </Switch>
+      </Space>
+    );
   }
 }
 

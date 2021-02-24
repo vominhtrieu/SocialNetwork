@@ -44,7 +44,7 @@ function Friends({ socket }) {
       <Title title="Friends" />
       <List
         style={{ width: "100%" }}
-        header={<h3>Pending friend requests</h3>}
+        header={<h3 style={{ marginBottom: 0 }}>Pending friend requests</h3>}
         loading={loading}
         itemLayout="horizontal"
         dataSource={requests}

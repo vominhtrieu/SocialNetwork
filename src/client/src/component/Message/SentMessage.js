@@ -1,49 +1,16 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  makeStyles,
-  withStyles,
-  Tooltip,
-} from "@material-ui/core";
 import moment from "moment/moment";
-
-const useStyles = makeStyles((theme) => ({
-  messageContentSent: {
-    padding: "8px 15px",
-    borderRadius: 25,
-    whiteSpace: "pre-line",
-    color: "white",
-    backgroundColor: "#1e88e5",
-  },
-}));
-
-const LightTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: 12,
-  },
-}))(Tooltip);
+import { Tooltip } from "antd";
+import { emojify } from "react-emojione";
 
 export default function SentMessage({ message }) {
-  const classes = useStyles();
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      marginBottom={0.5}
-      justifyContent="flex-end"
-    >
-      <LightTooltip
-        title={moment(message.date).format("DD-MM-YYYY hh:mm")}
-        placement="left"
-      >
-        <Box className={classes.messageContentSent}>
-          <Typography align="right">{message.textContent}</Typography>
-        </Box>
-      </LightTooltip>
-    </Box>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: 4 }}>
+      <Tooltip color="#177DDC" title={moment(message.date).format("DD-MM-YYYY hh:mm")} placement="left">
+        <div style={{ padding: "6px 12px", borderRadius: 20, background: "#177DDC", marginLeft: 5 }} marginLeft={1}>
+          <pre style={{ marginBottom: 0 }}>{emojify(message.textContent, { style: { height: 18 } })}</pre>
+        </div>
+      </Tooltip>
+    </div>
   );
 }

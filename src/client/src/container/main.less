@@ -27,7 +27,13 @@ body {
 
 .main-content {
   padding-right: 10px;
+  padding-left: 10px;
   padding-top: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+pre {
+  font-family: inherit !important;
 }
 
 #main-sider {
@@ -37,7 +43,9 @@ body {
   padding-top: 64px;
   height: "100vh";
   overflow-y: auto;
-  background-color: "#333333";
+  background: none !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 @media only screen and (max-width: 1199px) {
@@ -73,4 +81,25 @@ body {
   #main-sider {
     right: 0;
   }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar:hover {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bebebe;
 }

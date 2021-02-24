@@ -1,28 +1,10 @@
-import React from 'react';
-import { ListItem, ListItemText, ListItemAvatar, Avatar, Box, makeStyles } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import { AvatarGroup } from '@material-ui/lab';
-import { API_HOST } from '../../config/constant';
-
-const useStyles = makeStyles((theme) => ({
-  message: {
-    color: 'inherit',
-    '&:hover': {
-      cursor: 'pointer',
-    },
-  },
-  notSeen: {
-    color: 'blue',
-    marginTop: 5,
-  },
-  seen: {
-    color: 'inherit',
-    marginTop: 5,
-  },
-}));
+import React from "react";
+import { Link } from "react-router-dom";
+import { API_HOST } from "../../config/constant";
+import { List, Avatar } from "antd";
+import UserAvatar from "../Common/UserAvatar";
 
 export default function RoomItem({ room, userId }) {
-  const classes = useStyles();
   const [isSeen, setIsSeen] = React.useState(false);
   const [conversationName, setConversationName] = React.useState(null);
 
@@ -33,38 +15,38 @@ export default function RoomItem({ room, userId }) {
         setIsSeen(participant.messageSeen === room.messageCount);
         return name;
       }
-      return user.firstName + ' ' + user.lastName + ', ' + name;
-    }, '');
+      return user.firstName + " " + user.lastName + ", " + name;
+    }, "");
 
     setConversationName(name.substring(0, name.length - 2));
   }, [room.participants, room.messageCount, userId]);
 
+  const avatar = (
+    <Link to={`/messages/${room._id}`}>
+      <Avatar.Group maxCount={2}>
+        {room.participants.map((participant, index) =>
+          participant.user._id === userId ? null : <UserAvatar key={index} imageId={participant.user.avatar} />
+        )}
+      </Avatar.Group>
+    </Link>
+  );
   if (!conversationName) return null;
   try {
     return (
-      <ListItem component={Link} to={`/messages/${room._id}`} className={classes.message} alignItems='flex-start'>
-        <ListItemAvatar>
-          <Box marginX={2}>
-            <AvatarGroup max={3} spacing='small'>
-              {room.participants.map((participant, index) =>
-                participant.user._id === userId ? null : (
-                  <Avatar
-                    key={index}
-                    alt={`${participant.user.firstName}'s avatar`}
-                    src={participant.user.avatar ? `${API_HOST}/image/${participant.user.avatar}` : null}
-                  />
-                )
-              )}
-            </AvatarGroup>
-          </Box>
-        </ListItemAvatar>
-        <Box className={isSeen ? classes.seen : classes.notSeen}>
-          <ListItemText
-            primary={<b>{conversationName}</b>}
-            secondary={room.messageCount === 0 ? 'Let start this conversation' : room.recentMessage.textContent}
-          />
-        </Box>
-      </ListItem>
+      <List.Item>
+        <List.Item.Meta
+          avatar={avatar}
+          title={<Link to={`/messages/${room._id}`}>{conversationName}</Link>}
+          description={
+            <Link
+              style={{ color: isSeen ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.8" }}
+              to={`/messages/${room._id}`}
+            >
+              {room.messageCount === 0 ? "Let start this conversation" : room.recentMessage.textContent}
+            </Link>
+          }
+        />
+      </List.Item>
     );
   } catch (e) {
     console.log(room);

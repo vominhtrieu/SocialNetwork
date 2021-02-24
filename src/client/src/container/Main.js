@@ -1,6 +1,6 @@
 import React from "react";
 import Friends from "../container/Friends";
-// import Messages from "../container/Messages";
+import Messages from "../container/Messages";
 import Home from "./Home";
 import Notification from "./Notification";
 import About from "../component/About/About";
@@ -22,11 +22,11 @@ function Main() {
         <MainNavbar />
       </Header>
       <Layout className="main-body">
-        <Content className="main-content">
+        <Content style={{ minHeight: "100%" }} className="main-content">
           <Switch>
             <PrivateRoute exact path="/" component={Home} />
             <PrivateRoute exact path="/friends" component={Friends} />
-            {/* <PrivateRoute path="/messages" component={Messages} /> */}
+            <PrivateRoute path="/messages" component={Messages} />
             <PrivateRoute exact path="/notifications" component={Notification} />
             <Route path="/about" component={About} />
             <PrivateRoute path="/:id" component={Profile} />

@@ -66,7 +66,7 @@ export function MainNavbar(props) {
     <>
       <SearchBar />
       <Space style={{ marginLeft: "auto" }}>
-        <Menu style={{ marginRight: 20 }} theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
+        <Menu style={{ marginRight: 5 }} theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
           <Menu.Item key={routes[0]}>
             <Link to={routes[0]}>
               <Badge count={0}>

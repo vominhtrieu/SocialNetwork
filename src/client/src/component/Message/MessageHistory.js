@@ -1,7 +1,6 @@
 import React from "react";
 import ReceiveMessage from "./ReceiveMessage";
 import SentMessage from "./SentMessage";
-import { Box } from "@material-ui/core";
 import { API_HOST } from "../../config/constant";
 import TypingMessage from "./TypingMessage";
 
@@ -100,11 +99,11 @@ export default function MessageHistory(props) {
   });
 
   return (
-    <Box ref={messageHistory} flexGrow={1} flexBasis={0} padding={2} display="block" overflow="auto">
+    <div style={{ height: "100%", overflow: "auto" }} ref={messageHistory}>
       {renderMessages}
       {typingUserList.length > 0 ? (
         <TypingMessage typingUsers={typingUserList} participants={roomInfo.participants} />
       ) : null}
-    </Box>
+    </div>
   );
 }

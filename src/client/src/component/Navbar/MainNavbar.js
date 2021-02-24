@@ -84,7 +84,7 @@ export function MainNavbar(props) {
 
           <Menu.Item key={routes[2]}>
             <Link to={routes[2]}>
-              <Badge count={notSeenRooms} overflowCount={99}>
+              <Badge count={notSeenRooms.size} overflowCount={99}>
                 <MessageOutlined style={{ fontSize: 24, margin: "auto" }} />
               </Badge>
             </Link>

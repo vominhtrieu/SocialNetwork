@@ -1,5 +1,4 @@
 import React from "react";
-import NewMessageDialog from "../Dialog/NewMessage";
 import { connect } from "react-redux";
 import { API_HOST } from "../../config/constant";
 import Title from "../Common/Title";
@@ -7,7 +6,7 @@ import { List } from "antd";
 import RoomItem from "./RoomItem";
 
 function Messages(props) {
-  const [messageOpen, setMessageOpen] = React.useState(false);
+  // const [messageOpen, setMessageOpen] = React.useState(false);
   const [rooms, setRooms] = React.useState([]);
   React.useEffect(() => {
     fetch(`${API_HOST}/chatrooms`, {

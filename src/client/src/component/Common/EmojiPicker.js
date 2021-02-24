@@ -1,6 +1,5 @@
 import React from "react";
 import { SmileOutlined } from "@ant-design/icons";
-import { makeStyles } from "@material-ui/core/styles";
 import { emojify } from "react-emojione";
 import { Button, Popover } from "antd";
 

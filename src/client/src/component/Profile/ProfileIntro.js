@@ -1,11 +1,9 @@
 import React from "react";
 import { Space, Upload, message, Button, Spin } from "antd";
-import { CameraOutlined, PlusOutlined } from "@ant-design/icons";
+import { CameraOutlined } from "@ant-design/icons";
 import UserAvatar from "../Common/UserAvatar";
 import ImgCrop from "antd-img-crop";
-import ProfileTabs from "./ProfileTabs";
 import { API_HOST } from "../../config/constant";
-import axios from "axios";
 import "./profileIntro.less";
 import ProfileFriends from "./ProfileFriends";
 import FriendButton from "./FriendButton";

@@ -6,17 +6,11 @@ import { Button, Input } from "antd";
 export default function MessageInput({ socket, roomInfo }) {
   //Text that user input
   const [textContent, setTextContent] = React.useState("");
-  //Determine is the Emoji Picker is opened or not
-  const [isEmojiPickerOpened, setIsEmojiPickerOpened] = React.useState(false);
 
   const onTyping = (e) => {
     if (e.target.value === "\n") return;
     setTextContent(e.target.value);
     if (textContent !== "") socket.emit("typing", { roomId: roomInfo._id });
-  };
-
-  const closeEmojiPicker = () => {
-    setIsEmojiPickerOpened(false);
   };
 
   let checkEnterKey = (e) => {

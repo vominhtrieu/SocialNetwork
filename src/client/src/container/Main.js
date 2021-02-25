@@ -17,7 +17,7 @@ const { Content, Header, Sider } = Layout;
 
 function Main() {
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ minHeight: "100vh" }}>
       <Header style={{ width: "100%", position: "fixed", zIndex: 999 }} className="nav-bar">
         <MainNavbar />
       </Header>

@@ -25,13 +25,15 @@ export function MainNavbar(props) {
 
   // List of rooms which  message(s) user have not read
   const [notSeenRooms, setNotSeenRooms] = React.useState(new Set());
+  const [notifications, setNotifications] = React.useState(0);
 
   React.useEffect(() => {
     fetch(`${API_HOST}/update`, { method: "GET", credentials: "include" })
       .then((res) => res.json())
-      .then((notifications) => {
-        setNewFriendRequests(notifications.newFriendRequests);
-        setNotSeenRooms(new Set(notifications.notSeenRooms));
+      .then((data) => {
+        setNewFriendRequests(data.newFriendRequests);
+        setNotSeenRooms(new Set(data.notSeenRooms));
+        setNotifications(data.notifications);
       });
 
     props.socket.on("friendRequestUpdate", (data) => {
@@ -92,7 +94,7 @@ export function MainNavbar(props) {
 
           <Menu.Item key={routes[3]}>
             <Link to={routes[3]}>
-              <Badge count={0} overflowCount={99}>
+              <Badge count={notifications} overflowCount={99}>
                 <NotificationOutlined style={{ fontSize: 24, margin: "auto" }} />
               </Badge>
             </Link>

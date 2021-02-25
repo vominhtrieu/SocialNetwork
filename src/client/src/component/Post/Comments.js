@@ -60,6 +60,7 @@ function Comments({ socket, postId }) {
       <List
         className="comment-list"
         itemLayout="horizontal"
+        style={{ height: 300, overflowY: "auto" }}
         dataSource={comments}
         renderItem={(comment) => (
           <li key={comment}>

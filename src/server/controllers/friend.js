@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const FriendRequest = require("../models/FriendRequest");
 const ChatRoom = require("../models/ChatRoom");
+const Notification = require("../models/Notification");
 
 exports.addFriend = async (req, res) => {
   try {
@@ -98,6 +99,14 @@ exports.respondFriendRequest = async (req, res) => {
         req.body.user.chatRooms.push(room._id);
         request.user.chatRooms.push(room._id);
       }
+
+      const noti = new Notification({
+        user: req.body.user._id,
+        html: `${req.body.user.lastName} has accepted your friend request`,
+        link: `/${req.body.user._id}`,
+      });
+      await noti.save();
+      request.user.notifications.push(noti);
 
       await Promise.all([req.body.user.save(), request.user.save()]);
     }

@@ -1,21 +1,21 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const DataId = require('./IdRecord');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const DataId = require("./IdRecord");
 
-mongoose.set('useCreateIndex', true);
+mongoose.set("useCreateIndex", true);
 const saltRound = 10;
 
 const FriendRelationshipSchema = new mongoose.Schema(
   {
     user: {
       type: Number,
-      ref: 'User',
+      ref: "User",
     },
     type: {
       type: String,
-      default: 'Normal',
+      default: "Normal",
     },
     since: {
       type: Date,
@@ -52,42 +52,48 @@ const UserSchema = new mongoose.Schema({
   friendRequests: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'FriendRequest',
+      ref: "FriendRequest",
     },
   ],
   avatar: {
     type: Number,
-    ref: 'Image',
+    ref: "Image",
   },
   cover: {
     type: Number,
-    ref: 'Image',
+    ref: "Image",
   },
   posts: [
     {
       type: Number,
-      ref: 'Post',
+      ref: "Post",
     },
   ],
   chatRooms: [
     {
       type: Number,
-      ref: 'ChatRoom',
+      ref: "ChatRoom",
     },
   ],
   images: [
     {
       type: Number,
-      ref: 'Image',
+      ref: "Image",
+    },
+  ],
+  notifications: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Notification",
     },
   ],
 });
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre("save", function (next) {
   if (this.isNew) {
     const document = this;
     DataId.findOneAndUpdate(
-      { model: 'User' },
+      { model: "User" },
       { $inc: { recentId: 1 } },
       { new: true, useFindAndModify: false },
       (err, data) => {
@@ -104,7 +110,7 @@ UserSchema.pre('save', function (next) {
         }
       }
     );
-  } else if (this.isModified('password')) {
+  } else if (this.isModified("password")) {
     bcrypt.hash(document.password, saltRound, function (err, hash) {
       if (err) next(err);
       else {
@@ -124,4 +130,4 @@ UserSchema.methods.validatePassword = function (password, callback) {
   });
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

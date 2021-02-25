@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Comment, Tooltip, message, Skeleton, Typography } from "antd";
+import { LikeOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import UserAvatar from "../Common/UserAvatar";
 import { API_HOST } from "../../config/constant";
@@ -24,6 +25,15 @@ export default function UserComment({ commentId }) {
     <Skeleton loading={Boolean(!comment.user)} active avatar>
       {comment.user && (
         <Comment
+          actions={[
+            <span style={{ fontSize: 14 }}>
+              <LikeOutlined style={{ marginRight: 5 }} />
+              <span className="comment-action">3</span>
+            </span>,
+            <span style={{ fontSize: 14 }}>
+              <span className="comment-action">Reply</span>
+            </span>,
+          ]}
           author={
             <Link to={`/${comment.user._id}`}>
               <h3
@@ -33,7 +43,10 @@ export default function UserComment({ commentId }) {
           }
           avatar={<UserAvatar imageId={comment.user.avatar} />}
           content={
-            <Paragraph ellipsis={{ expandable: true, rows: 2 }} style={{ color: "rgba(255,255,255,0.6)" }}>
+            <Paragraph
+              ellipsis={{ expandable: true, rows: 2 }}
+              style={{ color: "rgba(255,255,255,0.6)", marginBottom: 0 }}
+            >
               {comment.textContent}
             </Paragraph>
           }

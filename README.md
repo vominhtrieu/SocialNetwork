@@ -1,11 +1,19 @@
 # SocialNetwork
-SocialNetwork is a personal project which was built with NodeJs, React,...
+SocialNetwork is a personal project which was built with NodeJs, React, MongoDB, Express, Ant Design, Socket.IO, Redis,...
 
-Project will have these functionalities:
+Implemented features:
 <ul>
-  <li>Post and interact with status</li>
-  <li>Make friend with others</li>
-  <li>Communication</li>
+  <li>Post status</li>
+  <li>Like and comment</li>
+  <li>Chat</li>
+  <li>Notification</li>
+  <li>Friend list</li>
+</ul>
+
+Upcoming features:
+<ul>
+  <li>Reply comment</li>
+  <li>Audio and video call</li>
 </ul>
 
 Usage:
@@ -23,7 +31,7 @@ Usage:
       PORT=4000 #Server Port
       DB_HOST=mongodb://localhost:27017/SocialNetwork #MongoDB Url
       CLIENT_BUILD_DIRECTORY=../client/build/ #Optional: specify url to client build directory after running <code>npm run build</code>
-      ORIGIN=http://localhost:3000 #React server
+      ORIGIN=http://localhost:3000 #React server host
       JWT_TOKEN_SECRET=WriteSomethingHere #Secret for JWT, must be keep secure
   </li>
   <li>Type <code>node app.js</code> to start NodeJs server</li>

@@ -9,7 +9,7 @@ import getMenu from "./DropDownMenu";
 import SearchBar from "./SearchBar";
 import { API_HOST } from "../../config/constant";
 
-const routes = ["/", "/friends", "/messages", "notifications"];
+const routes = ["/", "/friends", "/messages", "/notifications"];
 
 export function MainNavbar(props) {
   const { user } = props;

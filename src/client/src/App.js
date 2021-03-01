@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { getProfile } from "./actions/getProfile";
 import { Redirect } from "react-router-dom";
 import Main from "./container/Main";
+import CallingRoom from "./component/Call/CallingRoom";
 
 function App(props) {
   const { isPending, getProfile } = props;
@@ -14,7 +15,11 @@ function App(props) {
   }, [getProfile]);
 
   React.useEffect(() => {
-    if (props.socket) props.socket.on("error", (err) => message.error(err));
+    if (props.socket)
+      props.socket.on("error", (err) => {
+        if (typeof err !== "string") err = err.toString();
+        message.error(err);
+      });
   }, [props.socket]);
 
   if (isPending)
@@ -30,8 +35,13 @@ function App(props) {
         <Switch>
           <Route exact path="/signin" component={Auth} />
           <Route exact path="/signup" component={Auth} />
+          <Route path="/call/:id" component={CallingRoom} />
           <Route path="*">
-            {props.user && Object.keys(props.user).length > 0 ? <Main /> : <Redirect to="/signin" />}
+            {props.user && Object.keys(props.user).length > 0 ? (
+              <Main socket={props.socket} />
+            ) : (
+              <Redirect to="/signin" />
+            )}
           </Route>
         </Switch>
       </BrowserRouter>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Menu, Badge, Button, Space } from "antd";
+import { Dropdown, Menu, Badge, Button, Space, message } from "antd";
 import { HomeOutlined, TeamOutlined, MessageOutlined, NotificationOutlined, DownOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import { signOut } from "../../actions/signOut";
 import getMenu from "./DropDownMenu";
 import SearchBar from "./SearchBar";
 import { API_HOST } from "../../config/constant";
+import axios from "axios";
 
 const routes = ["/", "/friends", "/messages", "/notifications"];
 
@@ -28,13 +29,14 @@ export function MainNavbar(props) {
   const [notifications, setNotifications] = React.useState(0);
 
   React.useEffect(() => {
-    fetch(`${API_HOST}/update`, { method: "GET", credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
+    axios
+      .get(`${API_HOST}/update`, { withCredentials: true })
+      .then(({ data }) => {
         setNewFriendRequests(data.newFriendRequests);
         setNotSeenRooms(new Set(data.notSeenRooms));
         setNotifications(data.notifications);
-      });
+      })
+      .catch((err) => message.error(err.toString()));
 
     props.socket.on("friendRequestUpdate", (data) => {
       setNewFriendRequests(data.newFriendRequests);

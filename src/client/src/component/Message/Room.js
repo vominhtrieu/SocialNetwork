@@ -8,10 +8,33 @@ import UserAvatar from "../Common/UserAvatar";
 import MessageHistory from "./MessageHistory";
 import MessageInput from "./MessageInput";
 
+const WINDOW_WIDTH = 900;
+const WINDOW_HEIGHT = 450;
+
 function Room(props) {
   const roomId = props.match.params.id;
   const [roomInfo, setRoomInfo] = React.useState(null);
   const [conversationName, setConversationName] = React.useState(null);
+
+  function makeACall() {
+    const participants = roomInfo.participants.map((participant) => participant.user._id);
+    props.socket.emit("createNewCallingRoom", { participants });
+    props.socket.on("roomCreated", ({ roomId }) => {
+      props.socket.off("roomCreated");
+
+      const w = Math.min(WINDOW_WIDTH, window.innerWidth);
+      const h = Math.min(WINDOW_HEIGHT, window.innerHeight);
+      const left = (window.innerWidth - w) / 2;
+      const top = (window.innerHeight - h) / 2;
+      const newWindow = window.open(
+        `/call/${roomId}`,
+        "_blank",
+        `height=${h}, width=${w}, location=no, status=no, left=${left}, top=${top}`
+      );
+      if (window.focus) newWindow.focus();
+    });
+  }
+
   //Fetch room's infomation
   React.useEffect(() => {
     fetch(`${API_HOST}/room/${roomId}`, {
@@ -66,7 +89,7 @@ function Room(props) {
             title="Audio call"
             icon={<PhoneOutlined />}
           />
-          <Button type="primary" shape="circle" title="Video call" icon={<VideoCameraOutlined />} />
+          <Button onClick={makeACall} type="primary" shape="circle" title="Video call" icon={<VideoCameraOutlined />} />
         </div>
       </div>
       <Divider style={{ margin: 0, marginTop: 10 }} />

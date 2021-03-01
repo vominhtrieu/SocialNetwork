@@ -1,0 +1,30 @@
+.room-container {
+  height: 100vh;
+  background-color: yellowgreen;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.room-item {
+  flex-grow: 1;
+  min-width: 25%;
+  max-width: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+.room-item-content {
+  background-color: black;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.room-item-content video {
+  width: auto;
+  height: 100%;
+  transform: scaleX(-1);
+  position: absolute;
+  object-fit: cover;
+}

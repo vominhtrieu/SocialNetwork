@@ -1,5 +1,6 @@
 # SocialNetwork
 SocialNetwork is a personal project which was built with NodeJs, React, MongoDB, Express, Ant Design, Socket.IO, Redis,...
+Current version is not responsive on mobile devices and may not implement this feature in future. Instead, a mobile version is created.
 
 Implemented features:
 <ul>
@@ -14,6 +15,7 @@ Upcoming features:
 <ul>
   <li>Reply comment</li>
   <li>Audio and video call</li>
+  <li>Mobile version</li>
 </ul>
 
 Usage:

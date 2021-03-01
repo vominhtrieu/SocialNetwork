@@ -37,6 +37,7 @@ module.exports = (io) => {
     require("./message")(io, socket);
     require("./post")(io, socket);
     require("./notification")(io, socket);
+    require("./calling")(io, socket);
 
     socket.on("disconnect", () => {
       redisClient.get(socket.userId, (err, clientCount) => {

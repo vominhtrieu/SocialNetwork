@@ -101,19 +101,35 @@ exports.getMessages = (req, res) => {
     });
 };
 
-exports.createNewRoom = (req, res) => {
-  for (const participant of req.body.participants) {
-    if (user.friends.find((friend) => friend.user === participant.user) === -1)
-      return res.status(400).json("You're not allowed to chat with strangers");
-  }
+exports.createNewRoom = async (req, res) => {
+  try {
+    const userPromiseList = [];
+    for (const participant of req.body.participants) {
+      if (req.user.friends.find((friend) => friend.user === participant) === -1)
+        return res.status(400).json("You're not allowed to chat with strangers");
+      userPromiseList.push(User.findById(participant));
+    }
 
-  const newRoom = ChatRoom({
-    participants: req.body.participants,
-  });
-  newRoom
-    .save()
-    .then(() => {
-      return res.status(200);
-    })
-    .catch((e) => res.status(500));
+    req.body.participants = [req.user._id, ...req.body.participants];
+
+    const newRoom = ChatRoom({
+      participants: req.body.participants.map((participant) => ({
+        user: participant,
+      })),
+    });
+
+    await newRoom.save();
+    const userList = await Promise.all(userPromiseList);
+    await Promise.all(
+      userList.map((user) => {
+        user.chatRooms.push(newRoom);
+        return user.save();
+      })
+    );
+
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
+  }
 };

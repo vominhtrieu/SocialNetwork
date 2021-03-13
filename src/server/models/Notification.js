@@ -7,6 +7,10 @@ const schema = mongoose.Schema({
   },
   html: String,
   link: String,
+  seen: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now,

@@ -14,7 +14,9 @@ function Notification({ socket, user }) {
   React.useEffect(() => {
     axios
       .get(`${API_HOST}/notifications`)
-      .then(({ data }) => setNotifications(data))
+      .then(({ data }) => {
+        setNotifications(data);
+      })
       .catch((err) => {
         message.error(err.toString());
       });
@@ -25,7 +27,10 @@ function Notification({ socket, user }) {
     };
   }, [socket]);
 
-  console.log(notifications);
+  const seenANotification = (id) => {
+    socket.emit("seenNotification", { notificationId: id });
+  };
+
   return (
     <>
       <Title title="Notification" />
@@ -33,11 +38,16 @@ function Notification({ socket, user }) {
         dataSource={notifications === null ? [] : notifications}
         loading={notifications === null}
         renderItem={(notification) => (
-          <Link to={notification.link}>
+          <Link to={notification.link} onClick={() => seenANotification(notification._id)}>
             <List.Item>
               <List.Item.Meta
                 avatar={<UserAvatar imageId={notification.user.avatar} />}
-                title={<span dangerouslySetInnerHTML={{ __html: notification.html }} />}
+                title={
+                  <span
+                    style={notification.seen ? { fontWeight: "normal" } : { fontWeight: "bold" }}
+                    dangerouslySetInnerHTML={{ __html: notification.html }}
+                  />
+                }
                 description={moment(notification.date).fromNow()}
               />
             </List.Item>

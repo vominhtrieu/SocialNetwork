@@ -21,6 +21,7 @@ exports.getUpdate = async (req, res) => {
       });
     });
 
+    await User.populate(req.body.user, { path: "notifications", select: "seen" });
     const notSeenNotificationCount = req.body.user.notifications.filter((noti) => !noti.seen).length;
 
     res.json({

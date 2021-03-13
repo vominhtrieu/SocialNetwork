@@ -21,10 +21,12 @@ exports.getUpdate = async (req, res) => {
       });
     });
 
+    const notSeenNotificationCount = req.body.user.notifications.filter((noti) => !noti.seen).length;
+
     res.json({
       newFriendRequests: req.body.user.friendRequests.length,
       notSeenRooms: notSeenRooms,
-      notifications: req.body.user.notifications.length,
+      notifications: notSeenNotificationCount,
     });
   } catch (err) {
     res.status(500).json(err);
@@ -37,7 +39,6 @@ exports.getNotifications = async (req, res) => {
       path: "notifications",
       populate: { path: "user" },
     });
-    console.log(user);
     res.json(user.notifications);
   } catch (err) {
     res.status(500).json(err);

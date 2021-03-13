@@ -17,10 +17,7 @@ export default function ReceiveMessage(props) {
         </Link>
       </div>
       <Tooltip title={moment(message.date).format("DD-MM-YYYY hh:mm")} placement="right">
-        <div
-          style={{ padding: "6px 12px", borderRadius: 20, background: "rgba(255,255,255,0.3)", marginLeft: 5 }}
-          marginLeft={1}
-        >
+        <div style={{ padding: "6px 12px", borderRadius: 20, background: "rgba(255,255,255,0.3)", marginLeft: 5 }}>
           <pre style={{ marginBottom: 0 }}>{emojify(message.textContent, { style: { height: 18 } })}</pre>
         </div>
       </Tooltip>

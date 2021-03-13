@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { API_HOST } from "../../config/constant";
 import { List, Avatar } from "antd";
 import UserAvatar from "../Common/UserAvatar";
+import { emojify } from "react-emojione";
 
 export default function RoomItem({ room, userId }) {
   const [isSeen, setIsSeen] = React.useState(false);
@@ -42,7 +43,9 @@ export default function RoomItem({ room, userId }) {
               style={{ color: isSeen ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.8" }}
               to={`/messages/${room._id}`}
             >
-              {room.messageCount === 0 ? "Let start this conversation" : room.recentMessage.textContent}
+              {room.messageCount === 0
+                ? "Let start this conversation"
+                : emojify(room.recentMessage.textContent, { style: { height: 18 } })}
             </Link>
           }
         />

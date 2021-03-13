@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowLeftOutlined, PhoneOutlined, VideoCameraOutlined } from "@ant-design/icons";
-import { Avatar, Button, Divider, Space } from "antd";
+import { Avatar, Button, Divider } from "antd";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { API_HOST } from "../../config/constant";
@@ -15,6 +15,10 @@ function Room(props) {
   const roomId = props.match.params.id;
   const [roomInfo, setRoomInfo] = React.useState(null);
   const [conversationName, setConversationName] = React.useState(null);
+
+  function updateRoomInfo(update) {
+    setRoomInfo(Object.assign({}, roomInfo, update));
+  }
 
   function makeACall() {
     const participants = roomInfo.participants.map((participant) => participant.user._id);
@@ -48,15 +52,8 @@ function Room(props) {
           return participant.user._id !== props.user.id;
         });
         setRoomInfo(Object.assign(roomData, { participants: temp }));
-
         //Conversation name is calculated by concating all participant name
-        setConversationName(
-          temp
-            .reduce((name, { user }) => {
-              return user.firstName + " " + user.lastName + ", " + name;
-            }, "")
-            .slice(0, -2)
-        );
+        setConversationName(temp.map(({ user }) => user.firstName + " " + user.lastName).join(", "));
       });
   }, [roomId, props.user.id]);
 
@@ -94,7 +91,7 @@ function Room(props) {
       </div>
       <Divider style={{ margin: 0, marginTop: 10 }} />
       <div style={{ height: "100%", overflowY: "auto", flexGrow: "1" }}>
-        <MessageHistory roomInfo={roomInfo} socket={props.socket} user={props.user} />
+        <MessageHistory roomInfo={roomInfo} socket={props.socket} user={props.user} updateRoomInfo={updateRoomInfo} />
       </div>
 
       <MessageInput roomInfo={roomInfo} socket={props.socket} />

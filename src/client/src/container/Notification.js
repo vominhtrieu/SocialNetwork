@@ -7,6 +7,7 @@ import UserAvatar from "../component/Common/UserAvatar";
 import { API_HOST } from "../config/constant";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import "./notification.less";
 
 function Notification({ socket, user }) {
   const [notifications, setNotifications] = React.useState(null);

@@ -71,6 +71,7 @@ module.exports = (io, socket) => {
       (err) => {
         if (!err) {
           io.to("u/" + socket.userId).emit("seen", { roomId: roomId });
+          socket.to(`r/${roomId}`).emit("seenMessage", { user: socket.userId, messageSeen });
         }
       }
     );

@@ -164,7 +164,9 @@ function Post(props) {
 
   const moreButton = (
     <Dropdown overlay={moreMenu} placement="topCenter" arrow>
-      <MoreOutlined style={{ fontSize: 24 }} key="more" />
+      <Space style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+        <MoreOutlined style={{ fontSize: 24 }} key="more" />
+      </Space>
     </Dropdown>
   );
 

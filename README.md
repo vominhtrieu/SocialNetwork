@@ -50,3 +50,20 @@ Current version is not responsive on mobile devices and may not implement this f
   <li>Visit localhost:3000</li>
 </ul>
 
+<h2>Demo</h2>
+<div>
+  <h5>New feed</h5>
+  <img src="https://i.imgur.com/1Imc1Em.png" />
+  <h5>Comments</h5>
+  <img src="https://i.imgur.com/88E5eAo.png" />
+  <h5>Friend requests</h5>
+  <img src="https://i.imgur.com/wlJq3gx.png" />
+  <h5>Message list</h5>
+  <img src="https://i.imgur.com/fL1FNOZ.png" />
+  <h5>Private chat</h5>
+  <img src="https://i.imgur.com/tfnF17T.png" />
+  <h5>Notification</h5>
+  <img src="https://i.imgur.com/VrULi78.png" />
+  <h5>Profile</h5>
+  <img src="https://i.imgur.com/E7m3VC1.png" />
+</div>

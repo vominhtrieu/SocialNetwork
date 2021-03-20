@@ -2,11 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { API_HOST } from "../../config/constant";
 import Title from "../Common/Title";
-import { List } from "antd";
+import { List, Space, Button } from "antd";
 import RoomItem from "./RoomItem";
+import { PlusOutlined } from "@ant-design/icons";
+import NewMessageModal from "./NewMessageModal";
 
 function Messages(props) {
-  // const [messageOpen, setMessageOpen] = React.useState(false);
+  const [newMessageOpen, setNewMessageOpen] = React.useState(false);
   const [rooms, setRooms] = React.useState([]);
   React.useEffect(() => {
     fetch(`${API_HOST}/chatrooms`, {
@@ -46,20 +48,23 @@ function Messages(props) {
     };
   }, [props.socket]);
 
+  const title = (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <h3 style={{ marginBottom: 0 }}>Messages</h3>
+      <Space style={{ marginLeft: "auto" }}>
+        <Button onClick={() => setNewMessageOpen(true)} shape="circle">
+          <PlusOutlined />
+        </Button>
+      </Space>
+    </div>
+  );
+
   return (
     <>
       <Title title="Messages" />
-      {/* <NewMessageDialog open={messageOpen} closeDialog={() => setMessageOpen(false)} userId={props.user.id} /> */}
-      {/* <Space>
-        <IconButton onClick={() => setMessageOpen(true)}>
-          <AddIcon />
-        </IconButton>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
-      </Space> */}
+      <NewMessageModal visible={newMessageOpen} user={props.user} onClose={() => setNewMessageOpen(false)} />
       <List
-        header={<h3 style={{ marginBottom: 0 }}>Messages</h3>}
+        header={title}
         dataSource={rooms}
         renderItem={(room) => <RoomItem key={room._id} room={room} userId={props.user.id} />}
       />

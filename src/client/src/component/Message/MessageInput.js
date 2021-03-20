@@ -35,7 +35,7 @@ export default function MessageInput({ socket, roomInfo }) {
       style={{
         display: "flex",
         alignItems: "center",
-        padding: "5px 0",
+        padding: "10px 0",
         width: "100%",
         borderTop: "1px solid rgba(255, 255, 255, 0.15)",
       }}
@@ -50,6 +50,7 @@ export default function MessageInput({ socket, roomInfo }) {
           backgroundColor: "rgba(255,255,255,0.1)",
           resize: "none",
         }}
+        rows={1}
         value={textContent}
         onChange={onTyping}
         onKeyDown={checkEnterKey}

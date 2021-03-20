@@ -5,7 +5,7 @@ import { API_HOST } from "../../config/constant";
 import TypingMessage from "./TypingMessage";
 
 export default function MessageHistory(props) {
-  const { roomInfo, socket, user } = props;
+  const { roomInfo, socket, user, updateRoomInfo } = props;
   const messageHistory = React.useRef(null);
   const [messages, setMessages] = React.useState([]);
   const [typingUsers, setTypingUsers] = React.useState({});
@@ -63,6 +63,8 @@ export default function MessageHistory(props) {
     };
 
     socket.on("message", (data) => {
+      socket.emit("seen", { roomId: roomInfo._id, messageSeen: roomInfo.messageCount + 1 });
+      updateRoomInfo({ messageCount: roomInfo.messageCount + 1 });
       setMessages((messages) => [...messages, data]);
       scrollToBottom();
     });
@@ -70,10 +72,22 @@ export default function MessageHistory(props) {
       addNewTypingUser(sender);
       scrollToBottom();
     });
+    socket.on("seenMessage", ({ user, messageSeen }) => {
+      console.log("seen");
+      const newParticipants = [...roomInfo.participants];
+      newParticipants.forEach((participant) => {
+        if (user === participant.user._id) {
+          participant.messageSeen = messageSeen;
+        }
+      });
+      updateRoomInfo({ participants: newParticipants });
+    });
     return () => {
       socket.removeAllListeners("message");
       socket.removeAllListeners("typing");
+      socket.removeAllListeners("seenMessage");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, typingUsers]);
 
   //Listen to seen event
@@ -86,7 +100,15 @@ export default function MessageHistory(props) {
 
   const renderMessages = messages.map((message, index) => {
     if (message.sender === user.id) {
-      return <SentMessage key={index} message={message} room={props.room} />;
+      return (
+        <SentMessage
+          key={index}
+          message={message}
+          room={props.room}
+          roomInfo={roomInfo}
+          last={index === messages.length - 1}
+        />
+      );
     }
     let showAvatar = index === messages.length - 1 || messages[index + 1].sender !== message.sender;
     return (

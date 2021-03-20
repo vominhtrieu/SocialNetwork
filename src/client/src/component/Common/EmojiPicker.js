@@ -50,7 +50,7 @@ export default function EmojiPicker(props) {
   const content = (
     <div style={{ width: 200 }}>
       {emojiList.map((emoji, index) => (
-        <span>
+        <span key={index}>
           {emojify(emoji, {
             convertShortnames: true,
             convertUnicode: true,

@@ -104,7 +104,7 @@ export function MainNavbar(props) {
         </Menu>
         <Dropdown overlay={getMenu(user, signOut)} placement="bottomRight">
           <Button>
-            {`${user.lastName} ${user.firstName}`} <DownOutlined />
+            {`${user.firstName} ${user.lastName}`} <DownOutlined />
           </Button>
         </Dropdown>
       </Space>

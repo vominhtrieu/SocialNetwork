@@ -6,7 +6,8 @@ Current version is not responsive on mobile devices and may not implement this f
 <ul>
   <li>Post status</li>
   <li>Like and comment</li>
-  <li>Chat</li>
+  <li>Private Chat</li>
+  <li>Group Chat</li>
   <li>Notification</li>
   <li>Friend list</li>
   <li>Video call</li>
@@ -14,7 +15,6 @@ Current version is not responsive on mobile devices and may not implement this f
 
 <h2>Upcoming features</h2>
 <ul>
-  <li>Reply comment</li>
   <li>Audio call</li>
   <li>Mobile version</li>
   <li>Sending and receiving message with image(s)</li>

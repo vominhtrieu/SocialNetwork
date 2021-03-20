@@ -7,6 +7,10 @@ import { API_HOST } from "../../config/constant";
 export default function FriendButton({ user, friend, socket, style }) {
   const [status, setStatus] = React.useState(friend.status);
 
+  React.useEffect(() => {
+    setStatus(friend.status);
+  }, [friend.status]);
+
   const unfriend = () => {
     setStatus(false);
     axios

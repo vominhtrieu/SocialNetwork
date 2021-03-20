@@ -25,15 +25,6 @@ export default function UserComment({ commentId }) {
     <Skeleton loading={Boolean(!comment.user)} active avatar>
       {comment.user && (
         <Comment
-          actions={[
-            <span style={{ fontSize: 14 }}>
-              <LikeOutlined style={{ marginRight: 5 }} />
-              <span className="comment-action">3</span>
-            </span>,
-            <span style={{ fontSize: 14 }}>
-              <span className="comment-action">Reply</span>
-            </span>,
-          ]}
           author={
             <Link to={`/${comment.user._id}`}>
               <h3
